@@ -1,39 +1,51 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
+import { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { motion } from 'framer-motion';
 
-const LocationMap = () => {
-  // Coordonnées d'Antananarivo
-  const position: [number, number] = [-18.9038, 47.5134];
+// Fix default marker icon issue
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: '/marker-icon-2x.png',
+  iconUrl: '/marker-icon.png',
+  shadowUrl: '/marker-shadow.png',
+});
 
-  // Personnalisation du marqueur
-  const customIcon = new L.Icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
+interface LocationMapProps {
+  center?: LatLngExpression;
+  zoom?: number;
+}
 
+const LocationMap: React.FC<LocationMapProps> = ({ 
+  center = [48.8566, 2.3522] as LatLngExpression, // Paris coordinates by default
+  zoom = 13 
+}) => {
   return (
-    <MapContainer 
-      center={position} 
-      zoom={13} 
-      style={{ height: '100%', width: '100%' }}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="h-[400px] w-full rounded-lg overflow-hidden shadow-lg"
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      <Marker position={position} icon={customIcon}>
-        <Popup>
-          Antananarivo, Madagascar
-        </Popup>
-      </Marker>
-    </MapContainer>
+      <MapContainer 
+        center={center}
+        zoom={zoom}
+        scrollWheelZoom={false}
+        style={{ height: '100%', width: '100%' }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        <Marker position={center}>
+          <Popup>
+            Mon emplacement
+          </Popup>
+        </Marker>
+      </MapContainer>
+    </motion.div>
   );
 };
 

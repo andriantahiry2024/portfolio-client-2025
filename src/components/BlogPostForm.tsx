@@ -298,8 +298,8 @@ const BlogPostForm = ({ post, isCreating, onCancel, onSubmit }) => {
                   alt="Preview"
                   className="h-full w-full object-cover"
                   onError={(e) => {
-                    e.target.src =
-                      "https://via.placeholder.com/800x400?text=Invalid+Image+URL";
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://via.placeholder.com/800x400?text=Invalid+Image+URL";
                   }}
                 />
               </div>

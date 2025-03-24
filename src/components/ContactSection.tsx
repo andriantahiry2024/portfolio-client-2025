@@ -65,7 +65,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                 </div>
                 <div>
                   <h4 className="font-medium">Email</h4>
-                  <p className="text-muted-foreground">contact@example.com</p>
+                  <p className="text-muted-foreground">andriantahirynomena@gmail.com</p>
                 </div>
               </div>
 
@@ -75,7 +75,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                 </div>
                 <div>
                   <h4 className="font-medium">Phone</h4>
-                  <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                  <p className="text-muted-foreground">+261 34 96 712 22</p>
                 </div>
               </div>
 
@@ -85,7 +85,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                 </div>
                 <div>
                   <h4 className="font-medium">Location</h4>
-                  <p className="text-muted-foreground">Paris, France</p>
+                  <p className="text-muted-foreground">Antananarivo, Madagascar</p>
                 </div>
               </div>
             </div>
