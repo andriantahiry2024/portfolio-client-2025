@@ -11,6 +11,7 @@ import TickerSection from "./TickerSection";
 import BlogSection from "./BlogSection";
 import SliderSection from "./SliderSection";
 import Scene3D from "./Scene3D";
+import AppointmentCalendar from "./AppointmentCalendar";
 
 const Home = () => {
   const { scrollYProgress } = useScroll();
@@ -28,40 +29,27 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background">
       <Navbar />
+      
+      
 
-      {/* Hero Section with Parallax Effect */}
-      <section id="home" className="relative">
-        <HeroSection
-          name="John Doe"
-          title="Full Stack Developer"
-          description="Je crée des applications web modernes et performantes avec une attention particulière aux détails et à l'expérience utilisateur."
-          ctaText="Voir mes projets"
-          onCtaClick={() => {
-            document
-              .getElementById("projects")
-              ?.scrollIntoView({ behavior: "smooth" });
-          }}
-        />
+      {/* Main Content */}
+      <main>
+{/* Hero Section with Parallax Effect */}
+<section id="home" className="relative h-screen">
+        <HeroSection />
         <motion.div
           style={{ opacity }}
           className="absolute inset-0 pointer-events-none"
         />
       </section>
-
-      {/* Main Content */}
-      <main>
-        {/* Ticker Section */}
-        <TickerSection />
-
         {/* About Section */}
         <section id="about">
           <AboutSection />
         </section>
 
-        {/* 3D Scene */}
-        <Scene3D />
+        
 
         {/* Skills Section */}
         <section id="skills">
@@ -75,15 +63,17 @@ const Home = () => {
 
         {/* Projects Section */}
         <section id="projects">
-          <ProjectsSection
-            title="Mes Projets"
-            description="Voici quelques-uns de mes projets récents. Chacun a été soigneusement conçu avec une attention particulière aux détails et aux technologies modernes."
-          />
+          <ProjectsSection />
         </section>
 
         {/* Blog Section */}
         <section id="blog">
           <BlogSection />
+        </section>
+
+{/* Appointment Calendar */}
+        <section id="appointment" className="bg-gray-dark dark:bg-dark p-5">
+          <AppointmentCalendar />
         </section>
 
         {/* Contact Section */}

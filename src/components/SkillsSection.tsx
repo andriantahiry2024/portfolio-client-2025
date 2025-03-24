@@ -1,7 +1,22 @@
 import React from "react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { 
+  FaReact, 
+  FaNodeJs, 
+  FaDocker, 
+  FaGitAlt,
+  FaFigma
+} from "react-icons/fa";
+import { 
+  SiTypescript, 
+  SiTailwindcss, 
+  SiExpress, 
+  SiMongodb, 
+  SiGraphql,
+  SiNextdotjs
+} from "react-icons/si";
+import { MdDesignServices } from "react-icons/md";
 
 interface Skill {
   name: string;
@@ -12,38 +27,56 @@ interface Skill {
 interface SkillsSectionProps {
   title?: string;
   description?: string;
-  skills?: Skill[];
 }
+
+const getSkillIcon = (skillName: string) => {
+  const icons: { [key: string]: React.ReactNode } = {
+    "React": <FaReact className="w-5 h-5 text-[#61DAFB]" />,
+    "TypeScript": <SiTypescript className="w-5 h-5 text-[#3178C6]" />,
+    "Tailwind CSS": <SiTailwindcss className="w-5 h-5 text-[#06B6D4]" />,
+    "Next.js": <SiNextdotjs className="w-5 h-5 text-[#000000] dark:text-white" />,
+    "Node.js": <FaNodeJs className="w-5 h-5 text-[#339933]" />,
+    "Express": <SiExpress className="w-5 h-5 text-[#000000] dark:text-white" />,
+    "MongoDB": <SiMongodb className="w-5 h-5 text-[#47A248]" />,
+    "GraphQL": <SiGraphql className="w-5 h-5 text-[#E10098]" />,
+    "Figma": <FaFigma className="w-5 h-5 text-[#F24E1E]" />,
+    "UI/UX Design": <MdDesignServices className="w-5 h-5 text-[#FF69B4]" />,
+    "Git": <FaGitAlt className="w-5 h-5 text-[#F05032]" />,
+    "Docker": <FaDocker className="w-5 h-5 text-[#2496ED]" />,
+  };
+  return icons[skillName] || null;
+};
+
+const skills = {
+  frontend: [
+    { name: "React", level: 90 },
+    { name: "TypeScript", level: 85 },
+    { name: "Tailwind CSS", level: 95 },
+    { name: "Next.js", level: 85 },
+  ],
+  backend: [
+    { name: "Node.js", level: 80 },
+    { name: "Express", level: 75 },
+    { name: "MongoDB", level: 70 },
+    { name: "GraphQL", level: 70 },
+  ],
+  design: [
+    { name: "Figma", level: 85 },
+    { name: "UI/UX Design", level: 80 },
+  ],
+  tools: [
+    { name: "Git", level: 90 },
+    { name: "Docker", level: 65 },
+  ],
+};
 
 const SkillsSection = ({
   title = "Compétences",
-  description = "Voici un aperçu de mes compétences techniques et de mon niveau d'expertise dans différents domaines.",
-  skills = [
-    { name: "React", level: 90, category: "frontend" },
-    { name: "TypeScript", level: 85, category: "frontend" },
-    { name: "Tailwind CSS", level: 95, category: "frontend" },
-    { name: "Node.js", level: 80, category: "backend" },
-    { name: "Express", level: 75, category: "backend" },
-    { name: "MongoDB", level: 70, category: "backend" },
-    { name: "Figma", level: 85, category: "design" },
-    { name: "UI/UX Design", level: 80, category: "design" },
-    { name: "Git", level: 90, category: "tools" },
-    { name: "Docker", level: 65, category: "tools" },
-    { name: "Next.js", level: 85, category: "frontend" },
-    { name: "GraphQL", level: 70, category: "backend" },
-  ],
+  description = "Mes compétences techniques et mon niveau d'expertise",
 }: SkillsSectionProps) => {
-  // Group skills by category
-  const categories = {
-    frontend: skills.filter((skill) => skill.category === "frontend"),
-    backend: skills.filter((skill) => skill.category === "backend"),
-    design: skills.filter((skill) => skill.category === "design"),
-    tools: skills.filter((skill) => skill.category === "tools"),
-  };
-
   return (
-    <section id="skills" className="py-20 bg-background w-full">
-      <div className="container px-4 md:px-6 mx-auto">
+    <section className="py-20 bg-background">
+      <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4">
             {title}
@@ -53,31 +86,86 @@ const SkillsSection = ({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {Object.entries(categories).map(([category, categorySkills]) => (
-            <div key={category} className="space-y-6">
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="text-xl font-semibold capitalize">{category}</h3>
-                <div className="h-px flex-1 bg-border"></div>
-              </div>
-
-              <div className="space-y-6">
-                {categorySkills.map((skill) => (
-                  <div key={skill.name} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{skill.name}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {skill.level}%
-                        </Badge>
-                      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="border border-border/40 bg-background/60 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Frontend</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {skills.frontend.map((skill) => (
+                <div key={skill.name} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      {getSkillIcon(skill.name)}
+                      <span className="font-medium">{skill.name}</span>
                     </div>
-                    <Progress value={skill.level} className="h-2" />
+                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
+                  <Progress value={skill.level} className="h-2" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border border-border/40 bg-background/60 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Backend</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {skills.backend.map((skill) => (
+                <div key={skill.name} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      {getSkillIcon(skill.name)}
+                      <span className="font-medium">{skill.name}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                  </div>
+                  <Progress value={skill.level} className="h-2" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border border-border/40 bg-background/60 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Design</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {skills.design.map((skill) => (
+                <div key={skill.name} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      {getSkillIcon(skill.name)}
+                      <span className="font-medium">{skill.name}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                  </div>
+                  <Progress value={skill.level} className="h-2" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border border-border/40 bg-background/60 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Tools</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {skills.tools.map((skill) => (
+                <div key={skill.name} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      {getSkillIcon(skill.name)}
+                      <span className="font-medium">{skill.name}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                  </div>
+                  <Progress value={skill.level} className="h-2" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
