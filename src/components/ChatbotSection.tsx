@@ -26,13 +26,20 @@ interface Message {
 }
 
 // Service pour communiquer avec OpenRouter API et Gemini
+const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const BASE_URL = 'https://openrouter.ai/api/v1';
+const MODEL = 'google/gemini-2.0-flash-thinking-exp:free';
+
 const openRouterService = {
-  API_KEY:  "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",
-  BASE_URL: 'https://openrouter.ai/api/v1',
-  MODEL: 'google/gemini-2.0-flash-thinking-exp:free',
-  
   async generateResponse(userMessage: string): Promise<string> {
     try {
+      console.log('Checking API Key:', API_KEY ? 'API Key exists' : 'No API Key found');
+      
+      if (!API_KEY) {
+        console.error('No API Key found in environment variables');
+        throw new Error('API Key not configured');
+      }
+
       console.log('Sending request to OpenRouter API...');
       
       // Vérifier si on est sur GitHub Pages (environnement de production)
@@ -42,11 +49,14 @@ const openRouterService = {
       }
       
       const requestBody = {
-        model: this.MODEL,
+        model: MODEL,
         messages: [
           {
             role: 'system',
-            content: `## Instructions pour le Chatbot Professionnel
+            content: [
+              {
+                type: 'text',
+                text: `## Instructions pour le Chatbot Professionnel
 
 Tu es Andriantahiry Nomena Hasina, développeur fullstack, cloud practitioner et spécialiste en automatisation.
 
@@ -61,7 +71,7 @@ Tu es Andriantahiry Nomena Hasina, développeur fullstack, cloud practitioner et
 - 🛠️ Base de données : Supabase, Firebase, MongoDB
 
 ### Expérience
-- 🏢 Responsable Production Applicatif chez Satisfactory | Konecta Madagascar
+- 🏢 Responsable Production Applicatve chez Satisfactory | Konecta Madagascar
 - 💻 Développeur WordPress et Fullstack en freelance
 - 🎓 Créateur de plateformes éducatives avec Next.js, Express, Supabase, OpenAI
 
@@ -124,42 +134,71 @@ EXEMPLE FORMAT CODE INCORRECT:
 #!/bin/bash
 sudo apt-get update
 sudo apt-get install docker-ce`
+              }
+            ]
           },
           {
             role: 'user',
-            content: userMessage
+            content: [
+              {
+                type: 'text',
+                text: userMessage
+              }
+            ]
           }
         ]
       };
       
-      console.log('Request body:', JSON.stringify(requestBody));
+      // console.log('Request body:', JSON.stringify(requestBody));
       
-      const response = await fetch(`${this.BASE_URL}/chat/completions`, {
+      const response = await fetch(`${BASE_URL}/chat/completions`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.API_KEY}`,
+          'Authorization': `Bearer ${API_KEY}`,
           'HTTP-Referer': window.location.origin,
-          'X-Title': 'Portfolio Chatbot'
+          'X-Title': 'Portfolio Chatbot',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
       });
 
       console.log('Response status:', response.status);
       const data = await response.json();
-      console.log('Response data:', data);
+      // console.log('Response data:', data);
       
       if (!response.ok) {
         console.error('Error from OpenRouter API:', data);
-        return "Je suis désolé, j'ai rencontré un problème technique. Pouvez-vous réessayer plus tard?";
+        throw new Error(data.error?.message || 'Error calling OpenRouter API');
       }
       
-      if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
-        console.error('Unexpected response format:', data);
-        return "Je suis désolé, j'ai reçu une réponse dans un format inattendu. Pouvez-vous réessayer?";
+      // Vérifier la présence de choices
+      if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
+        console.error('No choices in response:', data);
+        throw new Error('No choices in response from API');
       }
       
-      return data.choices[0].message.content;
+      // Extraire le contenu du message selon la structure disponible
+      const choice = data.choices[0];
+      let messageContent = '';
+      
+      if (choice.message?.content) {
+        // Format possible 1: {message: {content: string}}
+        messageContent = choice.message.content;
+      } else if (choice.message?.content?.[0]?.text) {
+        // Format possible 2: {message: {content: [{type: 'text', text: string}]}}
+        messageContent = choice.message.content[0].text;
+      } else if (choice.text) {
+        // Format possible 3: {text: string}
+        messageContent = choice.text;
+      } else if (typeof choice.message === 'string') {
+        // Format possible 4: {message: string}
+        messageContent = choice.message;
+      } else {
+        console.error('Unrecognized response format:', data);
+        throw new Error('Unrecognized response format from API');
+      }
+      
+      return messageContent;
     } catch (error) {
       console.error('Error calling OpenRouter API:', error);
       return "Je suis désolé, j'ai rencontré un problème de connexion. Pouvez-vous réessayer plus tard?";
