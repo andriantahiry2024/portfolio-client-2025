@@ -28,23 +28,23 @@ interface Message {
 // Service pour communiquer avec OpenRouter API et Gemini
 const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 const BASE_URL = 'https://openrouter.ai/api/v1';
-const MODEL = 'google/gemini-2.5-pro-exp-03-25:free';
+const MODEL = 'google/gemini-2.0-flash-thinking-exp:free';
+
+// Définir l'URL du backend selon l'environnement
+const BACKEND_URL = import.meta.env.MODE === 'development' 
+  ? 'http://localhost:3001/api' 
+  : 'https://portfolio-backend-ni0h05or3-andriantahiry2024s-projects.vercel.app/api';
 
 const openRouterService = {
   async generateResponse(userMessage: string): Promise<string> {
     try {
       console.log('Checking API Key:', API_KEY ? 'API Key exists' : 'No API Key found');
       
-      if (!API_KEY) {
-        console.error('No API Key found in environment variables');
-        throw new Error('API Key not configured');
-      }
-
-      console.log('Sending request to OpenRouter API...');
+      console.log('Sending request to backend...');
       
       // Vérifier si on est sur GitHub Pages (environnement de production)
-      if (window.location.hostname.includes('github.io')) {
-        console.log('Running on GitHub Pages - using fallback responses');
+      if (window.location.hostname.includes('github.io') && !BACKEND_URL.includes('vercel')) {
+        console.log('Running on GitHub Pages without backend - using fallback responses');
         throw new Error('Running on GitHub Pages - API calls disabled');
       }
       
@@ -149,12 +149,12 @@ sudo apt-get install docker-ce`
         ]
       };
       
-      // console.log('Request body:', JSON.stringify(requestBody));
+      console.log('Request body:', JSON.stringify(requestBody));
       
-      const response = await fetch(`${BASE_URL}/chat/completions`, {
+      // Appeler notre backend au lieu d'OpenRouter directement
+      const response = await fetch(`${BACKEND_URL}/chat`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
@@ -162,17 +162,17 @@ sudo apt-get install docker-ce`
 
       console.log('Response status:', response.status);
       const data = await response.json();
-      // console.log('Response data:', data);
+      console.log('Response data:', data);
       
       if (!response.ok) {
-        console.error('Error from OpenRouter API:', data);
-        throw new Error(data.error?.message || 'Error calling OpenRouter API');
+        console.error('Error from backend:', data);
+        throw new Error(data.error?.message || 'Error calling backend');
       }
       
       // Vérifier la présence de choices
       if (!data.choices || !Array.isArray(data.choices) || data.choices.length === 0) {
         console.error('No choices in response:', data);
-        throw new Error('No choices in response from API');
+        throw new Error('No choices in response from backend');
       }
       
       // Extraire le contenu du message selon la structure disponible
@@ -193,12 +193,12 @@ sudo apt-get install docker-ce`
         messageContent = choice.message;
       } else {
         console.error('Unrecognized response format:', data);
-        throw new Error('Unrecognized response format from API');
+        throw new Error('Unrecognized response format from backend');
       }
       
       return messageContent;
     } catch (error) {
-      console.error('Error calling OpenRouter API:', error);
+      console.error('Error calling backend:', error);
       return "Je suis désolé, j'ai rencontré un problème de connexion. Pouvez-vous réessayer plus tard?";
     }
   }
@@ -248,7 +248,7 @@ const ChatbotSection: React.FC = () => {
       console.log('Running in restricted mode - using fallback responses');
       setUseLocalResponses(true);
     } else {
-      console.log('API Key available - using OpenRouter API');
+      console.log('API Key available - using backend');
     }
   }, []);
 
@@ -277,7 +277,7 @@ const ChatbotSection: React.FC = () => {
         const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
         response = fallbackResponses[randomIndex];
       } else {
-        // Appel à l'API Gemini via OpenRouter
+        // Appel à l'API Gemini via backend
         try {
           response = await openRouterService.generateResponse(userQuery);
         } catch (apiError) {
