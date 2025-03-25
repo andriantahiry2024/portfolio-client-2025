@@ -2,6 +2,24 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Spline from '@splinetool/react-spline';
 
+// Fonction pour formater le markdown
+function formatMarkdown(text: string): string {
+  // Convertir les blocs de code
+  let formattedText = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
+    const lang = language || '';
+    return `<pre class="bg-gray-900 text-gray-200 p-4 rounded-md overflow-x-auto"><code class="language-${lang}">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+  });
+  
+  // Convertir les sauts de ligne en balises <br>
+  formattedText = formattedText.replace(/\n\n/g, '</p><p>');
+  formattedText = formattedText.replace(/\n/g, '<br>');
+  
+  // Entourer le texte avec des balises <p>
+  formattedText = `<p>${formattedText}</p>`;
+  
+  return formattedText;
+}
+
 interface Message {
   text: string;
   isBot: boolean;
@@ -283,9 +301,12 @@ const ChatbotSection: React.FC = () => {
               >
                 <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                   <div className="p-5">
-                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                      {lastBotMessage.text}
-                    </p>
+                    <div 
+                      className="text-gray-800 dark:text-gray-200 leading-relaxed markdown-content" 
+                      dangerouslySetInnerHTML={{ 
+                        __html: formatMarkdown(lastBotMessage.text) 
+                      }}
+                    />
                   </div>
                 </div>
               </motion.div>
