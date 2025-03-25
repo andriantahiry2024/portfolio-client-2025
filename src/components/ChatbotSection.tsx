@@ -35,6 +35,13 @@ const BACKEND_URL = import.meta.env.MODE === 'development'
   ? 'http://localhost:3001/api' 
   : 'https://portfolio-backend-rmg2awkb4-andriantahiry2024s-projects.vercel.app/api';
 
+// Version alternative avec URL relative qui fonctionne si les deux sont sur le même domaine
+// const BACKEND_URL = import.meta.env.PROD && window.location.hostname.includes('vercel.app')
+//  ? '/api'  // URL relative pour le même domaine sur Vercel
+//  : import.meta.env.MODE === 'development' 
+//    ? 'http://localhost:3001/api'
+//    : 'https://portfolio-backend-rmg2awkb4-andriantahiry2024s-projects.vercel.app/api';
+
 const openRouterService = {
   async generateResponse(userMessage: string): Promise<string> {
     try {
