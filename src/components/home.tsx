@@ -12,6 +12,7 @@ import BlogSection from "./BlogSection";
 import SliderSection from "./SliderSection";
 import Scene3D from "./Scene3D";
 import AppointmentCalendar from "./AppointmentCalendar";
+import ChatbotSection from "./ChatbotSection";
 
 const Home = () => {
   const { scrollYProgress } = useScroll();
@@ -31,25 +32,25 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      
+
+
 
       {/* Main Content */}
       <main>
-{/* Hero Section with Parallax Effect */}
-<section id="home" className="relative h-screen">
-        <HeroSection />
-        <motion.div
-          style={{ opacity }}
-          className="absolute inset-0 pointer-events-none"
-        />
-      </section>
+        {/* Hero Section with Parallax Effect */}
+        <section id="home" className="relative h-screen">
+          <HeroSection />
+          <motion.div
+            style={{ opacity }}
+            className="absolute inset-0 pointer-events-none"
+          />
+        </section>
         {/* About Section */}
         <section id="about">
           <AboutSection />
         </section>
 
-        
+
 
         {/* Skills Section */}
         <section id="skills">
@@ -71,9 +72,13 @@ const Home = () => {
           <BlogSection />
         </section>
 
-{/* Appointment Calendar */}
+        {/* Appointment Calendar */}
         <section id="appointment" className="bg-gray-dark dark:bg-dark p-5">
           <AppointmentCalendar />
+        </section>
+        {/* Chatbot Section */}
+        <section id="chatbot">
+          <ChatbotSection />
         </section>
 
         {/* Contact Section */}
