@@ -155,8 +155,6 @@ sudo apt-get install docker-ce`
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'Portfolio Chatbot',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
@@ -242,9 +240,15 @@ const ChatbotSection: React.FC = () => {
 
   // Vérifier si on est sur GitHub Pages (environnement de production)
   useEffect(() => {
-    if (window.location.hostname.includes('github.io')) {
-      console.log('Running on GitHub Pages - using fallback responses');
+    // Vérifier si on est sur GitHub Pages ou si l'API key n'est pas disponible
+    if (
+      window.location.hostname.includes('github.io') || 
+      !import.meta.env.VITE_OPENROUTER_API_KEY
+    ) {
+      console.log('Running in restricted mode - using fallback responses');
       setUseLocalResponses(true);
+    } else {
+      console.log('API Key available - using OpenRouter API');
     }
   }, []);
 
