@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Spline from '@splinetool/react-spline';
-
 // Fonction pour formater le markdown
 function formatMarkdown(text: string): string {
   // Convertir les blocs de code
@@ -28,13 +27,19 @@ interface Message {
 
 // Service pour communiquer avec OpenRouter API et Gemini
 const openRouterService = {
-  API_KEY: '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',
+  API_KEY: import.meta.env.VITE_OPENROUTER_API_KEY || "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",
   BASE_URL: 'https://openrouter.ai/api/v1',
   MODEL: 'google/gemini-2.0-flash-thinking-exp:free',
   
   async generateResponse(userMessage: string): Promise<string> {
     try {
       console.log('Sending request to OpenRouter API...');
+      
+      // Vérifier si on est sur GitHub Pages (environnement de production)
+      if (window.location.hostname.includes('github.io')) {
+        console.log('Running on GitHub Pages - using fallback responses');
+        throw new Error('Running on GitHub Pages - API calls disabled');
+      }
       
       const requestBody = {
         model: this.MODEL,
@@ -195,6 +200,14 @@ const ChatbotSection: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [responseKey, setResponseKey] = useState(0); // Pour forcer l'animation à se reproduire
   const [useLocalResponses, setUseLocalResponses] = useState(false);
+
+  // Vérifier si on est sur GitHub Pages (environnement de production)
+  useEffect(() => {
+    if (window.location.hostname.includes('github.io')) {
+      console.log('Running on GitHub Pages - using fallback responses');
+      setUseLocalResponses(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
