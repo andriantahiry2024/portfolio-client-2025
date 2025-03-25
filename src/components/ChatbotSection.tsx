@@ -27,7 +27,7 @@ interface Message {
 
 // Service pour communiquer avec OpenRouter API et Gemini
 const openRouterService = {
-  API_KEY: import.meta.env.VITE_OPENROUTER_API_KEY || "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",
+  API_KEY:  "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",
   BASE_URL: 'https://openrouter.ai/api/v1',
   MODEL: 'google/gemini-2.0-flash-thinking-exp:free',
   
