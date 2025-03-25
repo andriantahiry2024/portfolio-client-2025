@@ -33,7 +33,7 @@ const MODEL = 'google/gemini-2.0-flash-thinking-exp:free';
 // Définir l'URL du backend selon l'environnement
 const BACKEND_URL = import.meta.env.MODE === 'development' 
   ? 'http://localhost:3001/api' 
-  : 'https://portfolio-backend-ni0h05or3-andriantahiry2024s-projects.vercel.app/api';
+  : 'https://portfolio-backend-rmg2awkb4-andriantahiry2024s-projects.vercel.app/api';
 
 const openRouterService = {
   async generateResponse(userMessage: string): Promise<string> {
