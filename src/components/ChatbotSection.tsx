@@ -25,38 +25,25 @@ interface Message {
   timestamp: Date;
 }
 
-// Service pour communiquer avec OpenRouter API et Gemini
-const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
-const BASE_URL = 'https://openrouter.ai/api/v1';
-const MODEL = 'google/gemini-2.0-flash-thinking-exp:free';
-
 // Définir l'URL du backend selon l'environnement
 const BACKEND_URL = import.meta.env.MODE === 'development' 
-  ? 'http://localhost:3001/api' 
-  : 'https://portfolio-backend-rmg2awkb4-andriantahiry2024s-projects.vercel.app/api';
+  ? 'https://portfolio-backend-eta-ten.vercel.app/api' 
+  : import.meta.env.PROD && window.location.hostname.includes('vercel.app')
+    ? `https://portfolio-backend-eta-ten.vercel.app/api`
+    : 'https://portfolio-backend-eta-ten.vercel.app/api';
 
-// Version alternative avec URL relative qui fonctionne si les deux sont sur le même domaine
-// const BACKEND_URL = import.meta.env.PROD && window.location.hostname.includes('vercel.app')
-//  ? '/api'  // URL relative pour le même domaine sur Vercel
-//  : import.meta.env.MODE === 'development' 
-//    ? 'http://localhost:3001/api'
-//    : 'https://portfolio-backend-rmg2awkb4-andriantahiry2024s-projects.vercel.app/api';
+// Mode debug pour suivre les appels
+console.log('Mode:', import.meta.env.MODE);
+console.log('Backend URL:', BACKEND_URL);
 
-const openRouterService = {
+// Service pour communiquer avec le backend
+const chatService = {
   async generateResponse(userMessage: string): Promise<string> {
     try {
-      console.log('Checking API Key:', API_KEY ? 'API Key exists' : 'No API Key found');
-      
       console.log('Sending request to backend...');
       
-      // Vérifier si on est sur GitHub Pages (environnement de production)
-      if (window.location.hostname.includes('github.io') && !BACKEND_URL.includes('vercel')) {
-        console.log('Running on GitHub Pages without backend - using fallback responses');
-        throw new Error('Running on GitHub Pages - API calls disabled');
-      }
-      
       const requestBody = {
-        model: MODEL,
+        model: "google/gemini-2.0-flash-thinking-exp:free",
         messages: [
           {
             role: 'system',
@@ -158,7 +145,7 @@ sudo apt-get install docker-ce`
       
       console.log('Request body:', JSON.stringify(requestBody));
       
-      // Appeler notre backend au lieu d'OpenRouter directement
+      // Appeler notre backend
       const response = await fetch(`${BACKEND_URL}/chat`, {
         method: 'POST',
         headers: {
@@ -245,20 +232,6 @@ const ChatbotSection: React.FC = () => {
   const [responseKey, setResponseKey] = useState(0); // Pour forcer l'animation à se reproduire
   const [useLocalResponses, setUseLocalResponses] = useState(false);
 
-  // Vérifier si on est sur GitHub Pages (environnement de production)
-  useEffect(() => {
-    // Vérifier si on est sur GitHub Pages ou si l'API key n'est pas disponible
-    if (
-      window.location.hostname.includes('github.io') || 
-      !import.meta.env.VITE_OPENROUTER_API_KEY
-    ) {
-      console.log('Running in restricted mode - using fallback responses');
-      setUseLocalResponses(true);
-    } else {
-      console.log('API Key available - using backend');
-    }
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -284,9 +257,9 @@ const ChatbotSection: React.FC = () => {
         const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
         response = fallbackResponses[randomIndex];
       } else {
-        // Appel à l'API Gemini via backend
+        // Appel au backend
         try {
-          response = await openRouterService.generateResponse(userQuery);
+          response = await chatService.generateResponse(userQuery);
         } catch (apiError) {
           console.error('API error:', apiError);
           // En cas d'erreur avec l'API, passer en mode local

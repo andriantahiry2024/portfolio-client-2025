@@ -9,28 +9,27 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Configuration CORS avancée
-const corsOptions = {
-  origin: ['https://andriantahiry2024.github.io', 'http://localhost:5173'],
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  maxAge: 86400 // 24 heures en secondes
-};
-
 // Middleware
-app.use(cors(corsOptions));
-app.use(express.json());
-
-// Middleware pour ajouter des en-têtes de sécurité
 app.use((req, res, next) => {
-  // Désactiver la politique de sécurité du contenu pour les tests
-  res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval'");
+  // Permettre toutes les origines
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  // Headers essentiels pour CORS
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Gérer les requêtes preflight OPTIONS
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   next();
 });
+
+// Ne plus utiliser le middleware cors standard qui peut interférer
+// app.use(cors(corsOptions));
+app.use(express.json());
 
 // Route racine
 app.get('/', (req, res) => {
@@ -47,6 +46,7 @@ app.post('/api/chat', async (req, res) => {
     const API_KEY = process.env.OPENROUTER_API_KEY;
     
     if (!API_KEY) {
+      console.error('Erreur: Clé API manquante');
       return res.status(500).json({ error: 'API key not configured' });
     }
     
@@ -55,13 +55,22 @@ app.post('/api/chat', async (req, res) => {
     
     console.log('Requête reçue:', JSON.stringify(requestBody));
     
+    // Vérifier si le modèle est spécifié
+    if (!requestBody.model) {
+      console.warn('Attention: Modèle non spécifié dans la requête');
+      // Ajouter le modèle si absent
+      requestBody.model = "google/gemini-2.0-flash-thinking-exp:free";
+    }
+    
     // Appeler OpenRouter API
+    console.log('Envoi de la requête à OpenRouter avec la clé API:', API_KEY.substring(0, 10) + '...');
+    
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`,
-        'HTTP-Referer': 'https://andriantahiry2024.github.io',
+        'HTTP-Referer': 'https://portfolio-2025-a2414w4wl-andriantahiry2024s-projects.vercel.app',
         'X-Title': 'Portfolio Chatbot'
       },
       body: JSON.stringify(requestBody)
@@ -71,22 +80,28 @@ app.post('/api/chat', async (req, res) => {
     const data = await response.json();
     
     console.log('Réponse reçue:', response.status);
+    console.log('Données reçues:', JSON.stringify(data).substring(0, 200) + '...');
+    
+    if (!response.ok) {
+      console.error('Erreur OpenRouter:', data.error || data);
+    }
     
     // Retourner la réponse
     return res.status(response.status).json(data);
   } catch (error) {
-    console.error('Erreur:', error);
+    console.error('Erreur complète:', error);
     return res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 });
 
 // Route de test
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ 
+    status: 'ok',
+    apiKeyConfigured: !!process.env.OPENROUTER_API_KEY,
+    timestamp: new Date().toISOString()
+  });
 });
-
-// Gérer les requêtes OPTIONS (preflight)
-app.options('*', cors(corsOptions));
 
 // Démarrer le serveur
 app.listen(PORT, () => {
