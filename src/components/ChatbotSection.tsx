@@ -299,8 +299,8 @@ const ChatbotSection: React.FC = () => {
   };
 
   return (
-    <div>
-      <div className="max-w-4xl mx-auto">
+    <div className="py-16 px-4">
+      <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white">
           Assistant Virtuel
           {useLocalResponses && <span className="text-xs ml-2 text-red-500">(mode hors-ligne)</span>}
@@ -335,7 +335,7 @@ const ChatbotSection: React.FC = () => {
                 transition={{ duration: 0.4 }}
                 className="w-full flex justify-center"
               >
-                <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                   <div className="p-5">
                     <div 
                       className="text-gray-800 dark:text-gray-200 leading-relaxed markdown-content" 
