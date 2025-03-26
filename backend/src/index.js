@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// ====== MIDDLEWARES ======
 app.use((req, res, next) => {
   // Permettre toutes les origines
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,13 +31,208 @@ app.use((req, res, next) => {
 // app.use(cors(corsOptions));
 app.use(express.json());
 
-// Route racine
+// ====== BASE DE DONNÉES ======
+// Base de données de blagues
+const jokes = [
+  {
+    setup: "Pourquoi les développeurs n'aiment pas la nature ? 🌲🤔",
+    options: [
+      "Ils préfèrent les écrans",
+      "Il y a trop de bugs dehors",
+      "Ils sont allergiques aux feuilles",
+    ],
+    correctAnswer: 1,
+    punchline: "Il y a trop de bugs dehors 🐞",
+  },
+  {
+    setup: "Comment un développeur répare-t-il son ordinateur ? 💻🔧",
+    options: [
+      "En utilisant des outils",
+      "En le redémarrant et en croisant les doigts",
+      "En ouvrant et fermant",
+    ],
+    correctAnswer: 1,
+    punchline: "En le redémarrant et en croisant les doigts 🤞",
+  },
+  {
+    setup: "Pourquoi les programmeurs préfèrent-ils le noir ? 🌑",
+    options: [
+      "Pour économiser de l'énergie",
+      "Pour réduire la fatigue oculaire",
+      "C'est leur mode par défaut",
+    ],
+    correctAnswer: 2,
+    punchline: "C'est leur mode par défaut (dark mode) 🖥️",
+  },
+  {
+    setup: "Qu'est-ce qu'un développeur fait quand il a faim ? 🍕",
+    options: [
+      "Il commande des 'bytes' à manger",
+      "Il mange une 'pomme'",
+      "Il va au 'C/C++/Java' du coin",
+    ],
+    correctAnswer: 0,
+    punchline: "Il commande des 'bytes' à manger 😋",
+  },
+  {
+    setup: "Comment s'appelle un développeur qui ne comprend pas JavaScript ? 🤷‍♂️",
+    options: [
+      "Un développeur normal",
+      "Un TypeScripter",
+      "Un undefined",
+    ],
+    correctAnswer: 2,
+    punchline: "Un undefined 👻",
+  },
+  {
+    setup: "Combien de développeurs faut-il pour changer une ampoule ? 💡",
+    options: [
+      "Aucun, c'est un problème matériel",
+      "Un seul, mais il en blâme dix autres",
+      "Aucun, ils préfèrent rester dans l'obscurité",
+    ],
+    correctAnswer: 1,
+    punchline: "Un seul, mais il en blâme dix autres pour les bugs 😅",
+  },
+  {
+    setup: "Quelle est la nourriture préférée d'un développeur JavaScript ? 🍔",
+    options: [
+      "Les cookies",
+      "Les JSON (prononcé comme 'Jason')",
+      "Les pommes",
+    ],
+    correctAnswer: 1,
+    punchline: "Les JSON (prononcé comme 'Jason') 🍽️",
+  },
+  {
+    setup: "Pourquoi les développeurs confondent-ils Halloween et Noël ? 🎃🎄",
+    options: [
+      "Parce qu'ils passent trop de temps devant l'écran",
+      "Parce que Oct(31) = Dec(25)",
+      "Parce qu'ils travaillent pendant les deux fêtes",
+    ],
+    correctAnswer: 1,
+    punchline: "Parce que Oct(31) = Dec(25) 🤓",
+  },
+];
+
+// ====== ROUTES API ======
+// Route racine - Documentation de l'API
 app.get('/', (req, res) => {
   res.status(200).json({ 
     message: 'Portfolio Backend API', 
     status: 'ok',
-    endpoints: ['/api/health', '/api/chat']
+    endpoints: ['/api/health', '/api/chat', '/api/joke']
   });
+});
+
+// Route de test - Vérification de l'état du serveur
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok',
+    apiKeyConfigured: !!process.env.OPENROUTER_API_KEY,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Endpoint pour récupérer une blague aléatoire
+app.get('/api/joke', async (req, res) => {
+  try {
+    // Essayer d'abord de générer une blague via OpenRouter
+    const API_KEY = process.env.OPENROUTER_API_KEY;
+    
+    // Si la clé d'API est disponible, essayer de générer une blague avec OpenRouter
+    if (API_KEY) {
+      try {
+        // Préparer la requête pour OpenRouter
+        const requestBody = {
+          model: "google/gemini-2.5-pro-exp-03-25:free",
+          messages: [
+            {
+              role: 'system',
+              content: [
+                {
+                  type: 'text',
+                  text: `Génère une blague de programmation au format JSON. La blague doit être structurée exactement comme ceci:
+                  {
+                    "setup": "La question de la blague avec un emoji",
+                    "options": ["Option A", "Option B", "Option C"],
+                    "correctAnswer": 0, 1 ou 2 (index de la bonne réponse),
+                    "punchline": "La chute de la blague avec un emoji"
+                  }
+                  IMPORTANT: Renvoie UNIQUEMENT le JSON sans texte supplémentaire.`
+                }
+              ]
+            }
+          ]
+        };
+        
+        // Déterminer l'URL de référence en fonction de l'environnement
+        const isLocalDevelopment = process.env.NODE_ENV !== 'production';
+        const refererUrl = isLocalDevelopment 
+          ? 'http://localhost:5173' 
+          : 'https://portfolio-2025-a2414w4wl-andriantahiry2024s-projects.vercel.app';
+        
+        // Appeler OpenRouter API
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`,
+            'HTTP-Referer': refererUrl,
+            'X-Title': 'Portfolio Joke Generator'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Extraire le contenu du message
+          const choice = data.choices?.[0];
+          let messageContent = '';
+          
+          if (choice?.message?.content) {
+            messageContent = choice.message.content;
+          } else if (choice?.message?.content?.[0]?.text) {
+            messageContent = choice.message.content[0].text;
+          } else if (choice?.text) {
+            messageContent = choice.text;
+          } else if (typeof choice?.message === 'string') {
+            messageContent = choice.message;
+          }
+          
+          // Chercher une structure JSON dans la réponse
+          const jsonMatch = messageContent.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            try {
+              const jokeJson = JSON.parse(jsonMatch[0]);
+              
+              // Vérifier que la structure est correcte
+              if (jokeJson.setup && 
+                  Array.isArray(jokeJson.options) && 
+                  jokeJson.options.length > 0 &&
+                  typeof jokeJson.correctAnswer === 'number' &&
+                  jokeJson.punchline) {
+                return res.json(jokeJson);
+              }
+            } catch (parseError) {
+              console.error('Erreur lors de l\'analyse JSON:', parseError);
+            }
+          }
+        }
+      } catch (openRouterError) {
+        console.error('Erreur lors de l\'appel à OpenRouter:', openRouterError);
+      }
+    }
+    
+    // Fallback: utiliser une blague prédéfinie si la génération a échoué
+    const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+    res.json(randomJoke);
+  } catch (error) {
+    console.error('Erreur lors de la récupération de la blague:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 });
 
 // Route principale qui sera utilisée comme proxy pour OpenRouter
@@ -103,15 +298,7 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-// Route de test
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'ok',
-    apiKeyConfigured: !!process.env.OPENROUTER_API_KEY,
-    timestamp: new Date().toISOString()
-  });
-});
-
+// ====== DÉMARRAGE DU SERVEUR ======
 // Pour le développement local
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {

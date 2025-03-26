@@ -116,7 +116,7 @@ const progressVariants = (level: number): Variants => ({
 const AnimatedSkill = ({ skill, index }: { skill: { name: string; level: number }; index: number }) => {
   const [count, setCount] = React.useState(0);
   const ref = React.useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.8 });
+  const isInView = useInView(ref, { once: true, amount: 0.8 });
   
   React.useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -192,7 +192,7 @@ const AnimatedSkill = ({ skill, index }: { skill: { name: string; level: number 
 // Composant pour une carte de compétences
 const SkillCard = ({ title, skills }: { title: string; skills: { name: string; level: number }[] }) => {
   const ref = React.useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.3 });
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
   const controls = useAnimation();
   
   React.useEffect(() => {
