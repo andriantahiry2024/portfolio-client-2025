@@ -46,3 +46,13 @@ Pour configurer le backend en local:
 1. Accédez au dossier `backend/`
 2. Copiez `.env.example` en `.env` et ajoutez votre clé API OpenRouter
 3. Exécutez `npm install` puis `npm start`
+
+### Déploiement sur Vercel
+
+Le backend est configuré pour fonctionner sur Vercel:
+
+1. Installez Vercel CLI: `npm install -g vercel`
+2. Naviguez vers le dossier backend: `cd backend`
+3. Déployez en production: `vercel --prod`
+
+L'API déployée sera disponible à une URL du type: `https://portfolio-backend-xxx.vercel.app`
