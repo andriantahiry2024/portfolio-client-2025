@@ -56,7 +56,7 @@ const HeroSection = ({
           >
             {description}
           </motion.p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4">
             <motion.button
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -67,7 +67,7 @@ const HeroSection = ({
                 stiffness: 100
               }}
               onClick={onCtaClick}
-              className="mt-8 px-6 py-3 text-base rounded-lg bg-white text-black font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/20"
+              className="mt-4 md:mt-8 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-lg bg-white text-black font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/20"
             >
               {ctaText}
             </motion.button>
@@ -81,9 +81,9 @@ const HeroSection = ({
                 stiffness: 100
               }}
               onClick={() => window.open('https://github.com/andriantahiry2024', '_blank')}
-              className="mt-8 px-3 py-1.5 text-xs rounded-md bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 flex items-center gap-2"
+              className="mt-4 md:mt-8 px-2 md:px-3 py-1 md:py-1.5 text-xs rounded-md bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 flex items-center gap-1 md:gap-2"
             >
-              <Github className="w-4 h-4" />
+              <Github className="w-3 h-3 md:w-4 md:h-4" />
               <span>Github</span>
             </motion.button>
             <motion.button
@@ -96,9 +96,9 @@ const HeroSection = ({
                 stiffness: 100
               }}
               onClick={() => window.open('https://linkedin.com/in/nomenahasina-andriantahiry', '_blank')}
-              className="mt-8 px-3 py-1.5 text-xs rounded-md bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 flex items-center gap-2"
+              className="mt-4 md:mt-8 px-2 md:px-3 py-1 md:py-1.5 text-xs rounded-md bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 flex items-center gap-1 md:gap-2"
             >
-              <Linkedin className="w-4 h-4" />
+              <Linkedin className="w-3 h-3 md:w-4 md:h-4" />
               <span>LinkedIn</span>
             </motion.button>
             <motion.button
@@ -111,9 +111,9 @@ const HeroSection = ({
                 stiffness: 100
               }}
               onClick={() => window.location.href = 'mailto:contact@andriantahiry.dev'}
-              className="mt-8 px-3 py-1.5 text-xs rounded-md bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 flex items-center gap-2"
+              className="mt-4 md:mt-8 px-2 md:px-3 py-1 md:py-1.5 text-xs rounded-md bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 flex items-center gap-1 md:gap-2"
             >
-              <Mail className="w-4 h-4" />
+              <Mail className="w-3 h-3 md:w-4 md:h-4" />
               <span>Email</span>
             </motion.button>
           </div>
