@@ -27,10 +27,10 @@ interface Message {
 
 // Définir l'URL du backend selon l'environnement
 const BACKEND_URL = import.meta.env.MODE === 'development' 
-  ? 'https://portfolio-backend-eta-ten.vercel.app/api' 
+  ? 'http://localhost:3001/api' 
   : import.meta.env.PROD && window.location.hostname.includes('vercel.app')
-    ? `https://portfolio-backend-eta-ten.vercel.app/api`
-    : 'https://portfolio-backend-eta-ten.vercel.app/api';
+    ? `https://portfolio-backend-ny8fs9x25-andriantahiry2024s-projects.vercel.app/api`
+    : 'https://portfolio-backend-ny8fs9x25-andriantahiry2024s-projects.vercel.app/api';
 
 // Mode debug pour suivre les appels
 console.log('Mode:', import.meta.env.MODE);
@@ -43,7 +43,7 @@ const chatService = {
       console.log('Sending request to backend...');
       
       const requestBody = {
-        model: "google/gemini-2.0-flash-thinking-exp:free",
+        model: "google/gemini-2.5-pro-exp-03-25:free",
         messages: [
           {
             role: 'system',
@@ -112,7 +112,7 @@ Tu es Andriantahiry Nomena Hasina, développeur fullstack, cloud practitioner et
 - Évite d'utiliser des questions rhétoriques
 
 Rappel final: Un bon formatage signifie:
-1. DES LIGNES VIDES entre chaque paragraphe
+1. DES LIGNES VIDES entre chaque paragraphe,avant et après les markdwns.
 2. DU CODE TOUJOURS en markdown avec indication du langage
 3. UNE PRÉSENTATION AÉRÉE
 4. PAS de formatage avec des astérisques ou symboles spéciaux
