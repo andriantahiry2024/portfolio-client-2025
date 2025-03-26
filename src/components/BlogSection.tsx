@@ -22,19 +22,19 @@ interface BlogSectionProps {
 }
 
 const BlogSection = ({
-  title = "Latest Articles",
-  description = "Discover insights, tutorials, and thoughts on web development, design, and technology.",
+  title = "Articles Récents",
+  description = "Découvrez des analyses, tutoriels et réflexions sur le développement web, le design et la technologie.",
   posts = defaultPosts.slice(0, 3),
 }: BlogSectionProps) => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Extract unique categories
-  const categories = ["All", ...new Set(posts.map((post) => post.category))];
+  const categories = ["Tous", ...new Set(posts.map((post) => post.category))];
 
   // Filter posts by category
   const filteredPosts =
-    selectedCategory && selectedCategory !== "All"
+    selectedCategory && selectedCategory !== "Tous"
       ? posts.filter((post) => post.category === selectedCategory)
       : posts;
 
@@ -67,7 +67,7 @@ const BlogSection = ({
       month: "long",
       day: "numeric",
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString('fr-FR', options);
   };
 
   return (
@@ -94,13 +94,13 @@ const BlogSection = ({
                 key={category}
                 variant={
                   selectedCategory === category ||
-                  (category === "All" && !selectedCategory)
+                  (category === "Tous" && !selectedCategory)
                     ? "default"
                     : "outline"
                 }
                 size="sm"
                 onClick={() =>
-                  setSelectedCategory(category === "All" ? null : category)
+                  setSelectedCategory(category === "Tous" ? null : category)
                 }
                 className="rounded-full"
               >
@@ -174,7 +174,7 @@ const BlogSection = ({
                     className="text-primary hover:text-primary/80"
                     onClick={() => navigate(`/blog/${post.id}`)}
                   >
-                    Read More <ArrowRight className="ml-2 h-4 w-4" />
+                    Lire la suite <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardFooter>
               </Card>
@@ -189,7 +189,7 @@ const BlogSection = ({
             className="px-8"
             onClick={() => navigate("/blog")}
           >
-            View All Articles
+            Voir tous les articles
           </Button>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { Suspense, lazy, useState, useEffect } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
 import Home from "./components/home";
 import routes from "tempo-routes";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Lazy load components for better performance
 const BlogPage = lazy(() => import("./components/BlogPage"));
@@ -57,10 +58,10 @@ function App() {
         >
           <>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog/:id" element={<BlogPostDetail />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/" element={<Home />} errorElement={<ErrorBoundary />} />
+              <Route path="/blog" element={<BlogPage />} errorElement={<ErrorBoundary />} />
+              <Route path="/blog/:id" element={<BlogPostDetail />} errorElement={<ErrorBoundary />} />
+              <Route path="/admin" element={<AdminDashboard />} errorElement={<ErrorBoundary />} />
               {import.meta.env.VITE_TEMPO === "true" && (
                 <Route path="/tempobook/*" />
               )}

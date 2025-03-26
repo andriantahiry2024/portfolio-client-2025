@@ -254,7 +254,7 @@ const SkillsSection = ({
           <SkillCard title="Frontend" skills={skills.frontend} />
           <SkillCard title="Backend" skills={skills.backend} />
           <SkillCard title="Design" skills={skills.design} />
-          <SkillCard title="Tools" skills={skills.tools} />
+          <SkillCard title="Outils" skills={skills.tools} />
         </div>
       </div>
     </section>

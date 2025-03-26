@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface NavbarProps {
   className?: string;
@@ -13,6 +13,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Initialize theme from localStorage or default to dark
   useEffect(() => {
@@ -23,11 +24,11 @@ const Navbar = ({ className = "" }: NavbarProps) => {
   }, []);
 
   const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "Interactive", href: "#interactive" },
-    { name: "Projects", href: "#projects" },
+    { name: "Accueil", href: "#home" },
+    { name: "À propos", href: "#about" },
+    { name: "Compétences", href: "#skills" },
+    { name: "Interactif", href: "#interactive" },
+    { name: "Projets", href: "#projects" },
     { name: "Blog", href: "/blog", isExternal: true },
     { name: "Admin", href: "/admin", isExternal: true },
     { name: "Contact", href: "#contact" },
@@ -53,9 +54,23 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     if (isExternal) {
       navigate(sectionId);
     } else {
-      const element = document.querySelector(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+      // Check if we're on a different page and trying to navigate to a section on home page
+      if (location.pathname !== "/" && sectionId.startsWith("#")) {
+        // Navigate to home first, then scroll to section
+        navigate("/");
+        // Use setTimeout to wait for navigation to complete
+        setTimeout(() => {
+          const element = document.querySelector(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      } else {
+        // We're already on the home page, just scroll
+        const element = document.querySelector(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
       }
     }
     setIsMobileMenuOpen(false);
@@ -73,11 +88,11 @@ const Navbar = ({ className = "" }: NavbarProps) => {
         {/* Logo */}
         <div className="flex items-center">
           <a
-            href="#home"
+            href="/"
             className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
             onClick={(e) => {
               e.preventDefault();
-              scrollToSection("/");
+              navigate("/");
             }}
           >
             Portfolio

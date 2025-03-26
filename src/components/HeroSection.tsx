@@ -146,7 +146,7 @@ const HeroSection = ({
         transition={{ delay: 1.5, duration: 1 }}
         className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center"
       >
-        <span className="text-gray-500 text-xs md:text-sm mb-1 md:mb-2">Scroll</span>
+        <span className="text-gray-500 text-xs md:text-sm mb-1 md:mb-2">Défiler</span>
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5 }}

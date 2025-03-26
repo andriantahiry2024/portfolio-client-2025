@@ -46,17 +46,17 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
     >
       <div className="max-w-6xl mx-auto w-full">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Contact Me</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Me Contacter</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Feel free to reach out if you have any questions or would like to
-            work together. I'll get back to you as soon as possible.
+            N'hésitez pas à me contacter si vous avez des questions ou si vous souhaitez
+            collaborer. Je vous répondrai dans les plus brefs délais.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <div className="space-y-8">
-            <h3 className="text-2xl font-semibold">Get In Touch</h3>
+            <h3 className="text-2xl font-semibold">Restons en Contact</h3>
 
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
@@ -74,7 +74,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                   <Phone className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-medium">Phone</h4>
+                  <h4 className="font-medium">Téléphone</h4>
                   <p className="text-muted-foreground">+261 34 96 712 22</p>
                 </div>
               </div>
@@ -84,14 +84,14 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                   <MapPin className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-medium">Location</h4>
+                  <h4 className="font-medium">Localisation</h4>
                   <p className="text-muted-foreground">Antananarivo, Madagascar</p>
                 </div>
               </div>
             </div>
 
             <div className="pt-6">
-              <h3 className="text-2xl font-semibold mb-4">Follow Me</h3>
+              <h3 className="text-2xl font-semibold mb-4">Suivez-moi</h3>
               <div className="flex space-x-4">
                 {/* Social media icons would go here */}
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
@@ -175,7 +175,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
 
           {/* Contact Form */}
           <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
-            <h3 className="text-2xl font-semibold mb-6">Send Me a Message</h3>
+            <h3 className="text-2xl font-semibold mb-6">Envoyez-moi un Message</h3>
 
             <Form {...form}>
               <form
@@ -187,9 +187,9 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>Nom</FormLabel>
                       <FormControl>
-                        <Input placeholder="Your name" {...field} />
+                        <Input placeholder="Votre nom" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -203,11 +203,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Your email address"
-                          {...field}
-                        />
+                        <Input placeholder="Votre email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -219,9 +215,9 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                   name="subject"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Subject</FormLabel>
+                      <FormLabel>Sujet</FormLabel>
                       <FormControl>
-                        <Input placeholder="Message subject" {...field} />
+                        <Input placeholder="Sujet de votre message" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -236,8 +232,8 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                       <FormLabel>Message</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Write your message here..."
-                          className="min-h-[120px]"
+                          placeholder="Votre message"
+                          className="min-h-32 resize-none"
                           {...field}
                         />
                       </FormControl>
@@ -247,7 +243,8 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                 />
 
                 <Button type="submit" className="w-full">
-                  <Send className="mr-2 h-4 w-4" /> Send Message
+                  <Send className="mr-2 h-4 w-4" />
+                  Envoyer le Message
                 </Button>
               </form>
             </Form>

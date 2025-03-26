@@ -22,14 +22,14 @@ interface ProjectsSectionProps {
 }
 
 const ProjectsSection = ({
-  title = "My Projects",
-  description = "Here are some of my recent projects. Each one was carefully crafted with attention to detail and modern technologies.",
+  title = "Mes Projets",
+  description = "Voici quelques-uns de mes projets récents. Chacun a été soigneusement élaboré avec une attention particulière aux détails et aux technologies modernes.",
   projects = [
     {
       id: 1,
-      title: "E-Commerce Platform",
+      title: "Plateforme E-Commerce",
       description:
-        "A full-featured e-commerce platform with product management, cart functionality, and secure checkout process.",
+        "Une plateforme e-commerce complète avec gestion des produits, fonctionnalités de panier et processus de paiement sécurisé.",
       image:
         "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80",
       technologies: ["React", "Node.js", "MongoDB", "Stripe"],
@@ -39,9 +39,9 @@ const ProjectsSection = ({
     },
     {
       id: 2,
-      title: "Task Management App",
+      title: "Application de Gestion de Tâches",
       description:
-        "A productivity application for managing tasks, projects, and team collaboration with real-time updates.",
+        "Une application de productivité pour gérer les tâches, les projets et la collaboration d'équipe avec des mises à jour en temps réel.",
       image:
         "https://images.unsplash.com/photo-1540350394557-8d14678e7f91?w=800&q=80",
       technologies: ["React", "Firebase", "Tailwind CSS"],
@@ -51,9 +51,9 @@ const ProjectsSection = ({
     },
     {
       id: 3,
-      title: "Portfolio Website",
+      title: "Site Portfolio",
       description:
-        "A modern portfolio website showcasing projects and skills with a clean, minimalist design.",
+        "Un site portfolio moderne présentant des projets et des compétences avec un design épuré et minimaliste.",
       image:
         "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=800&q=80",
       technologies: ["React", "Tailwind CSS", "Framer Motion"],
@@ -63,9 +63,9 @@ const ProjectsSection = ({
     },
     {
       id: 4,
-      title: "Weather Dashboard",
+      title: "Tableau de Bord Météo",
       description:
-        "A weather application that provides real-time forecasts, historical data, and interactive maps.",
+        "Une application météo qui fournit des prévisions en temps réel, des données historiques et des cartes interactives.",
       image:
         "https://images.unsplash.com/photo-1592210454359-9043f067919b?w=800&q=80",
       technologies: ["JavaScript", "Weather API", "Chart.js"],
@@ -75,9 +75,9 @@ const ProjectsSection = ({
     },
     {
       id: 5,
-      title: "Social Media Dashboard",
+      title: "Tableau de Bord Réseaux Sociaux",
       description:
-        "An analytics dashboard for tracking social media performance across multiple platforms.",
+        "Un tableau de bord d'analyse pour suivre les performances des réseaux sociaux sur plusieurs plateformes.",
       image:
         "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
       technologies: ["React", "D3.js", "Social Media APIs"],
@@ -87,9 +87,9 @@ const ProjectsSection = ({
     },
     {
       id: 6,
-      title: "Fitness Tracker",
+      title: "Suivi de Fitness",
       description:
-        "A mobile application for tracking workouts, nutrition, and fitness progress with personalized recommendations.",
+        "Une application mobile pour suivre les entraînements, la nutrition et les progrès de fitness avec des recommandations personnalisées.",
       image:
         "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
       technologies: ["React Native", "Firebase", "Health APIs"],
@@ -99,17 +99,19 @@ const ProjectsSection = ({
     },
   ],
 }: ProjectsSectionProps) => {
-  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeCategory, setActiveCategory] = useState<string>("tous");
 
   // Extract unique categories from projects
   const categories = [
-    "all",
-    ...new Set(projects.map((project) => project.category)),
+    "tous",
+    ...new Set(projects.map((project) => project.category === "web" ? "web" : 
+                            project.category === "mobile" ? "mobile" : 
+                            project.category === "design" ? "design" : project.category)),
   ];
 
   // Filter projects based on active category
   const filteredProjects =
-    activeCategory === "all"
+    activeCategory === "tous"
       ? projects
       : projects.filter((project) => project.category === activeCategory);
 
@@ -159,7 +161,7 @@ const ProjectsSection = ({
           </motion.p>
         </div>
 
-        <Tabs defaultValue="all" className="mb-12">
+        <Tabs defaultValue="tous" className="mb-12">
           <div className="flex justify-center">
             <TabsList>
               {categories.map((category) => (

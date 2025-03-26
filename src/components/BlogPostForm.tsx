@@ -23,13 +23,13 @@ import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 const categories = [
-  "Development",
+  "Développement",
   "React",
   "JavaScript",
   "TypeScript",
   "CSS",
   "Performance",
-  "Accessibility",
+  "Accessibilité",
   "Design",
 ];
 
@@ -131,7 +131,7 @@ const BlogPostForm = ({ post, isCreating, onCancel, onSubmit }) => {
     const isValid = formData.title && formData.excerpt && formData.content;
 
     if (!isValid) {
-      alert("Please fill in all required fields");
+      alert("Veuillez remplir tous les champs obligatoires");
       return;
     }
 
@@ -146,7 +146,7 @@ const BlogPostForm = ({ post, isCreating, onCancel, onSubmit }) => {
       slug,
       id: post?.id || Date.now(),
       date: post?.date || new Date().toISOString().split("T")[0],
-      readTime: post?.readTime || "5 min read",
+      readTime: post?.readTime || "5 min de lecture",
     };
 
     onSubmit(submissionData);
@@ -156,28 +156,28 @@ const BlogPostForm = ({ post, isCreating, onCancel, onSubmit }) => {
     <Card>
       <form onSubmit={handleSubmit}>
         <CardHeader>
-          <CardTitle>{isCreating ? "Create New Post" : "Edit Post"}</CardTitle>
+          <CardTitle>{isCreating ? "Créer un nouvel article" : "Modifier l'article"}</CardTitle>
           <CardDescription>
             {isCreating
-              ? "Fill in the details to create a new blog post"
-              : "Update the details of your blog post"}
+              ? "Remplissez les détails pour créer un nouvel article de blog"
+              : "Mettez à jour les détails de votre article de blog"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="title">Titre *</Label>
             <Input
               id="title"
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Enter post title"
+              placeholder="Entrez le titre de l'article"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="slug">Permalink</Label>
+            <Label htmlFor="slug">Permalien</Label>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">/blog/</span>
               <Input
@@ -185,90 +185,81 @@ const BlogPostForm = ({ post, isCreating, onCancel, onSubmit }) => {
                 name="slug"
                 value={formData.slug}
                 onChange={handleChange}
-                placeholder="post-url-slug"
+                placeholder="slug-url-article"
                 className="flex-1"
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Leave empty to generate from title
+              Laissez vide pour générer à partir du titre
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="excerpt">Excerpt *</Label>
+            <Label htmlFor="excerpt">Extrait *</Label>
             <Textarea
               id="excerpt"
               name="excerpt"
               value={formData.excerpt}
               onChange={handleChange}
-              placeholder="Enter a brief summary of the post"
+              placeholder="Écrivez un résumé attrayant de votre article"
               required
-              rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">Content *</Label>
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="visual">Visual</TabsTrigger>
+            <Label htmlFor="content">Contenu *</Label>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="mb-2">
+                <TabsTrigger value="visual">Éditeur</TabsTrigger>
                 <TabsTrigger value="html">HTML</TabsTrigger>
               </TabsList>
-              <TabsContent value="visual" className="mt-2">
+              <TabsContent value="visual">
                 <Textarea
                   id="content"
                   name="content"
                   value={formData.content}
                   onChange={handleChange}
-                  placeholder="Enter the full content of the post"
+                  placeholder="Écrivez votre article ici"
+                  className="min-h-[300px]"
                   required
-                  rows={10}
                 />
               </TabsContent>
-              <TabsContent value="html" className="mt-2">
+              <TabsContent value="html">
                 <Textarea
                   id="content-html"
                   name="content"
                   value={formData.content}
                   onChange={handleChange}
-                  placeholder="Enter HTML content"
+                  placeholder="<p>Écrivez votre HTML ici</p>"
+                  className="min-h-[300px] font-mono"
                   required
-                  rows={10}
-                  className="font-mono text-sm"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Edit HTML directly for more control
-                </p>
               </TabsContent>
             </Tabs>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="author">Author *</Label>
+              <Label htmlFor="author">Auteur *</Label>
               <Input
                 id="author"
                 name="author"
                 value={formData.author}
                 onChange={handleChange}
-                placeholder="Enter author name"
+                placeholder="Votre nom"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
+              <Label htmlFor="category">Catégorie *</Label>
               <Select
                 value={formData.category}
                 onValueChange={handleCategoryChange}
                 required
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Sélectionnez une catégorie" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
@@ -282,101 +273,73 @@ const BlogPostForm = ({ post, isCreating, onCancel, onSubmit }) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image">Featured Image URL *</Label>
+            <Label htmlFor="image">Image URL *</Label>
             <Input
               id="image"
               name="image"
               value={formData.image}
               onChange={handleChange}
-              placeholder="Enter image URL"
+              placeholder="https://exemple.com/image.jpg"
               required
             />
-            {formData.image && (
-              <div className="mt-2 aspect-video w-full max-w-md overflow-hidden rounded-md border">
-                <img
-                  src={formData.image}
-                  alt="Preview"
-                  className="h-full w-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "https://via.placeholder.com/800x400?text=Invalid+Image+URL";
-                  }}
-                />
-              </div>
-            )}
           </div>
 
           <div className="space-y-2">
-            <Label>Tags</Label>
-            <div className="flex gap-2">
-              <Input
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Add a tag"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddTag();
-                  }
-                }}
-              />
-              <Button type="button" variant="outline" onClick={handleAddTag}>
-                Add
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <Label htmlFor="tags">Tags</Label>
+            <div className="flex flex-wrap gap-2 mb-2">
               {formData.tags.map((tag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
+                <Badge key={index} variant="secondary">
                   {tag}
                   <button
                     type="button"
-                    className="ml-1 text-muted-foreground hover:text-foreground"
                     onClick={() => handleRemoveTag(tag)}
+                    className="ml-1 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               ))}
             </div>
+            <div className="flex gap-2">
+              <Input
+                id="tags"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                placeholder="Ajouter un tag"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleAddTag}
+                disabled={!newTag.trim()}
+              >
+                Ajouter
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label>External Links</Label>
-            <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr_auto] gap-2">
-              <Input
-                name="title"
-                value={newLink.title}
-                onChange={handleLinkChange}
-                placeholder="Link Text"
-              />
-              <Input
-                name="url"
-                value={newLink.url}
-                onChange={handleLinkChange}
-                placeholder="https://example.com"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddLink();
-                  }
-                }}
-              />
-              <Button type="button" variant="outline" onClick={handleAddLink}>
-                Add
-              </Button>
-            </div>
-            <div className="mt-2 space-y-2">
+            <Label>Liens</Label>
+            <div className="space-y-4 mb-4">
               {formData.links.map((link, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-2 border rounded-md"
+                  className="flex items-center gap-2 p-2 border rounded-md"
                 >
-                  <div className="flex items-center gap-2">
-                    <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{link.title}</span>
-                    <span className="text-sm text-muted-foreground">
+                  <LinkIcon className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex-1">
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium hover:underline"
+                    >
+                      {link.title}
+                    </a>
+                    <p className="text-xs text-muted-foreground truncate">
                       {link.url}
-                    </span>
+                    </p>
                   </div>
                   <Button
                     type="button"
@@ -389,14 +352,43 @@ const BlogPostForm = ({ post, isCreating, onCancel, onSubmit }) => {
                 </div>
               ))}
             </div>
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  placeholder="Titre du lien"
+                  name="title"
+                  value={newLink.title}
+                  onChange={handleLinkChange}
+                />
+                <Input
+                  placeholder="URL"
+                  name="url"
+                  value={newLink.url}
+                  onChange={handleLinkChange}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleAddLink}
+                className="w-full"
+                disabled={!newLink.title.trim() || !newLink.url.trim()}
+              >
+                Ajouter un lien
+              </Button>
+            </div>
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onCancel}
+          >
+            Annuler
           </Button>
           <Button type="submit">
-            {isCreating ? "Create Post" : "Update Post"}
+            {isCreating ? "Publier l'article" : "Mettre à jour l'article"}
           </Button>
         </CardFooter>
       </form>

@@ -22,8 +22,8 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({
-  title = "Project Title",
-  description = "A brief description of the project showcasing the main features and technologies used.",
+  title = "Titre du Projet",
+  description = "Une brève description du projet présentant les principales fonctionnalités et technologies utilisées.",
   image = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
   technologies = ["React", "TypeScript", "Tailwind CSS"],
   githubUrl = "#",
@@ -53,7 +53,7 @@ const ProjectCard = ({
                 <Button size="sm" className="mr-2" asChild>
                   <a href={liveUrl} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    Live Demo
+                    Démo
                   </a>
                 </Button>
               )}
@@ -121,7 +121,7 @@ const ProjectCard = ({
             >
               <a href={liveUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="mr-2 h-4 w-4" />
-                Live Demo
+                Démo
               </a>
             </Button>
           )}

@@ -38,7 +38,7 @@ const BlogPostDetail = () => {
       month: "long",
       day: "numeric",
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString('fr-FR', options);
   };
 
   return (
@@ -53,7 +53,7 @@ const BlogPostDetail = () => {
               onClick={() => navigate("/blog")}
               className="flex items-center"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
+              <ArrowLeft className="mr-2 h-4 w-4" /> Retour au Blog
             </Button>
           </div>
 
@@ -112,7 +112,7 @@ const BlogPostDetail = () => {
                 <div className="prose prose-lg dark:prose-invert max-w-none">
                   <p>
                     {post.content ||
-                      "This is a placeholder for the full content of the blog post. In a real application, this would be a rich text or markdown content with proper formatting, images, code snippets, and more."}
+                      "Ceci est un emplacement pour le contenu complet de l'article de blog. Dans une application réelle, il s'agirait d'un contenu en texte riche ou en markdown avec une mise en forme appropriée, des images, des extraits de code, etc."}
                   </p>
                   <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -121,7 +121,7 @@ const BlogPostDetail = () => {
                     auctor, nisl eget ultricies tincidunt, nisl nisl aliquam
                     nisl, eget ultricies nisl nisl eget nisl.
                   </p>
-                  <h2>Section Title</h2>
+                  <h2>Titre de section</h2>
                   <p>
                     Donec auctor, nisl eget ultricies tincidunt, nisl nisl
                     aliquam nisl, eget ultricies nisl nisl eget nisl. Donec
@@ -129,9 +129,9 @@ const BlogPostDetail = () => {
                     nisl, eget ultricies nisl nisl eget nisl.
                   </p>
                   <ul>
-                    <li>List item one</li>
-                    <li>List item two</li>
-                    <li>List item three</li>
+                    <li>Premier élément de liste</li>
+                    <li>Deuxième élément de liste</li>
+                    <li>Troisième élément de liste</li>
                   </ul>
                   <p>
                     Donec auctor, nisl eget ultricies tincidunt, nisl nisl

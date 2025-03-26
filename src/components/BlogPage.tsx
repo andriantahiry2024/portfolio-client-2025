@@ -32,7 +32,7 @@ const BlogPage = () => {
 
   // Extract unique categories
   const categories = [
-    "All",
+    "Tous",
     ...new Set(blogPosts.map((post) => post.category)),
   ];
 
@@ -47,7 +47,7 @@ const BlogPage = () => {
 
     const matchesCategory =
       !selectedCategory ||
-      selectedCategory === "All" ||
+      selectedCategory === "Tous" ||
       post.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
@@ -60,7 +60,7 @@ const BlogPage = () => {
       month: "long",
       day: "numeric",
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString('fr-FR', options);
   };
 
   return (
@@ -75,8 +75,8 @@ const BlogPage = () => {
                 Blog
               </h1>
               <p className="text-muted-foreground max-w-[700px] mb-8">
-                Discover insights, tutorials, and thoughts on web development,
-                design, and technology.
+                Découvrez des analyses, tutoriels et réflexions sur le développement web,
+                le design et la technologie.
               </p>
             </div>
             <Button
@@ -85,7 +85,7 @@ const BlogPage = () => {
               variant="outline"
             >
               <PlusCircle className="mr-2 h-4 w-4" />
-              Manage Posts
+              Gérer les articles
             </Button>
           </div>
 
@@ -95,7 +95,7 @@ const BlogPage = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
               <Input
                 type="text"
-                placeholder="Search articles..."
+                placeholder="Rechercher des articles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 py-6 text-base"
@@ -108,13 +108,13 @@ const BlogPage = () => {
                   key={category}
                   variant={
                     selectedCategory === category ||
-                    (category === "All" && !selectedCategory)
+                    (category === "Tous" && !selectedCategory)
                       ? "default"
                       : "outline"
                   }
                   size="sm"
                   onClick={() =>
-                    setSelectedCategory(category === "All" ? null : category)
+                    setSelectedCategory(category === "Tous" ? null : category)
                   }
                   className="rounded-full"
                 >
@@ -200,7 +200,7 @@ const BlogPage = () => {
                         className="text-primary hover:text-primary/80"
                         onClick={() => navigate(`/blog/${post.id}`)}
                       >
-                        Read More <ArrowRight className="ml-2 h-4 w-4" />
+                        Lire la suite <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </CardFooter>
                   </Card>
@@ -209,9 +209,9 @@ const BlogPage = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <h3 className="text-xl font-medium mb-2">No articles found</h3>
+              <h3 className="text-xl font-medium mb-2">Aucun article trouvé</h3>
               <p className="text-muted-foreground mb-6">
-                Try adjusting your search or filter criteria
+                Essayez d'ajuster vos critères de recherche ou de filtrage
               </p>
               <Button
                 onClick={() => {
@@ -219,7 +219,7 @@ const BlogPage = () => {
                   setSelectedCategory(null);
                 }}
               >
-                Reset Filters
+                Réinitialiser les filtres
               </Button>
             </div>
           )}
