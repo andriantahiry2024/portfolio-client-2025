@@ -90,8 +90,11 @@
     transition-property: background-color, border-color, color, fill, stroke;
     transition-duration: 200ms;
     transition-timing-function: ease-in-out;
+    
   }
-
+  body {
+    overflow-x: hidden;
+  }
   /* 3D transform styles */
   .transform-style-3d {
     transform-style: preserve-3d;

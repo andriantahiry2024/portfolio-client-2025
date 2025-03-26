@@ -13,6 +13,7 @@ import SliderSection from "./SliderSection";
 import Scene3D from "./Scene3D";
 import AppointmentCalendar from "./AppointmentCalendar";
 import ChatbotSection from "./ChatbotSection";
+import FadeInView from "./FadeInView";
 
 const Home = () => {
   const { scrollYProgress } = useScroll();
@@ -33,8 +34,6 @@ const Home = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-
-
       {/* Main Content */}
       <main>
         {/* Hero Section with Parallax Effect */}
@@ -45,49 +44,67 @@ const Home = () => {
             className="absolute inset-0 pointer-events-none"
           />
         </section>
+        
         {/* About Section */}
         <section id="about">
-          <AboutSection />
+          <FadeInView>
+            <AboutSection />
+          </FadeInView>
         </section>
-
-
 
         {/* Skills Section */}
         <section id="skills">
-          <SkillsSection />
+          <FadeInView delay={0.1}>
+            <SkillsSection />
+          </FadeInView>
         </section>
 
         {/* Slider Section */}
         <section id="interactive">
-          <SliderSection />
+          <FadeInView delay={0.2} direction="right">
+            <SliderSection />
+          </FadeInView>
         </section>
 
         {/* Projects Section */}
         <section id="projects">
-          <ProjectsSection />
+          <FadeInView delay={0.1} direction="left">
+            <ProjectsSection />
+          </FadeInView>
         </section>
 
         {/* Blog Section */}
         <section id="blog">
-          <BlogSection />
+          <FadeInView delay={0.2}>
+            <BlogSection />
+          </FadeInView>
         </section>
 
         {/* Appointment Calendar */}
         <section id="appointment" className="bg-gray-dark dark:bg-dark p-5">
-          <AppointmentCalendar />
+          <FadeInView delay={0.1} direction="up">
+            <AppointmentCalendar />
+          </FadeInView>
         </section>
+        
         {/* Chatbot Section */}
         <section id="chatbot">
-          <ChatbotSection />
+          <FadeInView delay={0.2} direction="right">
+            <ChatbotSection />
+          </FadeInView>
         </section>
 
         {/* Contact Section */}
         <section id="contact">
-          <ContactSection />
+          <FadeInView delay={0.1} direction="up">
+            <ContactSection />
+          </FadeInView>
         </section>
       </main>
 
-      <Footer />
+      <FadeInView delay={0.3} direction="none">
+        <Footer />
+      </FadeInView>
     </div>
   );
 };
