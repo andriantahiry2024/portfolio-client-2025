@@ -27,10 +27,10 @@ interface Message {
 
 // Définir l'URL du backend selon l'environnement
 const BACKEND_URL = import.meta.env.MODE === 'development' 
-  ? 'http://localhost:3001/api' 
+  ? 'https://portfolio-backend-eta-ten.vercel.app/api' 
   : import.meta.env.PROD && window.location.hostname.includes('vercel.app')
-    ? `https://portfolio-backend-ny8fs9x25-andriantahiry2024s-projects.vercel.app/api`
-    : 'https://portfolio-backend-ny8fs9x25-andriantahiry2024s-projects.vercel.app/api';
+    ? `https://portfolio-backend-eta-ten.vercel.app/api`
+    : 'https://portfolio-backend-eta-ten.vercel.app/api';
 
 // Mode debug pour suivre les appels
 console.log('Mode:', import.meta.env.MODE);

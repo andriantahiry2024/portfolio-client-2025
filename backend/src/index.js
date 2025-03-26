@@ -15,9 +15,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   
   // Headers essentiels pour CORS
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
   
   // Gérer les requêtes preflight OPTIONS
   if (req.method === 'OPTIONS') {
@@ -59,7 +57,7 @@ app.post('/api/chat', async (req, res) => {
     if (!requestBody.model) {
       console.warn('Attention: Modèle non spécifié dans la requête');
       // Ajouter le modèle si absent
-      requestBody.model = "google/gemini-2.0-flash-thinking-exp:free";
+      requestBody.model = "google/gemini-2.5-pro-exp-03-25:free";
     }
     
     // Appeler OpenRouter API
@@ -103,7 +101,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Démarrer le serveur
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
-}); 
+// Pour le développement local
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Serveur démarré sur http://localhost:${PORT}`);
+  });
+}
+
+// Export pour Vercel
+export default app; 
