@@ -2,7 +2,6 @@ import { Suspense, lazy, useState, useEffect } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
 import Home from "./components/home";
 import routes from "tempo-routes";
-import { Loader } from "./components/ui/loader";
 
 // Lazy load components for better performance
 const BlogPage = lazy(() => import("./components/BlogPage"));
@@ -47,9 +46,8 @@ function App() {
 
   return (
     <>
-      <Loader isReady={isAppReady} onReady={handleEnterSite} />
       
-      {(!showLoader || contentLoaded) && (
+      
         <Suspense
           fallback={
             <div className="flex h-screen w-full items-center justify-center">
@@ -70,7 +68,7 @@ function App() {
             {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
           </>
         </Suspense>
-      )}
+      
     </>
   );
 }
