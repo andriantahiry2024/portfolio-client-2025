@@ -1,6 +1,6 @@
 // Client/src/components/AdminDashboard.tsx
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Card, CardContent, CardDescription, CardHeader, CardTitle,
 } from "./ui/card";
@@ -11,13 +11,21 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "./ui/table";
 import { Badge } from "./ui/badge";
-import { Edit, Plus, Trash, Users, Loader2, Eye } from "lucide-react"; // Ajouter Eye
+import { Edit, Plus, Trash, Users, Loader2, Eye, Download } from "lucide-react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-// import { blogPosts } from "../data/blogData";
 import BlogPostForm from "./BlogPostForm";
-import AdminAppointmentsPage from "./AdminAppointmentsPage"; // Importer la page des RDV
-import AdminContactsPage from "./AdminContactsPage"; // Importer la page des contacts
+import AdminAppointmentsPage from "./AdminAppointmentsPage";
+import AdminContactsPage from "./AdminContactsPage";
+import AdminDashboardStats from "./AdminDashboardStats";
+import AdminDashboardCharts from "./AdminDashboardCharts";
+import AdminQuickActions from "./AdminQuickActions";
+import AdminRecentActivity from "./AdminRecentActivity";
+import AdminSettings from "./AdminSettings";
+import DataTable from "./DataTable";
+import ConfirmDialog from "./ConfirmDialog";
+import { useToast } from "./ui/use-toast";
+import { Toaster } from "./ui/toaster";
 // Type User (inchangé)
 interface User {
   id: string | number;
@@ -50,12 +58,25 @@ interface Post {
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("posts");
-  const [searchTerm, setSearchTerm] = useState(""); // Garder pour filtrer les posts affichés
-  const [isCreating, setIsCreating] = useState(false);
-  const [editingPost, setEditingPost] = useState<Post | null>(null); // Utiliser le type Post
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { toast } = useToast();
 
-  // États pour les utilisateurs (inchangés)
+  // Récupérer l'onglet actif depuis l'URL ou utiliser la valeur par défaut
+  const tabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabFromUrl || "dashboard");
+
+  // Écouter les changements d'URL pour mettre à jour l'onglet actif
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+
+  // États pour les utilisateurs
   const [users, setUsers] = useState<User[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [usersError, setUsersError] = useState<string | null>(null);
@@ -64,6 +85,9 @@ const AdminDashboard = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [postsError, setPostsError] = useState<string | null>(null);
+
+  // État pour l'exportation de données
+  const [isExporting, setIsExporting] = useState(false);
 
   // Fonction utilitaire pour les appels API (évite la répétition)
   const fetchApi = async (url: string, method: string = 'GET', body?: any) => {
@@ -137,27 +161,48 @@ const AdminDashboard = () => {
        }
      };
 
-  // --- useEffect pour charger les données de l'onglet actif ---
+  // --- useEffect pour mettre à jour l'URL lorsque l'onglet change ---
   useEffect(() => {
+    // Mettre à jour l'URL sans recharger la page
+    setSearchParams({ tab: activeTab });
+
+    // Charger les données en fonction de l'onglet actif
     if (activeTab === 'posts') {
       fetchPosts();
     } else if (activeTab === 'users') {
       fetchUsers();
     }
-  }, [activeTab]);
+  }, [activeTab, setSearchParams]);
 
+
+  // --- Fonctions de navigation ---
+  const handleViewAppointments = () => {
+    // Mettre à jour directement l'onglet actif sans utiliser navigate
+    setActiveTab("appointments");
+    // Mettre à jour l'URL sans déclencher de navigation
+    setSearchParams({ tab: "appointments" });
+  };
+
+  const handleViewContacts = () => {
+    // Mettre à jour directement l'onglet actif sans utiliser navigate
+    setActiveTab("contacts");
+    // Mettre à jour l'URL sans déclencher de navigation
+    setSearchParams({ tab: "contacts" });
+  };
 
   // --- Logique CRUD Posts ---
   const handleCreatePost = () => {
     setIsCreating(true);
     setEditingPost(null);
     setActiveTab("editor");
+    setSearchParams({ tab: "editor" });
   };
 
   const handleEditPost = (post: Post) => { // Utiliser le type Post
     setEditingPost(post);
     setIsCreating(false);
     setActiveTab("editor");
+    setSearchParams({ tab: "editor" });
   };
 
   const handleDeletePost = async (postId: string) => {
@@ -175,17 +220,20 @@ const AdminDashboard = () => {
   };
 
   const handleFormCancel = () => {
-    setActiveTab("posts");
+    // Revenir au tableau de bord
     setIsCreating(false);
     setEditingPost(null);
+    setActiveTab("dashboard");
+    setSearchParams({ tab: "dashboard" });
   };
 
   // La soumission est gérée dans BlogPostForm, mais on rafraîchit ici
    const handleFormSubmitSuccess = () => {
-     setActiveTab("posts");
      setIsCreating(false);
      setEditingPost(null);
      fetchPosts(); // Rafraîchir la liste des posts
+     setActiveTab("dashboard");
+     setSearchParams({ tab: "dashboard" });
    };
 
   // Filtrer les posts affichés (basé sur l'état `posts`)
@@ -207,6 +255,89 @@ const AdminDashboard = () => {
       return new Date(dateString).toLocaleDateString(undefined, options);
    };
 
+   // Fonction pour exporter les données au format CSV
+   const handleExportData = useCallback(async () => {
+     setIsExporting(true);
+
+     try {
+       // Déterminer quelles données exporter en fonction de l'onglet actif
+       let dataToExport: any[] = [];
+       let filename = '';
+
+       if (activeTab === 'posts' || activeTab === 'dashboard') {
+         dataToExport = posts;
+         filename = 'articles';
+       } else if (activeTab === 'users') {
+         dataToExport = users;
+         filename = 'utilisateurs';
+       } else if (activeTab === 'appointments') {
+         // Récupérer les rendez-vous depuis l'API
+         const data = await fetchApi('/api/admin/appointments');
+         dataToExport = data || [];
+         filename = 'rendez-vous';
+       } else if (activeTab === 'contacts') {
+         // Récupérer les contacts depuis l'API
+         const data = await fetchApi('/api/admin/contacts');
+         dataToExport = data || [];
+         filename = 'contacts';
+       }
+
+       if (dataToExport.length === 0) {
+         toast({
+           title: "Aucune donnée à exporter",
+           description: "Il n'y a pas de données disponibles pour l'exportation.",
+           variant: "warning",
+         });
+         return;
+       }
+
+       // Convertir les données en CSV
+       const headers = Object.keys(dataToExport[0]);
+       const csvContent = [
+         headers.join(','),
+         ...dataToExport.map(row =>
+           headers.map(header => {
+             const value = row[header];
+             // Gérer les valeurs complexes (objets, tableaux)
+             const cellValue = typeof value === 'object' && value !== null
+               ? JSON.stringify(value).replace(/\"/g, '\"\"')
+               : value;
+             // Entourer de guillemets si nécessaire
+             return typeof cellValue === 'string'
+               ? `\"${cellValue.replace(/\"/g, '\"\"')}\"`
+               : cellValue;
+           }).join(',')
+         )
+       ].join('\n');
+
+       // Créer un blob et un lien de téléchargement
+       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+       const url = URL.createObjectURL(blob);
+       const link = document.createElement('a');
+       link.setAttribute('href', url);
+       link.setAttribute('download', `${filename}_${new Date().toISOString().split('T')[0]}.csv`);
+       link.style.visibility = 'hidden';
+       document.body.appendChild(link);
+       link.click();
+       document.body.removeChild(link);
+
+       toast({
+         title: "Exportation réussie",
+         description: `Les données ont été exportées avec succès.`,
+         variant: "success",
+       });
+     } catch (error: any) {
+       console.error("Erreur lors de l'exportation des données:", error);
+       toast({
+         title: "Erreur d'exportation",
+         description: error.message || "Une erreur est survenue lors de l'exportation des données.",
+         variant: "destructive",
+       });
+     } finally {
+       setIsExporting(false);
+     }
+   }, [activeTab, posts, users, toast, fetchApi]);
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -219,28 +350,73 @@ const AdminDashboard = () => {
                  Admin Dashboard
                </h1>
                <p className="text-muted-foreground">
-                 Gérez votre site web
+                 Gérez votre site web et vos contenus
                </p>
              </div>
-             {/* Afficher le bouton New Post seulement si on n'est pas dans l'éditeur */}
-             {activeTab !== 'editor' && (
-                <Button onClick={handleCreatePost} className="mt-4 md:mt-0">
-                  <Plus className="mr-2 h-4 w-4" /> New Post
-                </Button>
-             )}
+             <div className="flex gap-2 mt-4 md:mt-0">
+               {/* Bouton d'exportation */}
+               {activeTab !== 'editor' && (
+                 <Button
+                   onClick={handleExportData}
+                   variant="outline"
+                   disabled={isExporting}
+                 >
+                   {isExporting ? (
+                     <>
+                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                       Exportation...
+                     </>
+                   ) : (
+                     <>
+                       <Download className="mr-2 h-4 w-4" />
+                       Exporter
+                     </>
+                   )}
+                 </Button>
+               )}
+
+               {/* Bouton Nouvel Article */}
+               {activeTab !== 'editor' && (
+                 <Button onClick={handleCreatePost}>
+                   <Plus className="mr-2 h-4 w-4" /> Nouvel Article
+                 </Button>
+               )}
+             </div>
           </div>
 
-          {/* Réintroduire les onglets */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            {/* Ajuster grid-cols pour le nombre total d'onglets visibles */}
-            <TabsList className="grid w-full grid-cols-6 mb-8">
-              <TabsTrigger value="posts">Blog Posts</TabsTrigger>
-              <TabsTrigger value="appointments">Rendez-vous</TabsTrigger> {/* Nouvel onglet RDV */}
-              <TabsTrigger value="contacts">Contacts</TabsTrigger> {/* Nouvel onglet Contacts */}
+          {/* Onglets */}
+          <Tabs value={activeTab} onValueChange={(value) => {
+              if (value !== activeTab) {
+                setActiveTab(value);
+                setSearchParams({ tab: value });
+              }
+            }} className="w-full">
+            <TabsList className="grid w-full grid-cols-7 mb-8">
+              <TabsTrigger value="dashboard">Tableau de bord</TabsTrigger>
+              <TabsTrigger value="posts">Articles</TabsTrigger>
+              <TabsTrigger value="appointments">Rendez-vous</TabsTrigger>
+              <TabsTrigger value="contacts">Contacts</TabsTrigger>
               <TabsTrigger value="users">Utilisateurs</TabsTrigger>
-              <TabsTrigger value="comments" disabled>Comments</TabsTrigger>
-              <TabsTrigger value="settings" disabled>Settings</TabsTrigger>
+              <TabsTrigger value="settings">Paramètres</TabsTrigger>
+              <TabsTrigger value="comments" disabled>Commentaires</TabsTrigger>
             </TabsList>
+
+            {/* Onglet Tableau de bord */}
+            <TabsContent value="dashboard" className="space-y-6">
+              <AdminDashboardStats />
+
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <AdminQuickActions
+                  onCreatePost={handleCreatePost}
+                  onExportData={handleExportData}
+                  onViewAppointments={handleViewAppointments}
+                  onViewContacts={handleViewContacts}
+                />
+                <AdminRecentActivity />
+              </div>
+
+              <AdminDashboardCharts />
+            </TabsContent>
 
             {/* Onglet Posts */}
             <TabsContent value="posts" className="space-y-4">
@@ -250,65 +426,81 @@ const AdminDashboard = () => {
                    <CardDescription>
                      Gérez vos articles de blog.
                    </CardDescription>
-                   <div className="mt-4">
-                     <Input
-                       placeholder="Rechercher des articles..."
-                       value={searchTerm}
-                       onChange={(e) => setSearchTerm(e.target.value)}
-                       className="max-w-md"
-                     />
-                   </div>
                  </CardHeader>
                  <CardContent>
                    {isLoadingPosts && <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin"/></div>}
                    {postsError && <p className="text-red-600 text-center p-4">{postsError}</p>}
                    {!isLoadingPosts && !postsError && (
-                     <div className="rounded-md border">
-                       <Table>
-                         <TableHeader>
-                           <TableRow>
-                             <TableHead>Titre</TableHead>
-                             <TableHead>Auteur</TableHead>
-                             <TableHead>Catégorie</TableHead>
-                             <TableHead>Publié</TableHead>
-                             <TableHead>Date Création</TableHead>
-                             <TableHead className="text-right w-[120px]">Actions</TableHead>
-                           </TableRow>
-                         </TableHeader>
-                         <TableBody>
-                           {filteredPosts.length > 0 ? (
-                             filteredPosts.map((post) => (
-                               <TableRow key={post.id}>
-                                 <TableCell className="font-medium">{post.title}</TableCell>
-                                 <TableCell>{post.author?.firstName || post.author?.email || 'N/A'}</TableCell>
-                                 <TableCell><Badge variant="outline">{post.category || 'N/A'}</Badge></TableCell>
-                                 <TableCell>{post.published ? 'Oui' : 'Non'}</TableCell>
-                                 <TableCell>{formatDate(post.createdAt)}</TableCell>
-                                 <TableCell className="text-right">
-                                   <div className="flex justify-end gap-1">
-                                      <Button variant="ghost" size="icon" title="Prévisualiser" onClick={() => navigate(`/blog/${post.slug}`)}>
-                                        <Eye className="h-4 w-4" />
-                                      </Button>
-                                      <Button variant="ghost" size="icon" title="Modifier" onClick={() => handleEditPost(post)}>
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                      <Button variant="ghost" size="icon" title="Supprimer" className="text-destructive hover:text-destructive/80" onClick={() => handleDeletePost(post.id)}>
-                                        <Trash className="h-4 w-4" />
-                                      </Button>
-                                   </div>
-                                 </TableCell>
-                               </TableRow>
-                             ))
-                           ) : (
-                             <TableRow>
-                               <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
-                                 Aucun article trouvé.
-                               </TableCell>
-                             </TableRow>
-                           )}
-                         </TableBody>
-                       </Table>
-                     </div>
+                     <DataTable
+                       data={posts}
+                       columns={[
+                         {
+                           header: "Titre",
+                           accessorKey: "title",
+                           cell: (post) => (
+                             <div className="font-medium">{post.title}</div>
+                           ),
+                           enableSorting: true
+                         },
+                         {
+                           header: "Auteur",
+                           accessorKey: "author",
+                           cell: (post) => (
+                             <div>{post.author?.firstName || post.author?.email || 'N/A'}</div>
+                           )
+                         },
+                         {
+                           header: "Catégorie",
+                           accessorKey: "category",
+                           cell: (post) => (
+                             <Badge variant="outline">{post.category || 'N/A'}</Badge>
+                           ),
+                           enableSorting: true
+                         },
+                         {
+                           header: "Publié",
+                           accessorKey: "published",
+                           cell: (post) => (
+                             <div>{post.published ? 'Oui' : 'Non'}</div>
+                           ),
+                           enableSorting: true
+                         },
+                         {
+                           header: "Date Création",
+                           accessorKey: "createdAt",
+                           cell: (post) => (
+                             <div>{formatDate(post.createdAt)}</div>
+                           ),
+                           enableSorting: true
+                         },
+                         {
+                           header: "Actions",
+                           accessorKey: "id",
+                           cell: (post) => (
+                             <div className="flex justify-end gap-1">
+                               <Button variant="ghost" size="icon" title="Prévisualiser" onClick={() => navigate(`/blog/${post.slug}`)}>
+                                 <Eye className="h-4 w-4" />
+                               </Button>
+                               <Button variant="ghost" size="icon" title="Modifier" onClick={() => handleEditPost(post)}>
+                                 <Edit className="h-4 w-4" />
+                               </Button>
+                               <ConfirmDialog
+                                 title="Supprimer l'article"
+                                 description="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
+                                 triggerText=""
+                                 icon={<Trash className="h-4 w-4" />}
+                                 onConfirm={() => handleDeletePost(post.id)}
+                                 destructive
+                               />
+                             </div>
+                           ),
+                           className: "w-[120px]"
+                         }
+                       ]}
+                       searchPlaceholder="Rechercher des articles..."
+                       searchFields={["title", "category"]}
+                       emptyMessage="Aucun article trouvé."
+                     />
                    )}
                  </CardContent>
                </Card>
@@ -325,40 +517,63 @@ const AdminDashboard = () => {
                   {isLoadingUsers && <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin"/></div>}
                   {usersError && <p className="text-red-600 text-center p-4">{usersError}</p>}
                   {!isLoadingUsers && !usersError && (
-                    <div className="rounded-md border">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Prénom</TableHead>
-                            <TableHead>Nom</TableHead>
-                            <TableHead>Rôle</TableHead>
-                            <TableHead>Créé le</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {users.length > 0 ? (
-                            users.map((user) => (
-                              <TableRow key={user.id}>
-                                <TableCell className="font-mono text-xs">{user.id}</TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>{user.firstName || '-'}</TableCell>
-                                <TableCell>{user.lastName || '-'}</TableCell>
-                                <TableCell><Badge variant={user.role === 'ADMIN' || user.role === 'SUPERADMIN' ? 'default' : 'secondary'}>{user.role}</Badge></TableCell>
-                                <TableCell>{formatDate(user.createdAt)}</TableCell>
-                              </TableRow>
-                            ))
-                          ) : (
-                            <TableRow>
-                              <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
-                                Aucun utilisateur trouvé.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
+                    <DataTable
+                      data={users}
+                      columns={[
+                        {
+                          header: "ID",
+                          accessorKey: "id",
+                          cell: (user) => (
+                            <div className="font-mono text-xs">{user.id}</div>
+                          )
+                        },
+                        {
+                          header: "Email",
+                          accessorKey: "email",
+                          cell: (user) => (
+                            <div>{user.email}</div>
+                          ),
+                          enableSorting: true
+                        },
+                        {
+                          header: "Prénom",
+                          accessorKey: "firstName",
+                          cell: (user) => (
+                            <div>{user.firstName || '-'}</div>
+                          ),
+                          enableSorting: true
+                        },
+                        {
+                          header: "Nom",
+                          accessorKey: "lastName",
+                          cell: (user) => (
+                            <div>{user.lastName || '-'}</div>
+                          ),
+                          enableSorting: true
+                        },
+                        {
+                          header: "Rôle",
+                          accessorKey: "role",
+                          cell: (user) => (
+                            <Badge variant={user.role === 'ADMIN' || user.role === 'SUPERADMIN' ? 'default' : 'secondary'}>
+                              {user.role}
+                            </Badge>
+                          ),
+                          enableSorting: true
+                        },
+                        {
+                          header: "Créé le",
+                          accessorKey: "createdAt",
+                          cell: (user) => (
+                            <div>{formatDate(user.createdAt)}</div>
+                          ),
+                          enableSorting: true
+                        }
+                      ]}
+                      searchPlaceholder="Rechercher des utilisateurs..."
+                      searchFields={["email", "firstName", "lastName", "role"]}
+                      emptyMessage="Aucun utilisateur trouvé."
+                    />
                   )}
                 </CardContent>
               </Card>
@@ -384,33 +599,23 @@ const AdminDashboard = () => {
                 <AdminContactsPage />
              </TabsContent>
 
-             {/* Onglets Comments et Settings (inchangés) */}
+             {/* Onglet Paramètres */}
+             <TabsContent value="settings">
+                <AdminSettings />
+             </TabsContent>
+
+             {/* Onglet Commentaires (désactivé) */}
              <TabsContent value="comments">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Comments</CardTitle>
+                    <CardTitle>Commentaires</CardTitle>
                     <CardDescription>
-                      Manage comments on your blog posts.
+                      Gérez les commentaires sur vos articles.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">
-                      Comment management will be available in a future update.
-                    </p>
-                  </CardContent>
-                </Card>
-             </TabsContent>
-             <TabsContent value="settings">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Settings</CardTitle>
-                    <CardDescription>
-                      Configure your blog settings.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      Settings will be available in a future update.
+                      La gestion des commentaires sera disponible dans une prochaine mise à jour.
                     </p>
                   </CardContent>
                 </Card>
@@ -420,6 +625,7 @@ const AdminDashboard = () => {
         </div>
       </main>
       <Footer />
+      <Toaster />
     </div>
   );
 };

@@ -16,6 +16,7 @@ import { Loader2 } from 'lucide-react';
 // Importer Navbar et Footer si nécessaire pour la mise en page
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useToast } from "@/components/ui/use-toast";
 
 // Importer un contexte ou un store pour gérer l'état d'authentification (Exemple simple)
 // import { useAuth } from '../context/AuthContext'; // Supposons qu'un tel contexte existe
@@ -29,6 +30,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
   // const { login } = useAuth(); // Utiliser la fonction de connexion du contexte
 
   const form = useForm<LoginFormValues>({
@@ -67,7 +69,13 @@ const LoginPage: React.FC = () => {
       // 2. Mettre à jour l'état global d'authentification (via contexte/store)
       // login(data.user, data.token); // Appeler la fonction du contexte
 
-      // 3. Rediriger l'utilisateur
+      // 3. Afficher une notification et rediriger l'utilisateur
+      toast({
+        title: "Connexion réussie",
+        description: "Vous êtes maintenant connecté.",
+        variant: "success",
+      });
+
       // Rediriger l'utilisateur vers /admin après connexion réussie
       console.log('Login successful, redirecting to /admin'); // Log pour débogage
       navigate('/admin');
@@ -80,9 +88,16 @@ const LoginPage: React.FC = () => {
 
     } catch (err: any) {
       console.error("Erreur lors de la connexion:", err);
-      setError(err.message || 'Une erreur est survenue.');
+      const errorMessage = err.message || 'Une erreur est survenue lors de la connexion.';
+      setError(errorMessage);
+
+      toast({
+        title: "Erreur de connexion",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
       localStorage.removeItem('authToken'); // Nettoyer en cas d'erreur
-      // localStorage.removeItem('userData'); // Plus nécessaire car on ne le stocke plus
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +149,7 @@ const LoginPage: React.FC = () => {
           {/* Optionnel: Lien vers la page d'inscription */}
            <p className="mt-4 text-center text-sm">
             Pas encore de compte ? <Link to="/create-user" className="text-indigo-600 hover:underline">Inscrivez-vous</Link>
-          </p> 
+          </p>
         </div>
       </main>
       <Footer />

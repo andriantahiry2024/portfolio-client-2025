@@ -13,7 +13,7 @@ import { Switch } from "./ui/switch";
 import {
   Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Type Post (content est maintenant string)
@@ -85,7 +85,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, isCreating, onCancel,
   const [contentValue, setContentValue] = useState<string>(
     post?.content || ""
   );
-  
+
   // Référence à l'éditeur ReactQuill
   const quillRef = useRef<any>(null);
 
@@ -122,7 +122,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, isCreating, onCancel,
     try {
       // S'assurer que le contenu HTML est valide et pas échappé
       let htmlContent = values.content;
-      
+
       // Si le contenu contient des balises échappées, les décoder
       if (htmlContent.includes('&lt;') || htmlContent.includes('&gt;')) {
         console.log("Décodage des entités HTML détecté dans le contenu");
@@ -130,7 +130,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, isCreating, onCancel,
         textarea.innerHTML = htmlContent;
         htmlContent = textarea.value;
       }
-      
+
       // Vérifier si le contenu est valide
       if (!htmlContent.startsWith('<') && htmlContent.includes('<')) {
         console.warn("Le contenu HTML ne semble pas correctement formaté");
@@ -198,10 +198,11 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, isCreating, onCancel,
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardHeader>
-             <CardTitle>{isCreating ? "Créer un nouvel article" : "Modifier l'article"}</CardTitle>
-             <CardDescription>
-               {isCreating ? "Remplissez les détails requis." : "Mettez à jour les détails de l'article."}
-             </CardDescription>
+            {/* Bouton de retour supprimé */}
+            <CardTitle>{isCreating ? "Créer un nouvel article" : "Modifier l'article"}</CardTitle>
+            <CardDescription>
+              {isCreating ? "Remplissez les détails requis." : "Mettez à jour les détails de l'article."}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
@@ -256,22 +257,22 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, isCreating, onCancel,
             {/* Section Prévisualisation */}
             <div className="space-y-2">
                 <Label>Prévisualisation</Label>
-                <div 
+                <div
                   className="prose prose-sm dark:prose-invert max-w-none p-4 border rounded-md min-h-[100px] bg-muted/40 overflow-auto blog-preview"
-                  dangerouslySetInnerHTML={{ 
+                  dangerouslySetInnerHTML={{
                     __html: (() => {
                       // Nettoyage du contenu pour la prévisualisation
                       if (!contentValue) return '<p><i>Commencez à écrire...</i></p>';
-                      
+
                       // Décodage des entités HTML si nécessaire
                       if (contentValue.includes('&lt;') || contentValue.includes('&gt;')) {
                         const textarea = document.createElement('textarea');
                         textarea.innerHTML = contentValue;
                         return textarea.value;
                       }
-                      
+
                       return contentValue;
-                    })() 
+                    })()
                   }}
                 />
             </div>

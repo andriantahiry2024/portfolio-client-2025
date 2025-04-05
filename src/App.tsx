@@ -5,6 +5,7 @@ import routes from "tempo-routes";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AnimatePresence, motion } from "framer-motion";
 import ScrollToTop from "./components/ScrollToTop";
+import { Toaster } from "./components/ui/toaster";
 
 // Lazy load components
 const BlogPage = lazy(() => import("./components/BlogPage"));
@@ -100,12 +101,13 @@ function App() {
                 )}
               </Routes>
               {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-              
+
               <ScrollToTop />
             </Suspense>
           // </motion.div> {/* Temporairement supprimé pour tester l'animation de transition */}
         )}
       {/* </AnimatePresence> {/* Temporairement commenté pour isoler le problème de scroll */}
+      <Toaster />
     </>
   );
 }

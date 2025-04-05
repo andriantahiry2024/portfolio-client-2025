@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Mail, MessageSquare, User, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import DataTable from './DataTable';
+import { useToast } from "./ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
 interface Contact {
   id: string;
@@ -15,9 +18,13 @@ interface Contact {
 }
 
 const AdminContactsPage: React.FC = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Fonction de retour supprimée
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -60,6 +67,7 @@ const AdminContactsPage: React.FC = () => {
   return (
     <Card className="m-4">
       <CardHeader>
+        {/* Bouton de retour supprimé */}
         <CardTitle>Nos Futurs Clients (Messages de Contact)</CardTitle>
       </CardHeader>
       <CardContent>
@@ -75,34 +83,67 @@ const AdminContactsPage: React.FC = () => {
             <p>Erreur : {error}</p>
           </div>
         )}
-        {!isLoading && !error && contacts.length === 0 && (
-          <p className="text-center py-10 text-muted-foreground">Aucun message de contact trouvé.</p>
-        )}
-        {!isLoading && !error && contacts.length > 0 && (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date Réception</TableHead>
-                <TableHead>Nom</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Sujet</TableHead>
-                <TableHead>Message</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {contacts.map((contact) => (
-                <TableRow key={contact.id}>
-                   <TableCell>
-                     {format(new Date(contact.created_at), 'Pp', { locale: fr })}
-                  </TableCell>
-                  <TableCell>{contact.name}</TableCell>
-                  <TableCell>{contact.email}</TableCell>
-                  <TableCell>{contact.subject || '-'}</TableCell>
-                  <TableCell className="whitespace-pre-wrap">{contact.message}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        {!isLoading && !error && (
+          <DataTable
+            data={contacts}
+            columns={[
+              {
+                header: "Date Réception",
+                accessorKey: "created_at",
+                cell: (contact) => (
+                  <div className="text-muted-foreground text-sm">
+                    {format(new Date(contact.created_at), 'Pp', { locale: fr })}
+                  </div>
+                ),
+                enableSorting: true
+              },
+              {
+                header: "Nom",
+                accessorKey: "name",
+                cell: (contact) => (
+                  <div className="flex items-center">
+                    <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{contact.name}</span>
+                  </div>
+                ),
+                enableSorting: true
+              },
+              {
+                header: "Email",
+                accessorKey: "email",
+                cell: (contact) => (
+                  <div className="flex items-center">
+                    <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <span>{contact.email}</span>
+                  </div>
+                )
+              },
+              {
+                header: "Sujet",
+                accessorKey: "subject",
+                cell: (contact) => (
+                  <div className="flex items-center">
+                    <Info className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <span>{contact.subject || '-'}</span>
+                  </div>
+                ),
+                enableSorting: true
+              },
+              {
+                header: "Message",
+                accessorKey: "message",
+                cell: (contact) => (
+                  <div className="flex items-start max-w-md">
+                    <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground mt-0.5" />
+                    <span className="line-clamp-2 whitespace-pre-wrap">{contact.message}</span>
+                  </div>
+                )
+              }
+            ]}
+            searchPlaceholder="Rechercher des messages..."
+            searchFields={["name", "email", "subject", "message"]}
+            emptyMessage="Aucun message de contact trouvé."
+          />
         )}
       </CardContent>
     </Card>

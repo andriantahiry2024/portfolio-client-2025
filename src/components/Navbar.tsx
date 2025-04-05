@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Moon, Sun, Menu, X, LogOut, User } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router-dom"; // Ajouter Link
+import { useToast } from "@/components/ui/use-toast";
 
 interface NavbarProps {
   className?: string;
@@ -53,29 +54,59 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lire les données utilisateur depuis localStorage au montage
+  // Récupérer les données utilisateur depuis l'API
   useEffect(() => {
-    const storedUserData = localStorage.getItem('userData');
-    if (storedUserData) {
-      try {
-        setUserData(JSON.parse(storedUserData));
-      } catch (e) {
-        console.error("Erreur parsing userData dans Navbar:", e);
-        localStorage.removeItem('userData'); // Nettoyer si invalide
-        localStorage.removeItem('authToken');
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('authToken');
+
+      if (!token) {
+        setUserData(null);
+        return;
       }
-    }
-    // Optionnel: Écouter les changements de localStorage si nécessaire
-    // window.addEventListener('storage', handleStorageChange);
-    // return () => window.removeEventListener('storage', handleStorageChange);
+
+      try {
+        const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/auth/me`;
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          setUserData(userData);
+        } else {
+          // Si la réponse n'est pas OK, supprimer le token
+          console.error(`Erreur d'authentification: ${response.status}`);
+          localStorage.removeItem('authToken');
+          setUserData(null);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données utilisateur:", error);
+        localStorage.removeItem('authToken');
+        setUserData(null);
+      }
+    };
+
+    fetchUserData();
   }, [location]); // Ré-évaluer si la location change (après login/logout)
 
   // Fonction de déconnexion
+  const { toast } = useToast();
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
     setUserData(null);
     setIsMobileMenuOpen(false);
+
+    toast({
+      title: "Déconnexion réussie",
+      description: "Vous avez été déconnecté avec succès.",
+      variant: "success",
+    });
+
     navigate('/login'); // Rediriger vers la page de login
   };
 
@@ -84,10 +115,10 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     // Priorité à la mise à jour visuelle
     const newTheme = theme === "dark" ? "light" : "dark";
     document.documentElement.classList.toggle("dark", newTheme === "dark");
-    
+
     // Puis mettre à jour l'état et localStorage
     setTheme(newTheme);
-    
+
     // Utiliser requestAnimationFrame pour différer l'écriture localStorage
     requestAnimationFrame(() => {
       localStorage.setItem("theme", newTheme);
@@ -167,10 +198,12 @@ const Navbar = ({ className = "" }: NavbarProps) => {
           <div className="flex items-center space-x-2 border-l pl-4 ml-2"> {/* Séparateur visuel */}
             {userData ? (
               <>
-                <span className="text-sm font-medium text-muted-foreground hidden lg:inline">
-                  Bonjour, {userData.firstName || userData.email}
+                <span className="text-sm font-medium text-muted-foreground hidden lg:inline flex items-center">
+                  <User className="h-4 w-4 mr-1" />
+                  Bonjour, {userData.name || userData.email}
                 </span>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center">
+                  <LogOut className="h-4 w-4 mr-1" />
                   Déconnexion
                 </Button>
               </>
@@ -254,13 +287,15 @@ const Navbar = ({ className = "" }: NavbarProps) => {
              <div className="border-t pt-4 mt-4 space-y-2">
                {userData ? (
                  <>
-                   <div className="px-3 py-2 text-base font-medium text-muted-foreground">
-                     Bonjour, {userData.firstName || userData.email}
+                   <div className="px-3 py-2 text-base font-medium text-muted-foreground flex items-center">
+                     <User className="h-4 w-4 mr-2" />
+                     Bonjour, {userData.name || userData.email}
                    </div>
                    <button
                      onClick={handleLogout}
-                     className="block w-full text-left rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground"
+                     className="block w-full text-left rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground flex items-center"
                    >
+                     <LogOut className="h-4 w-4 mr-2" />
                      Déconnexion
                    </button>
                  </>

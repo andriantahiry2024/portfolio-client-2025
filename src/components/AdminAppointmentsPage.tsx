@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Calendar, Mail, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import DataTable from './DataTable';
+import { useToast } from "./ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
 interface Appointment {
   id: string;
@@ -15,9 +18,13 @@ interface Appointment {
 }
 
 const AdminAppointmentsPage: React.FC = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Fonction de retour supprimée
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -57,9 +64,15 @@ const AdminAppointmentsPage: React.FC = () => {
     fetchAppointments();
   }, []);
 
+  // Fonction pour formater la date et l'heure
+  const formatDateTime = (dateString: string) => {
+    return format(new Date(dateString), 'PPP p', { locale: fr });
+  };
+
   return (
     <Card className="m-4">
       <CardHeader>
+        {/* Bouton de retour supprimé */}
         <CardTitle>Les Prises de RDV</CardTitle>
       </CardHeader>
       <CardContent>
@@ -75,36 +88,70 @@ const AdminAppointmentsPage: React.FC = () => {
             <p>Erreur : {error}</p>
           </div>
         )}
-        {!isLoading && !error && appointments.length === 0 && (
-          <p className="text-center py-10 text-muted-foreground">Aucun rendez-vous trouvé.</p>
-        )}
-        {!isLoading && !error && appointments.length > 0 && (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date & Heure RDV</TableHead>
-                <TableHead>Nom</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Message</TableHead>
-                <TableHead>Date Création</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {appointments.map((appointment) => (
-                <TableRow key={appointment.id}>
-                  <TableCell>
-                    {format(new Date(appointment.appointment_datetime), 'PPP p', { locale: fr })}
-                  </TableCell>
-                  <TableCell>{appointment.name}</TableCell>
-                  <TableCell>{appointment.email}</TableCell>
-                  <TableCell>{appointment.message || '-'}</TableCell>
-                  <TableCell>
-                     {format(new Date(appointment.created_at), 'Pp', { locale: fr })}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        {!isLoading && !error && (
+          <DataTable
+            data={appointments}
+            columns={[
+              {
+                header: "Date & Heure RDV",
+                accessorKey: "appointment_datetime",
+                cell: (appointment) => (
+                  <div className="flex items-center">
+                    <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <span>{formatDateTime(appointment.appointment_datetime)}</span>
+                  </div>
+                ),
+                enableSorting: true
+              },
+              {
+                header: "Nom",
+                accessorKey: "name",
+                cell: (appointment) => (
+                  <div className="font-medium">{appointment.name}</div>
+                ),
+                enableSorting: true
+              },
+              {
+                header: "Email",
+                accessorKey: "email",
+                cell: (appointment) => (
+                  <div className="flex items-center">
+                    <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
+                    <span>{appointment.email}</span>
+                  </div>
+                )
+              },
+              {
+                header: "Message",
+                accessorKey: "message",
+                cell: (appointment) => (
+                  <div className="flex items-start">
+                    {appointment.message ? (
+                      <>
+                        <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground mt-0.5" />
+                        <span className="line-clamp-2">{appointment.message}</span>
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </div>
+                )
+              },
+              {
+                header: "Date Création",
+                accessorKey: "created_at",
+                cell: (appointment) => (
+                  <div className="text-muted-foreground text-sm">
+                    {format(new Date(appointment.created_at), 'Pp', { locale: fr })}
+                  </div>
+                ),
+                enableSorting: true
+              }
+            ]}
+            searchPlaceholder="Rechercher des rendez-vous..."
+            searchFields={["name", "email", "message"]}
+            emptyMessage="Aucun rendez-vous trouvé."
+          />
         )}
       </CardContent>
     </Card>
