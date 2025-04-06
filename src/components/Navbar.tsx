@@ -154,8 +154,10 @@ const Navbar = ({ className = "" }: NavbarProps) => {
   return (
     <header
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300 bg-background",
-        isScrolled ? "border-b shadow-sm" : "",
+        "fixed top-0 w-full z-50 transition-all duration-300",
+        isScrolled
+          ? "bg-background/80 backdrop-blur-md border-b border-border/40 shadow-sm"
+          : "bg-transparent",
         className,
       )}
     >
@@ -164,70 +166,85 @@ const Navbar = ({ className = "" }: NavbarProps) => {
         <div className="flex items-center">
           <a
             href="/"
-            className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
+            className="text-xl font-bold tracking-tight hover:text-primary transition-colors flex items-center gap-2"
             onClick={(e) => {
               e.preventDefault();
               navigate("/");
             }}
           >
-            Portfolio
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">NA</div>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 font-extrabold">Portfolio</span>
           </a>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-4"> {/* Ajuster space-x si besoin */}
+        <nav className="hidden md:flex items-center space-x-1"> {/* Ajuster space-x si besoin */}
           {/* Liens de navigation principaux */}
-          {navItems
-            .filter(item => !(item.name === 'Admin' && (!userData || !['ADMIN', 'SUPERADMIN'].includes(userData.role)))) // Filtrer Admin si non autorisé
-            .filter(item => !(item.name === 'Blog' && location.pathname.startsWith('/blog'))) // Optionnel: Cacher Blog si déjà sur une page de blog
-            .map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium hover:text-primary transition-colors"
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(item.href, item.isExternal);
-                }}
-              >
-                {item.name}
-              </a>
-           ))}
+          <div className="bg-background/30 backdrop-blur-sm rounded-full px-2 py-1.5 border border-white/10">
+            {navItems
+              .filter(item => !(item.name === 'Admin' && (!userData || !['ADMIN', 'SUPERADMIN'].includes(userData.role)))) // Filtrer Admin si non autorisé
+              .filter(item => !(item.name === 'Blog' && location.pathname.startsWith('/blog'))) // Optionnel: Cacher Blog si déjà sur une page de blog
+              .map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm font-medium hover:text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-white/10"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(item.href, item.isExternal);
+                  }}
+                >
+                  {item.name}
+                </a>
+             ))}
+          </div>
 
           {/* Section Authentification */}
-          <div className="flex items-center space-x-2 border-l pl-4 ml-2"> {/* Séparateur visuel */}
+          <div className="flex items-center space-x-3 ml-4"> {/* Séparateur visuel */}
             {userData ? (
               <>
-                <span className="text-sm font-medium text-muted-foreground hidden lg:inline flex items-center">
-                  <User className="h-4 w-4 mr-1" />
-                  Bonjour, {userData.name || userData.email}
-                </span>
-                <Button variant="ghost" size="sm" onClick={handleLogout} className="flex items-center">
+                <div className="bg-primary/10 rounded-full px-3 py-1.5 hidden lg:flex items-center gap-2 border border-primary/20">
+                  <User className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">
+                    {userData.name || userData.email}
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="flex items-center rounded-full hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                >
                   <LogOut className="h-4 w-4 mr-1" />
                   Déconnexion
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" asChild className="rounded-full hover:bg-white/10">
                   <Link to="/login">Connexion</Link>
                 </Button>
-                <Button variant="default" size="sm" asChild>
+                <Button
+                  variant="default"
+                  size="sm"
+                  asChild
+                  className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-md hover:shadow-blue-500/20 border-none"
+                >
                    <Link to="/create-user">S'inscrire</Link>
                  </Button>
               </>
             )}
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              className="ml-2" // Marge pour séparer du reste
+              className="rounded-full border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-background/80"
             >
               {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-4 w-4" />
               ) : (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-4 w-4" />
               )}
             </Button>
           </div>
@@ -236,27 +253,29 @@ const Navbar = ({ className = "" }: NavbarProps) => {
         {/* Mobile Menu Button */}
         <div className="flex items-center md:hidden space-x-2">
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={toggleTheme}
             aria-label="Toggle theme"
+            className="rounded-full border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-background/80 h-9 w-9"
           >
             {theme === "dark" ? (
-              <Sun className="h-5 w-5" />
+              <Sun className="h-4 w-4" />
             ) : (
-              <Moon className="h-5 w-5" />
+              <Moon className="h-4 w-4" />
             )}
           </Button>
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
+            className="rounded-full border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-background/80 h-9 w-9"
           >
             {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-4 w-4" />
             )}
           </Button>
         </div>
@@ -264,8 +283,14 @@ const Navbar = ({ className = "" }: NavbarProps) => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-background border-t">
-          <div className="container mx-auto px-4 py-4 space-y-1">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.2 }}
+          className="md:hidden bg-background/95 backdrop-blur-md border-t border-border/20 shadow-lg"
+        >
+          <div className="container mx-auto px-4 py-6 space-y-2">
              {/* Liens de navigation principaux Mobile */}
             {navItems
               .filter(item => !(item.name === 'Admin' && (!userData || !['ADMIN', 'SUPERADMIN'].includes(userData.role))))
@@ -274,7 +299,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground"
+                  className="block rounded-full px-4 py-2.5 text-base font-medium hover:bg-primary/10 hover:text-primary transition-colors"
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToSection(item.href, item.isExternal);
@@ -284,16 +309,16 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                 </a>
             ))}
              {/* Section Authentification Mobile */}
-             <div className="border-t pt-4 mt-4 space-y-2">
+             <div className="border-t border-border/20 pt-4 mt-4 space-y-3">
                {userData ? (
                  <>
-                   <div className="px-3 py-2 text-base font-medium text-muted-foreground flex items-center">
+                   <div className="px-4 py-2 text-base font-medium text-primary flex items-center bg-primary/10 rounded-full">
                      <User className="h-4 w-4 mr-2" />
-                     Bonjour, {userData.name || userData.email}
+                     {userData.name || userData.email}
                    </div>
                    <button
                      onClick={handleLogout}
-                     className="block w-full text-left rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground flex items-center"
+                     className="block w-full text-left rounded-full px-4 py-2.5 text-base font-medium hover:bg-red-500/10 hover:text-red-500 transition-colors flex items-center"
                    >
                      <LogOut className="h-4 w-4 mr-2" />
                      Déconnexion
@@ -304,14 +329,14 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                    <Link
                      to="/login"
                      onClick={() => setIsMobileMenuOpen(false)}
-                     className="block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground"
+                     className="block rounded-full px-4 py-2.5 text-base font-medium hover:bg-primary/10 hover:text-primary transition-colors"
                    >
                      Connexion
                    </Link>
                    <Link
                      to="/create-user"
                      onClick={() => setIsMobileMenuOpen(false)}
-                     className="block rounded-md px-3 py-2 text-base font-medium hover:bg-accent hover:text-accent-foreground"
+                     className="block rounded-full px-4 py-2.5 text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center hover:shadow-md hover:shadow-blue-500/20 transition-all"
                    >
                      S'inscrire
                    </Link>
@@ -319,7 +344,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                )}
              </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </header>
   );

@@ -35,28 +35,74 @@ const Footer = ({ className }: FooterProps = {}) => {
   return (
     <footer
       className={cn(
-        "w-full py-6 px-4 md:px-8 border-t bg-background",
+        "w-full py-12 px-4 md:px-8 border-t border-border/30 bg-gradient-to-b from-background to-background/90 relative overflow-hidden",
         className,
       )}
     >
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="text-sm text-muted-foreground">
-          © {currentYear} Portfolio. All rights reserved.
+      {/* Éléments décoratifs */}
+      <div className="absolute inset-0 overflow-hidden opacity-5 pointer-events-none">
+        <div className="absolute h-64 w-64 rounded-full bg-primary/30 blur-3xl bottom-0 left-1/4"></div>
+        <div className="absolute h-64 w-64 rounded-full bg-blue-500/20 blur-3xl top-0 right-1/4"></div>
+      </div>
+
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">NA</div>
+              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">Portfolio</span>
+            </div>
+            <p className="text-muted-foreground mb-4 max-w-md">
+              Développeur full stack passionné par la création d'applications web modernes et performantes. Spécialisé en React, Node.js et technologies cloud.
+            </p>
+            <div className="flex items-center space-x-3 mt-4">
+              {socialLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-colors hover:scale-110 transform duration-200"
+                  aria-label={link.label}
+                >
+                  {link.icon}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-lg mb-4">Navigation</h3>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Accueil</a></li>
+              <li><a href="#projects" className="text-muted-foreground hover:text-primary transition-colors">Projets</a></li>
+              <li><a href="#skills" className="text-muted-foreground hover:text-primary transition-colors">Compétences</a></li>
+              <li><a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">Contact</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-lg mb-4">Contact</h3>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <Mail className="h-4 w-4" />
+                <a href="mailto:contact@example.com" className="hover:text-primary transition-colors">contact@example.com</a>
+              </li>
+              <li className="text-muted-foreground">Madagascar</li>
+            </ul>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-4">
-          {socialLinks.map((link, index) => (
-            <a
-              key={index}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={link.label}
-            >
-              {link.icon}
-            </a>
-          ))}
+        <div className="pt-8 border-t border-border/20 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-sm text-muted-foreground">
+            © {currentYear} Andriantahiry Nomenahasina. Tous droits réservés.
+          </div>
+
+          <div className="text-sm text-muted-foreground">
+            <a href="#" className="hover:text-primary transition-colors">Politique de confidentialité</a>
+            <span className="mx-2">•</span>
+            <a href="#" className="hover:text-primary transition-colors">Mentions légales</a>
+          </div>
         </div>
       </div>
     </footer>

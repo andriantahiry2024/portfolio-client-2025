@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { AnimatePresence, motion } from "framer-motion";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "./components/ui/toaster";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 // Lazy load components
 const BlogPage = lazy(() => import("./components/BlogPage"));
@@ -107,6 +108,7 @@ function App() {
           // </motion.div> {/* Temporairement supprimé pour tester l'animation de transition */}
         )}
       {/* </AnimatePresence> {/* Temporairement commenté pour isoler le problème de scroll */}
+      <ScrollToTopButton />
       <Toaster />
     </>
   );
