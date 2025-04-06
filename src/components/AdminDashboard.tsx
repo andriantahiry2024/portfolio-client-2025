@@ -11,12 +11,13 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "./ui/table";
 import { Badge } from "./ui/badge";
-import { Edit, Plus, Trash, Users, Loader2, Eye, Download } from "lucide-react";
+import { Edit, Plus, X, Users, Loader2, Eye, Download, Key, UserCog, Trash } from "lucide-react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BlogPostForm from "./BlogPostForm";
 import AdminAppointmentsPage from "./AdminAppointmentsPage";
 import AdminContactsPage from "./AdminContactsPage";
+import AdminVisitsPage from "./AdminVisitsPage";
 import AdminDashboardStats from "./AdminDashboardStats";
 import AdminDashboardCharts from "./AdminDashboardCharts";
 import AdminQuickActions from "./AdminQuickActions";
@@ -24,6 +25,9 @@ import AdminRecentActivity from "./AdminRecentActivity";
 import AdminSettings from "./AdminSettings";
 import DataTable from "./DataTable";
 import ConfirmDialog from "./ConfirmDialog";
+import UserEditModal from "./UserEditModal";
+import UserCreateModal from "./UserCreateModal";
+import PasswordConfirmDialog from "./PasswordConfirmDialog";
 import { useToast } from "./ui/use-toast";
 import { Toaster } from "./ui/toaster";
 // Type User (inchangé)
@@ -80,6 +84,11 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [usersError, setUsersError] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isPasswordConfirmOpen, setIsPasswordConfirmOpen] = useState(false);
+  const [isUserCreateModalOpen, setIsUserCreateModalOpen] = useState(false);
 
   // États pour les posts
   const [posts, setPosts] = useState<Post[]>([]);
@@ -146,20 +155,114 @@ const AdminDashboard = () => {
       }
     };
 
-  // --- Logique pour récupérer les Utilisateurs (inchangée) ---
-   const fetchUsers = async () => {
-       setIsLoadingUsers(true);
-       setUsersError(null);
-       try {
-         const data = await fetchApi('/api/admin/users');
-         setUsers(data || []);
-       } catch (err: any) {
-         console.error("Erreur lors de la récupération des utilisateurs:", err);
-         setUsersError(err.message || 'Une erreur est survenue.');
-       } finally {
-         setIsLoadingUsers(false);
-       }
-     };
+  // --- Logique pour récupérer les Utilisateurs ---
+  const fetchUsers = async () => {
+    setIsLoadingUsers(true);
+    setUsersError(null);
+    try {
+      const data = await fetchApi('/api/admin/users');
+      setUsers(data || []);
+    } catch (err: any) {
+      console.error("Erreur lors de la récupération des utilisateurs:", err);
+      setUsersError(err.message || 'Une erreur est survenue.');
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
+  // --- Logique pour éditer un utilisateur ---
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsUserModalOpen(true);
+  };
+
+  // --- Logique pour créer un nouvel utilisateur ---
+  const handleCreateUser = () => {
+    setIsUserCreateModalOpen(true);
+  };
+
+  // --- Logique pour sauvegarder un nouvel utilisateur ---
+  const handleSaveNewUser = async (userData: any) => {
+    try {
+      await fetchApi('/api/admin/users', 'POST', userData);
+      // Mettre à jour la liste des utilisateurs
+      fetchUsers();
+      toast({
+        title: "Utilisateur créé",
+        description: "Le nouvel utilisateur a été créé avec succès.",
+      });
+    } catch (err: any) {
+      console.error("Erreur lors de la création de l'utilisateur:", err);
+      toast({
+        title: "Erreur",
+        description: err.message || "Une erreur est survenue lors de la création de l'utilisateur.",
+        variant: "destructive"
+      });
+      throw err; // Propager l'erreur pour que le composant modal puisse la gérer
+    }
+  };
+
+  // --- Logique pour sauvegarder les modifications d'un utilisateur ---
+  const handleSaveUser = async (updatedUser: User) => {
+    try {
+      await fetchApi(`/api/admin/users/${updatedUser.id}`, 'PUT', updatedUser);
+      // Mettre à jour la liste des utilisateurs
+      fetchUsers();
+      toast({
+        title: "Utilisateur mis à jour",
+        description: "Les informations de l'utilisateur ont été mises à jour avec succès.",
+      });
+    } catch (err: any) {
+      console.error("Erreur lors de la mise à jour de l'utilisateur:", err);
+      toast({
+        title: "Erreur",
+        description: err.message || "Une erreur est survenue lors de la mise à jour de l'utilisateur.",
+        variant: "destructive"
+      });
+      throw err; // Propager l'erreur pour que le composant modal puisse la gérer
+    }
+  };
+
+  // --- Logique pour supprimer un utilisateur ---
+  const handleDeleteUser = (user: User) => {
+    setSelectedUser(user);
+    setIsPasswordConfirmOpen(true);
+  };
+
+  // --- Logique pour confirmer la suppression d'un utilisateur avec mot de passe ---
+  const confirmDeleteUserWithPassword = async (password: string) => {
+    if (!selectedUser) return;
+
+    try {
+      // Vérifier le mot de passe de l'utilisateur courant
+      const response = await fetchApi('/api/auth/verify-password', 'POST', { password });
+
+      if (!response.success) {
+        throw new Error("Mot de passe incorrect");
+      }
+
+      // Supprimer l'utilisateur
+      await fetchApi(`/api/admin/users/${selectedUser.id}`, 'DELETE');
+
+      // Mettre à jour la liste des utilisateurs
+      fetchUsers();
+      toast({
+        title: "Utilisateur supprimé",
+        description: "L'utilisateur a été supprimé avec succès.",
+      });
+    } catch (err: any) {
+      console.error("Erreur lors de la suppression de l'utilisateur:", err);
+      toast({
+        title: "Erreur",
+        description: err.message || "Une erreur est survenue lors de la suppression de l'utilisateur.",
+        variant: "destructive"
+      });
+      throw err; // Propager l'erreur pour que le composant modal puisse la gérer
+    } finally {
+      setIsPasswordConfirmOpen(false);
+      setSelectedUser(null);
+    }
+  };
 
   // --- useEffect pour mettre à jour l'URL lorsque l'onglet change ---
   useEffect(() => {
@@ -396,6 +499,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="posts">Articles</TabsTrigger>
               <TabsTrigger value="appointments">Rendez-vous</TabsTrigger>
               <TabsTrigger value="contacts">Contacts</TabsTrigger>
+              <TabsTrigger value="visits">Visites</TabsTrigger>
               <TabsTrigger value="users">Utilisateurs</TabsTrigger>
               <TabsTrigger value="settings">Paramètres</TabsTrigger>
               <TabsTrigger value="comments" disabled>Commentaires</TabsTrigger>
@@ -509,9 +613,18 @@ const AdminDashboard = () => {
             {/* Onglet Utilisateurs */}
             <TabsContent value="users">
               <Card>
-                <CardHeader>
-                  <CardTitle>Utilisateurs</CardTitle>
-                  <CardDescription>Liste des utilisateurs enregistrés.</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <div>
+                    <CardTitle>Utilisateurs</CardTitle>
+                    <CardDescription>Liste des utilisateurs enregistrés.</CardDescription>
+                  </div>
+                  <Button
+                    onClick={handleCreateUser}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Ajouter un utilisateur
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   {isLoadingUsers && <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin"/></div>}
@@ -568,6 +681,32 @@ const AdminDashboard = () => {
                             <div>{formatDate(user.createdAt)}</div>
                           ),
                           enableSorting: true
+                        },
+                        {
+                          header: "Actions",
+                          accessorKey: "id",
+                          cell: (user) => (
+                            <div className="flex justify-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-1 h-8 px-2"
+                                onClick={() => handleEditUser(user)}
+                              >
+                                <UserCog className="h-4 w-4" />
+                                Modifier
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-1 h-8 px-2 text-destructive border-destructive hover:bg-destructive/10"
+                                onClick={() => handleDeleteUser(user)}
+                              >
+                                <X className="h-4 w-4" />
+                                Supprimer
+                              </Button>
+                            </div>
+                          )
                         }
                       ]}
                       searchPlaceholder="Rechercher des utilisateurs..."
@@ -599,6 +738,11 @@ const AdminDashboard = () => {
                 <AdminContactsPage />
              </TabsContent>
 
+             {/* Onglet Visites */}
+             <TabsContent value="visits">
+                <AdminVisitsPage />
+             </TabsContent>
+
              {/* Onglet Paramètres */}
              <TabsContent value="settings">
                 <AdminSettings />
@@ -626,6 +770,30 @@ const AdminDashboard = () => {
       </main>
       <Footer />
       <Toaster />
+
+      {/* Modal d'édition d'utilisateur */}
+      <UserEditModal
+        user={selectedUser}
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+        onSave={handleSaveUser}
+      />
+
+      {/* Dialog de confirmation avec mot de passe pour la suppression */}
+      <PasswordConfirmDialog
+        title="Confirmer la suppression"
+        description={selectedUser ? `Pour supprimer l'utilisateur ${selectedUser.email}, veuillez confirmer avec votre mot de passe.` : ''}
+        isOpen={isPasswordConfirmOpen}
+        onClose={() => setIsPasswordConfirmOpen(false)}
+        onConfirm={confirmDeleteUserWithPassword}
+      />
+
+      {/* Modal de création d'utilisateur */}
+      <UserCreateModal
+        isOpen={isUserCreateModalOpen}
+        onClose={() => setIsUserCreateModalOpen(false)}
+        onSave={handleSaveNewUser}
+      />
     </div>
   );
 };

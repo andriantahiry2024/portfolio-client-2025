@@ -7,6 +7,7 @@ import DataTable from './DataTable';
 import { useToast } from "./ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
+import ContactDetailsModal from './ContactDetailsModal';
 
 interface Contact {
   id: string;
@@ -23,6 +24,8 @@ const AdminContactsPage: React.FC = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fonction de retour supprimée
 
@@ -64,6 +67,17 @@ const AdminContactsPage: React.FC = () => {
     fetchContacts();
   }, []);
 
+  // Fonction pour ouvrir la modale avec les détails du contact
+  const handleContactClick = (contact: Contact) => {
+    setSelectedContact(contact);
+    setIsModalOpen(true);
+  };
+
+  // Fonction pour fermer la modale
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Card className="m-4">
       <CardHeader>
@@ -84,66 +98,77 @@ const AdminContactsPage: React.FC = () => {
           </div>
         )}
         {!isLoading && !error && (
-          <DataTable
-            data={contacts}
-            columns={[
-              {
-                header: "Date Réception",
-                accessorKey: "created_at",
-                cell: (contact) => (
-                  <div className="text-muted-foreground text-sm">
-                    {format(new Date(contact.created_at), 'Pp', { locale: fr })}
-                  </div>
-                ),
-                enableSorting: true
-              },
-              {
-                header: "Nom",
-                accessorKey: "name",
-                cell: (contact) => (
-                  <div className="flex items-center">
-                    <User className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{contact.name}</span>
-                  </div>
-                ),
-                enableSorting: true
-              },
-              {
-                header: "Email",
-                accessorKey: "email",
-                cell: (contact) => (
-                  <div className="flex items-center">
-                    <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>{contact.email}</span>
-                  </div>
-                )
-              },
-              {
-                header: "Sujet",
-                accessorKey: "subject",
-                cell: (contact) => (
-                  <div className="flex items-center">
-                    <Info className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>{contact.subject || '-'}</span>
-                  </div>
-                ),
-                enableSorting: true
-              },
-              {
-                header: "Message",
-                accessorKey: "message",
-                cell: (contact) => (
-                  <div className="flex items-start max-w-md">
-                    <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground mt-0.5" />
-                    <span className="line-clamp-2 whitespace-pre-wrap">{contact.message}</span>
-                  </div>
-                )
-              }
-            ]}
-            searchPlaceholder="Rechercher des messages..."
-            searchFields={["name", "email", "subject", "message"]}
-            emptyMessage="Aucun message de contact trouvé."
-          />
+          <>
+            <DataTable
+              data={contacts}
+              columns={[
+                {
+                  header: "Date Réception",
+                  accessorKey: "created_at",
+                  cell: (contact) => (
+                    <div className="text-muted-foreground text-sm">
+                      {format(new Date(contact.created_at), 'Pp', { locale: fr })}
+                    </div>
+                  ),
+                  enableSorting: true
+                },
+                {
+                  header: "Nom",
+                  accessorKey: "name",
+                  cell: (contact) => (
+                    <div className="flex items-center">
+                      <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{contact.name}</span>
+                    </div>
+                  ),
+                  enableSorting: true
+                },
+                {
+                  header: "Email",
+                  accessorKey: "email",
+                  cell: (contact) => (
+                    <div className="flex items-center">
+                      <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>{contact.email}</span>
+                    </div>
+                  )
+                },
+                {
+                  header: "Sujet",
+                  accessorKey: "subject",
+                  cell: (contact) => (
+                    <div className="flex items-center">
+                      <Info className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>{contact.subject || '-'}</span>
+                    </div>
+                  ),
+                  enableSorting: true
+                },
+                {
+                  header: "Message",
+                  accessorKey: "message",
+                  cell: (contact) => (
+                    <div className="flex items-start max-w-md">
+                      <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground mt-0.5" />
+                      <span className="line-clamp-2 whitespace-pre-wrap">{contact.message}</span>
+                    </div>
+                  )
+                }
+              ]}
+              searchPlaceholder="Rechercher des messages..."
+              searchFields={["name", "email", "subject", "message"]}
+              emptyMessage="Aucun message de contact trouvé."
+              onRowClick={handleContactClick}
+              rowClassName={() => "cursor-pointer hover:bg-muted/50"}
+            />
+
+            {/* Modale de détails du contact */}
+            <ContactDetailsModal
+              contact={selectedContact}
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+            />
+          </>
         )}
       </CardContent>
     </Card>

@@ -7,6 +7,7 @@ import DataTable from './DataTable';
 import { useToast } from "./ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
+import AppointmentDetailsModal from './AppointmentDetailsModal';
 
 interface Appointment {
   id: string;
@@ -23,6 +24,8 @@ const AdminAppointmentsPage: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fonction de retour supprimée
 
@@ -69,6 +72,17 @@ const AdminAppointmentsPage: React.FC = () => {
     return format(new Date(dateString), 'PPP p', { locale: fr });
   };
 
+  // Fonction pour ouvrir la modale avec les détails du rendez-vous
+  const handleAppointmentClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setIsModalOpen(true);
+  };
+
+  // Fonction pour fermer la modale
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Card className="m-4">
       <CardHeader>
@@ -89,69 +103,80 @@ const AdminAppointmentsPage: React.FC = () => {
           </div>
         )}
         {!isLoading && !error && (
-          <DataTable
-            data={appointments}
-            columns={[
-              {
-                header: "Date & Heure RDV",
-                accessorKey: "appointment_datetime",
-                cell: (appointment) => (
-                  <div className="flex items-center">
-                    <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>{formatDateTime(appointment.appointment_datetime)}</span>
-                  </div>
-                ),
-                enableSorting: true
-              },
-              {
-                header: "Nom",
-                accessorKey: "name",
-                cell: (appointment) => (
-                  <div className="font-medium">{appointment.name}</div>
-                ),
-                enableSorting: true
-              },
-              {
-                header: "Email",
-                accessorKey: "email",
-                cell: (appointment) => (
-                  <div className="flex items-center">
-                    <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>{appointment.email}</span>
-                  </div>
-                )
-              },
-              {
-                header: "Message",
-                accessorKey: "message",
-                cell: (appointment) => (
-                  <div className="flex items-start">
-                    {appointment.message ? (
-                      <>
-                        <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground mt-0.5" />
-                        <span className="line-clamp-2">{appointment.message}</span>
-                      </>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </div>
-                )
-              },
-              {
-                header: "Date Création",
-                accessorKey: "created_at",
-                cell: (appointment) => (
-                  <div className="text-muted-foreground text-sm">
-                    {format(new Date(appointment.created_at), 'Pp', { locale: fr })}
-                  </div>
-                ),
-                enableSorting: true
-              }
-            ]}
-            searchPlaceholder="Rechercher des rendez-vous..."
-            searchFields={["name", "email", "message"]}
-            emptyMessage="Aucun rendez-vous trouvé."
-          />
+          <>
+            <DataTable
+              data={appointments}
+              columns={[
+                {
+                  header: "Date & Heure RDV",
+                  accessorKey: "appointment_datetime",
+                  cell: (appointment) => (
+                    <div className="flex items-center">
+                      <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>{formatDateTime(appointment.appointment_datetime)}</span>
+                    </div>
+                  ),
+                  enableSorting: true
+                },
+                {
+                  header: "Nom",
+                  accessorKey: "name",
+                  cell: (appointment) => (
+                    <div className="font-medium">{appointment.name}</div>
+                  ),
+                  enableSorting: true
+                },
+                {
+                  header: "Email",
+                  accessorKey: "email",
+                  cell: (appointment) => (
+                    <div className="flex items-center">
+                      <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>{appointment.email}</span>
+                    </div>
+                  )
+                },
+                {
+                  header: "Message",
+                  accessorKey: "message",
+                  cell: (appointment) => (
+                    <div className="flex items-start">
+                      {appointment.message ? (
+                        <>
+                          <MessageSquare className="mr-2 h-4 w-4 text-muted-foreground mt-0.5" />
+                          <span className="line-clamp-2">{appointment.message}</span>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </div>
+                  )
+                },
+                {
+                  header: "Date Création",
+                  accessorKey: "created_at",
+                  cell: (appointment) => (
+                    <div className="text-muted-foreground text-sm">
+                      {format(new Date(appointment.created_at), 'Pp', { locale: fr })}
+                    </div>
+                  ),
+                  enableSorting: true
+                }
+              ]}
+              searchPlaceholder="Rechercher des rendez-vous..."
+              searchFields={["name", "email", "message"]}
+              emptyMessage="Aucun rendez-vous trouvé."
+              onRowClick={handleAppointmentClick}
+              rowClassName={() => "cursor-pointer hover:bg-muted/50"}
+            />
+
+            {/* Modale de détails du rendez-vous */}
+            <AppointmentDetailsModal
+              appointment={selectedAppointment}
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+            />
+          </>
         )}
       </CardContent>
     </Card>

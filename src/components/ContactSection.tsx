@@ -41,13 +41,26 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
     setErrorMessage('');
 
     try {
+      // Récupérer le token d'authentification s'il existe
+      const token = localStorage.getItem('authToken');
+
+      // Préparer les en-têtes
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      // Ajouter le token d'authentification s'il existe
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       // Remplacer par l'URL de votre API backend si différente
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/contact`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data),
+        // Inclure les cookies dans la requête
+        credentials: 'include'
       });
 
       if (!response.ok) {

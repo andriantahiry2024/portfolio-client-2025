@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Users, FileText, Calendar, MessageSquare } from 'lucide-react';
+import { Loader2, Users, FileText, Calendar, MessageSquare, Globe, Map } from 'lucide-react';
+
+interface CountryVisit {
+  country: string;
+  count: number;
+}
 
 interface DashboardStats {
   totalUsers: number;
   totalPosts: number;
   totalAppointments: number;
   totalContacts: number;
+  totalVisits: number;
+  topVisitorCountries: CountryVisit[];
 }
 
 const AdminDashboardStats: React.FC = () => {
@@ -14,7 +21,9 @@ const AdminDashboardStats: React.FC = () => {
     totalUsers: 0,
     totalPosts: 0,
     totalAppointments: 0,
-    totalContacts: 0
+    totalContacts: 0,
+    totalVisits: 0,
+    topVisitorCountries: []
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +59,7 @@ const AdminDashboardStats: React.FC = () => {
       } catch (error: any) {
         console.error('Erreur lors de la récupération des statistiques:', error);
         setError(error.message);
-        
+
         // En cas d'erreur ou si l'API n'existe pas encore, utiliser des données de secours
         // basées sur les autres appels API existants
         fetchBackupStats();
@@ -117,7 +126,7 @@ const AdminDashboardStats: React.FC = () => {
               </p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Articles</CardTitle>
@@ -130,7 +139,7 @@ const AdminDashboardStats: React.FC = () => {
               </p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Rendez-vous</CardTitle>
@@ -143,7 +152,7 @@ const AdminDashboardStats: React.FC = () => {
               </p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Messages</CardTitle>
@@ -156,6 +165,38 @@ const AdminDashboardStats: React.FC = () => {
               </p>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Visites</CardTitle>
+              <Globe className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.totalVisits}</div>
+              <p className="text-xs text-muted-foreground">
+                Visiteurs uniques
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Carte des pays visiteurs */}
+          {stats.topVisitorCountries.length > 0 && (
+            <Card className="col-span-4">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pays des visiteurs</CardTitle>
+                <Map className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {stats.topVisitorCountries.map((country, index) => (
+                    <div key={index} className="flex flex-col items-center justify-center p-2 bg-muted/50 rounded-md">
+                      <span className="text-lg font-semibold">{country.country}</span>
+                      <span className="text-sm text-muted-foreground">{country.count} visites</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
     </div>
