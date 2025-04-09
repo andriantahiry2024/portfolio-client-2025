@@ -1,6 +1,7 @@
 import React, { useState } from "react"; // Importer useState
 import { useForm } from "react-hook-form";
 import { Send, Mail, Phone, MapPin, CheckCircle, AlertCircle } from "lucide-react"; // Importer des icônes supplémentaires
+import { useToast } from "@/components/ui/use-toast";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,34 +35,26 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const { toast } = useToast();
 
   const onSubmit = async (data: ContactFormValues) => {
     setIsLoading(true);
     setSubmitStatus('idle');
     setErrorMessage('');
 
+    console.log('Envoi du formulaire de contact:', data);
+
     try {
-      // Récupérer le token d'authentification s'il existe
-      const token = localStorage.getItem('authToken');
-
-      // Préparer les en-têtes
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
-      // Ajouter le token d'authentification s'il existe
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      // Remplacer par l'URL de votre API backend si différente
+      // Simplifier la requête pour qu'elle soit similaire à celle du formulaire de rendez-vous
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/contact`, {
         method: 'POST',
-        headers,
-        body: JSON.stringify(data),
-        // Inclure les cookies dans la requête
-        credentials: 'include'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
       });
+
+      console.log('Réponse du serveur:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -72,10 +65,26 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
       setSubmitStatus('success');
       form.reset(); // Réinitialiser le formulaire
 
+      // Afficher un toast de succès
+      toast({
+        title: "Message envoyé",
+        description: "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.",
+        variant: "success",
+      });
+
     } catch (error: any) {
       console.error('Erreur lors de l\'envoi du message:', error);
+      console.error('Détails de l\'erreur:', error.message, error.stack);
       setSubmitStatus('error');
-      setErrorMessage(error.message || 'Une erreur est survenue.');
+      const errorMsg = error.message || 'Une erreur est survenue.';
+      setErrorMessage(errorMsg);
+
+      // Afficher un toast d'erreur
+      toast({
+        title: "Erreur",
+        description: errorMsg,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

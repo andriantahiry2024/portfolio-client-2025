@@ -10,6 +10,7 @@ import { format, addDays, setHours, setMinutes, isBefore, isAfter } from 'date-f
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '@/components/ui/use-toast';
 
 interface TimeSlot {
   time: string;
@@ -34,6 +35,7 @@ export function AppointmentCalendar() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = React.useState('');
+  const { toast } = useToast();
 
   // Désactiver les dates passées et les week-ends
   const disabledDays = React.useCallback((date: Date) => {
@@ -76,7 +78,15 @@ export function AppointmentCalendar() {
 
       // Succès
       setSubmitStatus('success');
-      // Optionnel: Réinitialiser le formulaire ou afficher un message de succès
+
+      // Afficher un toast de succès
+      toast({
+        title: "Rendez-vous confirmé",
+        description: "Votre demande de rendez-vous a été envoyée avec succès. Nous vous contacterons bientôt.",
+        variant: "success",
+      });
+
+      // Réinitialiser le formulaire
       setSelectedDate(undefined);
       setSelectedTime(undefined);
       setName('');
@@ -86,14 +96,22 @@ export function AppointmentCalendar() {
     } catch (error: any) {
       console.error('Erreur lors de la prise de rendez-vous:', error);
       setSubmitStatus('error');
-      setErrorMessage(error.message || 'Une erreur est survenue.');
+      const errorMsg = error.message || 'Une erreur est survenue.';
+      setErrorMessage(errorMsg);
+
+      // Afficher un toast d'erreur
+      toast({
+        title: "Erreur",
+        description: errorMsg,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-900 text-black dark:text-white"> 
+    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-900 text-black dark:text-white">
       <h1 className='text-center mt-10 text-2xl font-bold'>Prendre un rendez-vous</h1>
       <CardHeader>
         <CardTitle>Prendre un rendez-vous</CardTitle>
@@ -114,7 +132,7 @@ export function AppointmentCalendar() {
                 className="rounded-md border"
               />
             </div>
-            
+
             <div className="flex-1 space-y-4">
               <div className="space-y-2">
                 <Label>Créneaux disponibles</Label>
@@ -223,4 +241,4 @@ export function AppointmentCalendar() {
   );
 }
 
-export default AppointmentCalendar; 
+export default AppointmentCalendar;

@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter, Phone, MapPin } from "lucide-react";
 
 interface FooterProps {
   className?: string;
@@ -27,7 +27,7 @@ const Footer = ({ className }: FooterProps = {}) => {
     },
     {
       icon: <Mail className="h-5 w-5" />,
-      href: "mailto:contact@example.com",
+      href: "mailto:andriantahirynomena@gmail.com",
       label: "Email",
     },
   ];
@@ -46,7 +46,7 @@ const Footer = ({ className }: FooterProps = {}) => {
       </div>
 
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">NA</div>
@@ -81,14 +81,21 @@ const Footer = ({ className }: FooterProps = {}) => {
             </ul>
           </div>
 
-          <div>
+          <div className="sm:col-span-2 md:col-span-1">
             <h3 className="font-semibold text-lg mb-4">Contact</h3>
-            <ul className="space-y-2">
+            <ul className="space-y-2 max-w-xs">
               <li className="flex items-center gap-2 text-muted-foreground">
-                <Mail className="h-4 w-4" />
-                <a href="mailto:contact@example.com" className="hover:text-primary transition-colors">contact@example.com</a>
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <a href="mailto:andriantahirynomena@gmail.com" className="hover:text-primary transition-colors truncate">andriantahirynomena@gmail.com</a>
               </li>
-              <li className="text-muted-foreground">Madagascar</li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <Phone className="h-4 w-4 flex-shrink-0" />
+                <a href="tel:+261349671222" className="hover:text-primary transition-colors">+261 34 96 712 22</a>
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4 flex-shrink-0" />
+                <span>Antananarivo, Madagascar</span>
+              </li>
             </ul>
           </div>
         </div>
