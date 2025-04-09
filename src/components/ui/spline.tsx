@@ -1,6 +1,8 @@
 'use client'
 
-import { Suspense, lazy, useRef, useEffect } from 'react'
+import { Suspense, lazy, useRef, useEffect, useState } from 'react'
+
+// Lazy load simplifié
 const Spline = lazy(() => import('@splinetool/react-spline'))
 
 interface SplineSceneProps {
@@ -15,46 +17,45 @@ export function SplineScene({ scene, className, allowScroll = true }: SplineScen
   // Désactiver la capture des événements de défilement
   useEffect(() => {
     if (!allowScroll || !containerRef.current) return;
-    
+
     const container = containerRef.current;
-    
+
     // Fonction pour gérer le défilement tout en permettant l'interaction
     const handleWheel = (e: WheelEvent) => {
-      // Ne pas empêcher la propagation par défaut
       // Permettre le défilement de la page
       window.scrollBy({
         top: e.deltaY
       });
     };
-    
-    // Écouter les événements wheel avec passive true pour de meilleures performances
+
+    // Écouter les événements wheel
     container.addEventListener('wheel', handleWheel, { passive: true });
-    
+
     return () => {
       container.removeEventListener('wheel', handleWheel);
     };
   }, [allowScroll]);
 
   return (
-    <div 
-      ref={containerRef} 
-      className={className} 
-      style={{ 
+    <div
+      ref={containerRef}
+      className={className}
+      style={{
         touchAction: 'pan-y',
         position: 'relative',
         zIndex: 1
       }}
     >
-      <Suspense 
+      <Suspense
         fallback={
           <div className="w-full h-full flex items-center justify-center">
-            <span className="loader"></span>
+            <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
           </div>
         }
       >
         <Spline
           scene={scene}
-          style={{ 
+          style={{
             pointerEvents: 'auto',
             width: '100%',
             height: '100%'
@@ -63,4 +64,4 @@ export function SplineScene({ scene, className, allowScroll = true }: SplineScen
       </Suspense>
     </div>
   );
-} 
+}

@@ -95,7 +95,9 @@ const AdminDashboardStats: React.FC = () => {
           totalUsers: users.length,
           totalPosts: posts.length,
           totalAppointments: appointments.length,
-          totalContacts: contacts.length
+          totalContacts: contacts.length,
+          totalVisits: 0, // Valeur par défaut car nous n'avons pas ces données
+          topVisitorCountries: [] // Tableau vide car nous n'avons pas ces données
         });
       } catch (error) {
         console.error('Erreur lors de la récupération des statistiques de secours:', error);

@@ -89,6 +89,14 @@ const BlogPage = () => {
             </Button>
           </div>
 
+          {/* Bannière "En cours de développement" */}
+          <div className="bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-lg p-6 mb-12 text-center">
+            <h2 className="text-2xl font-bold text-amber-800 dark:text-amber-300 mb-2">En cours de développement</h2>
+            <p className="text-amber-700 dark:text-amber-400">
+              La section blog est actuellement en cours de développement. De nouvelles fonctionnalités et contenus seront bientôt disponibles.
+            </p>
+          </div>
+
           {/* Search and Filter */}
           <div className="mb-12 max-w-3xl mx-auto">
             <div className="relative mb-6">

@@ -3,16 +3,40 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
+import { registerServiceWorker } from "./serviceWorkerRegistration";
 
-import { TempoDevtools } from "tempo-devtools";
-TempoDevtools.init();
+// Initialisation des outils de développement
+if (import.meta.env.DEV) {
+  import("tempo-devtools").then(({ TempoDevtools }) => {
+    TempoDevtools.init();
+  });
+}
 
 const basename = import.meta.env.BASE_URL;
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  // <React.StrictMode> {/* Commenté pour éviter le double rendu en développement */}
+// Supprimer le loader initial
+const removeInitialLoader = () => {
+  const initialLoader = document.querySelector('.initial-loader');
+  if (initialLoader) {
+    initialLoader.classList.add('fade-out');
+    setTimeout(() => {
+      initialLoader.remove();
+    }, 500);
+  }
+};
+
+// Rendu de l'application
+const root = document.getElementById("root");
+if (root) {
+  ReactDOM.createRoot(root).render(
     <BrowserRouter basename={basename}>
       <App />
     </BrowserRouter>
-  // </React.StrictMode>, {/* Commenté pour éviter le double rendu en développement */}
-);
+  );
+
+  // Supprimer le loader initial après un court délai
+  setTimeout(removeInitialLoader, 100);
+
+  // Enregistrer le service worker
+  registerServiceWorker();
+}

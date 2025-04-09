@@ -87,6 +87,13 @@ const BlogSection = ({
             {description}
           </p>
 
+          {/* Bannière "En cours de développement" */}
+          <div className="bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-lg p-4 mb-8 text-center max-w-3xl mx-auto">
+            <p className="text-amber-700 dark:text-amber-400 text-sm">
+              La section blog est actuellement en cours de développement. De nouvelles fonctionnalités et contenus seront bientôt disponibles.
+            </p>
+          </div>
+
           {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             {categories.map((category) => (

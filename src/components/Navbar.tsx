@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu, X, LogOut, User } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router-dom"; // Ajouter Link
 import { useToast } from "@/components/ui/use-toast";
+import { motion } from "framer-motion";
 
 interface NavbarProps {
   className?: string;
@@ -16,6 +17,7 @@ interface UserData {
   firstName?: string;
   lastName?: string;
   role: string;
+  name?: string; // Ajout de la propriété name pour compatibilité
 }
 
 const Navbar = ({ className = "" }: NavbarProps) => {

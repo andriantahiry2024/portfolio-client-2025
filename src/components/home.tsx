@@ -31,7 +31,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background home-component">
       <Navbar />
 
       {/* Main Content */}
@@ -44,7 +44,7 @@ const Home = () => {
             className="absolute inset-0 pointer-events-none"
           />
         </section>
-        
+
         {/* About Section */}
         <section id="about">
           <FadeInView>
@@ -86,7 +86,7 @@ const Home = () => {
             <AppointmentCalendar />
           </FadeInView>
         </section>
-        
+
         {/* Chatbot Section */}
         <section id="chatbot">
           {/* <FadeInView delay={0.2} direction="right"> {/* Temporairement supprimé pour tester le scroll */}
