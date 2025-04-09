@@ -72,7 +72,7 @@ const BlogSection = ({
 
   return (
     <section id="blog" className="py-20 bg-background w-full">
-      <div className="container mx-auto px-4">
+      <div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

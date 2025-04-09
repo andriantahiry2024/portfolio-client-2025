@@ -102,7 +102,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-black text-foreground overflow-x-hidden;
   }
 
   /* Ensure text is readable in dark mode */
@@ -123,8 +123,16 @@
     transition-timing-function: ease-in-out;
 
   }
-  body {
-    overflow-x: hidden;
+  /* Supprimé car déjà appliqué plus haut */
+
+  /* Classe pour limiter la largeur du contenu */
+  .content-container {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    width: 100%;
   }
   /* 3D transform styles */
   .transform-style-3d {

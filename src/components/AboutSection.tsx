@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import LocationMap from "./LocationMap";
-import { 
-  FaReact, 
-  FaNodeJs, 
-  FaDocker, 
+import {
+  FaReact,
+  FaNodeJs,
+  FaDocker,
   FaGitAlt,
   FaFigma
 } from "react-icons/fa";
-import { 
-  SiTypescript, 
-  SiTailwindcss, 
-  SiExpress, 
-  SiMongodb, 
+import {
+  SiTypescript,
+  SiTailwindcss,
+  SiExpress,
+  SiMongodb,
   SiGraphql,
   SiNextdotjs,
   SiPostgresql
@@ -118,7 +118,7 @@ const AboutSection = ({
 }: AboutSectionProps) => {
   return (
     <section id="about" className="py-20 bg-background w-full">
-      <div className="container mx-auto px-4">
+      <div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -198,7 +198,7 @@ const AboutSection = ({
                         }}
                         className="border-l-2 border-primary/50 pl-4"
                       >
-                        <motion.h4 
+                        <motion.h4
                           initial={{ opacity: 0, y: 10 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true, amount: 0.3 }}
@@ -210,7 +210,7 @@ const AboutSection = ({
                         >
                           {exp.title}
                         </motion.h4>
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0, y: 10 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true, amount: 0.3 }}
@@ -222,7 +222,7 @@ const AboutSection = ({
                         >
                           {exp.company} | {exp.period}
                         </motion.p>
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0, y: 10 }}
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true, amount: 0.3 }}
@@ -243,7 +243,7 @@ const AboutSection = ({
                   <h3 className="text-xl font-semibold mb-4">Formation</h3>
                   <div className="space-y-4">
                     {education.map((edu, index) => (
-                      <motion.div 
+                      <motion.div
                         key={index}
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}

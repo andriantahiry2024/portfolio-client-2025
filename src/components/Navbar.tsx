@@ -158,12 +158,12 @@ const Navbar = ({ className = "" }: NavbarProps) => {
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
         isScrolled
-          ? "bg-background/80 backdrop-blur-md border-b border-border/40 shadow-sm"
-          : "bg-transparent",
+          ? "bg-black/80 backdrop-blur-md border-b border-border/40 shadow-sm"
+          : "bg-black",
         className,
       )}
     >
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+      <div className="max-w-[1280px] mx-auto px-4 h-20 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
           <a
@@ -180,9 +180,9 @@ const Navbar = ({ className = "" }: NavbarProps) => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1"> {/* Ajuster space-x si besoin */}
+        <nav className="hidden md:flex items-center space-x-1 overflow-x-auto"> {/* Ajuster space-x si besoin */}
           {/* Liens de navigation principaux */}
-          <div className="bg-background/30 backdrop-blur-sm rounded-full px-2 py-1.5 border border-white/10">
+          <div className="bg-black/30 backdrop-blur-sm rounded-full px-2 py-1.5 border border-white/10 flex flex-wrap">
             {navItems
               .filter(item => !(item.name === 'Admin' && (!userData || !['ADMIN', 'SUPERADMIN'].includes(userData.role)))) // Filtrer Admin si non autorisé
               .filter(item => !(item.name === 'Blog' && location.pathname.startsWith('/blog'))) // Optionnel: Cacher Blog si déjà sur une page de blog

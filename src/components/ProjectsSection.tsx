@@ -104,8 +104,8 @@ const ProjectsSection = ({
   // Extract unique categories from projects
   const categories = [
     "tous",
-    ...new Set(projects.map((project) => project.category === "web" ? "web" : 
-                            project.category === "mobile" ? "mobile" : 
+    ...new Set(projects.map((project) => project.category === "web" ? "web" :
+                            project.category === "mobile" ? "mobile" :
                             project.category === "design" ? "design" : project.category)),
   ];
 
@@ -139,7 +139,7 @@ const ProjectsSection = ({
 
   return (
     <section id="projects" className="py-20 bg-background">
-      <div className="container mx-auto px-4">
+      <div>
         <div className="text-center mb-16">
           <motion.h2
             initial={{ opacity: 0, y: -20 }}

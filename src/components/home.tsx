@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "./Navbar";
 import HeroSection from "./HeroSection";
@@ -7,10 +7,8 @@ import SkillsSection from "./SkillsSection";
 import ProjectsSection from "./ProjectsSection";
 import ContactSection from "./ContactSection";
 import Footer from "./Footer";
-import TickerSection from "./TickerSection";
 import BlogSection from "./BlogSection";
 import SliderSection from "./SliderSection";
-import Scene3D from "./Scene3D";
 import AppointmentCalendar from "./AppointmentCalendar";
 import ChatbotSection from "./ChatbotSection";
 import FadeInView from "./FadeInView";
@@ -31,13 +29,13 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background home-component">
+    <div className="min-h-screen bg-black home-component">
       <Navbar />
 
       {/* Main Content */}
-      <main>
+      <main className="max-w-[1280px] mx-auto px-4">
         {/* Hero Section with Parallax Effect */}
-        <section id="home" className="relative h-screen">
+        <section id="home" className="relative h-screen p-4 mb-8">
           <HeroSection />
           <motion.div
             style={{ opacity }}

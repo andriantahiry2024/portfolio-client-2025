@@ -1,16 +1,14 @@
 'use client'
 
-import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "./ui/button";
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
-import { cn } from "../lib/utils";
+import { ArrowDown, GithubIcon, Linkedin, Mail } from "lucide-react";
 import { SplineScene } from "@/components/ui/spline";
 import { Spotlight } from "@/components/ui/spotlight";
 import { useTypedSpotlightEffect } from '@/hooks/useSpotlightEffect';
 
 interface HeroSectionProps {
   name?: string;
+  firstname?: string;
   title?: string;
   description?: string;
   ctaText?: string;
@@ -18,7 +16,8 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({
-  name = "Nomenahasina Andriantahiry",
+  name = "Andriantahiry",
+  firstname = "Nomenahasina",
   title = "Full Stack Developer",
   description = "Je crée des applications web modernes et performantes avec une attention particulière aux détails et à l'expérience utilisateur.",
   ctaText = "Voir mes projets",
@@ -26,11 +25,12 @@ const HeroSection = ({
 }: HeroSectionProps) => {
   // Utiliser le hook générique avec le bon type pour chaque élément
   const titleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
+  const titleRef2 = useTypedSpotlightEffect<HTMLHeadingElement>();
   const subtitleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
   const descriptionRef = useTypedSpotlightEffect<HTMLParagraphElement>();
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-black via-black/95 to-purple-950/30 overflow-hidden relative">
+    <div className="w-full h-screen bg-black overflow-hidden relative" style={{ borderRadius: '40px' }}>
       {/* Ajout d'un effet de particules subtil */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute h-2 w-2 rounded-full bg-blue-400 animate-pulse" style={{ top: '10%', left: '20%', animationDelay: '0s' }}></div>
@@ -50,9 +50,9 @@ const HeroSection = ({
         }}
       />
 
-      <div className="flex h-full relative">
+      <div className="flex h-full relative rounded-xl overflow-hidden">
         {/* Left content - with improved responsive sizing */}
-        <div className="w-full md:flex-1 px-4 py-8 md:p-8 relative z-10 flex flex-col justify-center">
+        <div className="w-full md:flex-1 px-4 py-8 md:p-8 relative z-10 flex flex-col justify-center rounded-l-xl overflow-hidden">
           <div className="w-full max-w-[90%] sm:max-w-md md:max-w-lg">  {/* Improved container constraints */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -69,7 +69,16 @@ const HeroSection = ({
               transition={{ duration: 0.5 }}
               className="text-3xl xs:text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-tight break-words hyphens-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-blue-200"
             >
-              {name}
+              Andriantahiry
+            </motion.h1>
+            <motion.h1
+              ref={titleRef2}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-3xl xs:text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-tight break-words hyphens-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-blue-200 mb-2"
+            >
+              Nomenahasina
             </motion.h1>
             <motion.h2
               ref={subtitleRef}
@@ -119,7 +128,7 @@ const HeroSection = ({
                 className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/10 flex items-center justify-center"
                 aria-label="Github"
               >
-                <Github className="w-5 h-5" />
+                <GithubIcon className="w-5 h-5" />
               </motion.button>
 
               <motion.button
@@ -154,7 +163,7 @@ const HeroSection = ({
         </div>
 
         {/* Right content */}
-        <div className="flex-1 relative hidden md:block">
+        <div className="flex-1 relative hidden md:block rounded-r-xl overflow-hidden">
           <div className="absolute inset-0 z-10">
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"

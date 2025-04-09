@@ -244,7 +244,7 @@ const SkillsSection = ({
         <div className="absolute h-64 w-64 rounded-full bg-blue-500/20 blur-3xl bottom-10 right-10"></div>
       </div>
 
-      <div className="container px-4 md:px-6 relative z-10">
+      <div className="relative z-10">
         <motion.div
           className="flex flex-col items-center text-center mb-16"
           initial={{ opacity: 0, y: -20 }}
