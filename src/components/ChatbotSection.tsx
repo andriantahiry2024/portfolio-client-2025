@@ -13,38 +13,38 @@ function prepareMarkdown(text: string): string {
     .replace(/\*\*/g, '**')    // Conserver l'emphase forte
     .replace(/\*/g, '*')       // Conserver l'emphase
     .trim();
-  
+
   // Sauvegarder les blocs de code existants avant traitement
   const existingCodeBlocks: string[] = [];
   cleanedText = cleanedText.replace(/```([\s\S]*?)```/g, (match) => {
     existingCodeBlocks.push(match);
     return `__EXISTING_CODE_BLOCK_${existingCodeBlocks.length - 1}__`;
   });
-  
+
   // Identifier les titres en majuscules et les formater en markdown
-  cleanedText = cleanedText.replace(/^([A-Z][A-Z\s]+)$/gm, (match) => 
+  cleanedText = cleanedText.replace(/^([A-Z][A-Z\s]+)$/gm, (match) =>
     `## ${match.trim()}`
   );
-  
+
   // Formater les sous-sections numérotées en markdown
   cleanedText = cleanedText.replace(/^(\d+\.\s+)([A-Z][A-Z\s]+)$/gm, (match, number, title) =>
     `### ${number}${title}`
   );
-  
+
   // Conserver le format des listes à puces
   cleanedText = cleanedText.replace(/^(\s*)-\s+(.+)$/gm, (match, space, content) =>
     `${space}- ${content.trim()}`
   );
-  
+
   // Détecter et envelopper le code Python qui n'est pas déjà dans des blocs de code
   const sections = cleanedText.split(/\n\n+/);
-  
+
   const processedSections = sections.map(section => {
     // Si la section contient des marqueurs de code, ne pas la traiter
     if (section.includes('__EXISTING_CODE_BLOCK_')) {
       return section;
     }
-    
+
     // Détection automatique du code Python par motifs courants
     const pythonPatterns = [
       /^import\s+[\w_.]+/m,                   // import statements
@@ -62,26 +62,26 @@ function prepareMarkdown(text: string): string {
       /^\s*print\(/m,                         // print statements
       /^ydl_opts\s*=/m                        // ydl_opts assignments (specific to the use case)
     ];
-    
+
     // Si la section contient un ou plusieurs de ces motifs, c'est probablement du code Python
     const isPythonCode = pythonPatterns.some(pattern => pattern.test(section));
-    
+
     if (isPythonCode) {
       // Envelopper dans un bloc de code Python
       return `\`\`\`python\n${section}\n\`\`\``;
     }
-    
+
     return section;
   });
-  
+
   // Reconstituer le texte
   cleanedText = processedSections.join('\n\n');
-  
+
   // Restaurer les blocs de code existants
   cleanedText = cleanedText.replace(/__EXISTING_CODE_BLOCK_(\d+)__/g, (match, index) => {
     return existingCodeBlocks[parseInt(index)];
   });
-  
+
   return cleanedText;
 }
 
@@ -110,7 +110,7 @@ interface CodeProps {
 // Composant pour le bouton de copie
 const CopyButton: React.FC<{ content: string }> = ({ content }) => {
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = () => {
     navigator.clipboard.writeText(content)
       .then(() => {
@@ -121,7 +121,7 @@ const CopyButton: React.FC<{ content: string }> = ({ content }) => {
         console.error('Failed to copy: ', err);
       });
   };
-  
+
   return (
     <button
       onClick={handleCopy}
@@ -154,29 +154,29 @@ function extractCodeText(rawMarkdown: string, language: string, codeContent: str
   if (typeof codeContent === 'string' && !codeContent.includes('[object Object]')) {
     return codeContent;
   }
-  
+
   // Sinon, essayons d'extraire le code du markdown original
   try {
     // Recherche des blocs de code dans le markdown brut
     const regex = new RegExp('```' + language + '\\n([\\s\\S]*?)```', 'g');
     const matches = [...rawMarkdown.matchAll(regex)];
-    
+
     // Retourne le contenu du premier bloc correspondant
     if (matches.length > 0 && matches[0][1]) {
       return matches[0][1].trim();
     }
-    
+
     // Si on ne trouve pas de bloc avec la langue spécifiée, chercher n'importe quel bloc
     const genericRegex = /```(?:\w*)\n([\s\S]*?)```/g;
     const genericMatches = [...rawMarkdown.matchAll(genericRegex)];
-    
+
     if (genericMatches.length > 0 && genericMatches[0][1]) {
       return genericMatches[0][1].trim();
     }
   } catch (error) {
     console.error('Error extracting code:', error);
   }
-  
+
   // Fallback: essai de nettoyage basique
   return String(codeContent).replace(/\[object Object\]/g, '').replace(/,/g, '').trim();
 }
@@ -219,7 +219,7 @@ const ChatbotSection: React.FC = () => {
 
   // État pour stocker l'historique de la conversation pour Gemini
   const [chatHistory, setChatHistory] = useState<GeminiHistoryItem[]>([]);
-  
+
   // Fonction pour maintenir le scroll sur la zone de saisie
   // const maintainScroll = () => { // Fonction entièrement supprimée pour tester
   //   if (inputSectionRef.current) {
@@ -231,12 +231,12 @@ const ChatbotSection: React.FC = () => {
   //     }, 50);
   //   }
   // };
-  
+
   // Appeler maintainScroll après chaque nouvelle réponse
   // useEffect(() => { // Temporairement supprimé pour tester le comportement par défaut
   //   maintainScroll();
   // }, [lastBotMessage, isTyping]);
-  
+
   // Mettre à jour le markdown brut quand le message du bot change
   useEffect(() => {
     if (lastBotMessage && lastBotMessage.text) {
@@ -256,9 +256,9 @@ const ChatbotSection: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!input.trim()) return;
-    
+
     // Capturer la position actuelle du scroll
     const scrollPos = window.scrollY;
 
@@ -281,7 +281,7 @@ const ChatbotSection: React.FC = () => {
     setTimeout(() => {
       titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 300); // Délai de 300ms
-    
+
     // S'assurer que la position du scroll reste la même
     // window.scrollTo(0, scrollPos); // Commenté car maintainScroll devrait gérer le positionnement
 
@@ -313,7 +313,7 @@ const ChatbotSection: React.FC = () => {
       }
 
       const data = await response.json();
-      
+
       const botMessage: Message = {
         text: data.message,
         isBot: true,
@@ -325,7 +325,7 @@ const ChatbotSection: React.FC = () => {
         role: 'model', // 'model' est le rôle pour les réponses de Gemini
         parts: [{ text: data.message }]
       };
-      
+
       // Mettre à jour l'historique complet (utilisateur + bot)
       setChatHistory([...historyToSend, botHistoryItem]);
 
@@ -333,15 +333,15 @@ const ChatbotSection: React.FC = () => {
       setLastBotMessage(botMessage); // Garder ceci pour l'affichage immédiat
       setResponseKey(prev => prev + 1);
       setIsOffline(false);
-      
+
       // Forcer le maintien de la position du chatbot
       // maintainScroll(); // Appel supprimé car la fonction n'existe plus
-      
+
     } catch (error) {
       console.error('Error:', error);
       setIsTyping(false);
       setIsOffline(true);
-      
+
       // Message d'erreur pour l'utilisateur
       setLastBotMessage({
         text: "Je suis désolé, je rencontre des difficultés de connexion. Pourriez-vous réessayer dans quelques instants ?",
@@ -349,7 +349,7 @@ const ChatbotSection: React.FC = () => {
         timestamp: new Date(),
       });
       setResponseKey(prev => prev + 1);
-      
+
       // Forcer le maintien de la position du chatbot
       // maintainScroll(); // Appel supprimé car la fonction n'existe plus
     }
@@ -359,12 +359,12 @@ const ChatbotSection: React.FC = () => {
   return (
     <div className="py-16 px-4" id="chatbot-section" ref={chatSectionRef} tabIndex={-1} style={{ outline: 'none' }}> {/* Ajout de tabIndex et suppression du contour de focus */}
       <div className="max-w-2xl mx-auto">
-        <h2 ref={titleRef} className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white"> {/* Ajout de la ref ici */}
+        <h2 ref={titleRef} className="text-3xl font-bold text-center mb-8 text-foreground"> {/* Ajout de la ref ici */}
           Assistant Virtuel
           {isOffline && <span className="text-xs ml-2 text-red-500">(mode hors-ligne)</span>}
         </h2>
-        <h4 className="text-center mb-8 text-gray-800 dark:text-white">Modèle de Gemini light</h4>
-        
+        <h4 className="text-center mb-8 text-foreground">Modèle de Gemini light</h4>
+
         <div className="h-72 mb-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
           <ChatbotAnimation />
         </div>
@@ -391,34 +391,34 @@ const ChatbotSection: React.FC = () => {
                 transition={{ duration: 0.4 }}
                 className="w-full flex justify-center"
               >
-                <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                <div className="w-full bg-card text-card-foreground rounded-xl shadow-lg overflow-hidden">
                   <div className="p-6">
                     <div className="prose prose-lg prose-indigo dark:prose-invert max-w-none">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeHighlight]}
                         components={{
-                          h2: ({node, ...props}) => <h2 className="text-2xl font-bold my-6 text-indigo-600 dark:text-indigo-400 tracking-wide" {...props} />,
-                          h3: ({node, ...props}) => <h3 className="text-xl font-semibold my-4 text-gray-700 dark:text-gray-300" {...props} />,
+                          h2: ({node, ...props}) => <h2 className="text-2xl font-bold my-6 text-primary tracking-wide" {...props} />,
+                          h3: ({node, ...props}) => <h3 className="text-xl font-semibold my-4 text-foreground" {...props} />,
                           ul: ({node, ...props}) => <ul className="my-4 space-y-2 list-none" {...props} />,
                           li: ({node, ...props}) => (
                             <li className="flex items-start space-x-2 my-2" {...props}>
-                              <span className="text-indigo-500 dark:text-indigo-400 mt-1">•</span>
-                              <span className="text-gray-700 dark:text-gray-300">{props.children}</span>
+                              <span className="text-primary mt-1">•</span>
+                              <span className="text-foreground">{props.children}</span>
                             </li>
                           ),
                           code: ({node, inline, className, children, ...props}: CodeProps) => {
                             const match = /language-(\w+)/.exec(className || '');
                             const language = match ? match[1] : 'plaintext';
-                            
+
                             // Utilise une valeur de secours pour le contenu affiché
                             const displayContent = children || '';
-                            
+
                             // Pour la copie, utilise la fonction d'extraction sur le markdown brut
-                            const codeContent = match 
+                            const codeContent = match
                               ? extractCodeText(rawMarkdown, language, String(displayContent))
                               : String(displayContent);
-                            
+
                             return !inline && match ? (
                               <div className="relative">
                                 <CopyButton content={codeContent} />
@@ -463,7 +463,7 @@ const ChatbotSection: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Tapez votre message ici..."
-            className="flex-1 p-4 rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm"
+            className="flex-1 p-4 rounded-full border border-input bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
             // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
           />
           <button
@@ -482,4 +482,4 @@ const ChatbotSection: React.FC = () => {
   );
 };
 
-export default ChatbotSection; 
+export default ChatbotSection;

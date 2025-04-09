@@ -114,6 +114,9 @@ const Navbar = ({ className = "" }: NavbarProps) => {
 
   // Fonction optimisée pour changer le thème
   const toggleTheme = () => {
+    // Désactiver les transitions pendant le changement de thème
+    document.documentElement.classList.add('disable-transitions');
+
     // Priorité à la mise à jour visuelle
     const newTheme = theme === "dark" ? "light" : "dark";
     document.documentElement.classList.toggle("dark", newTheme === "dark");
@@ -124,6 +127,11 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     // Utiliser requestAnimationFrame pour différer l'écriture localStorage
     requestAnimationFrame(() => {
       localStorage.setItem("theme", newTheme);
+
+      // Réactiver les transitions après un court délai
+      setTimeout(() => {
+        document.documentElement.classList.remove('disable-transitions');
+      }, 100);
     });
   };
 
@@ -158,8 +166,8 @@ const Navbar = ({ className = "" }: NavbarProps) => {
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
         isScrolled
-          ? "bg-black/80 backdrop-blur-md border-b border-border/40 shadow-sm"
-          : "bg-black",
+          ? "dark:bg-black/80 bg-white/90 backdrop-blur-md border-b border-border/40 shadow-sm"
+          : "dark:bg-black bg-white",
         className,
       )}
     >
@@ -182,7 +190,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1 overflow-x-auto"> {/* Ajuster space-x si besoin */}
           {/* Liens de navigation principaux */}
-          <div className="bg-black/30 backdrop-blur-sm rounded-full px-2 py-1.5 border border-white/10 flex flex-wrap">
+          <div className="dark:bg-black/30 bg-gray-100 backdrop-blur-sm rounded-full px-2 py-1.5 dark:border-white/10 border-gray-200 border flex flex-wrap">
             {navItems
               .filter(item => !(item.name === 'Admin' && (!userData || !['ADMIN', 'SUPERADMIN'].includes(userData.role)))) // Filtrer Admin si non autorisé
               .filter(item => !(item.name === 'Blog' && location.pathname.startsWith('/blog'))) // Optionnel: Cacher Blog si déjà sur une page de blog
@@ -190,7 +198,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-sm font-medium hover:text-primary transition-colors px-3 py-1.5 rounded-full hover:bg-white/10"
+                  className="text-sm font-medium hover:text-primary transition-colors px-3 py-1.5 rounded-full dark:hover:bg-white/10 hover:bg-gray-200"
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToSection(item.href, item.isExternal);
@@ -223,7 +231,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
               </>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild className="rounded-full hover:bg-white/10">
+                <Button variant="ghost" size="sm" asChild className="rounded-full dark:hover:bg-white/10 hover:bg-gray-100">
                   <Link to="/login">Connexion</Link>
                 </Button>
                 <Button
@@ -241,7 +249,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
               size="icon"
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              className="rounded-full border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-background/80"
+              className="rounded-full border border-border/40 dark:bg-black/50 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/80 hover:bg-gray-200/80"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -259,7 +267,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
             size="icon"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="rounded-full border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-background/80 h-9 w-9"
+            className="rounded-full border border-border/40 dark:bg-black/50 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/80 hover:bg-gray-200/80 h-9 w-9"
           >
             {theme === "dark" ? (
               <Sun className="h-4 w-4" />
@@ -272,7 +280,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
-            className="rounded-full border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-background/80 h-9 w-9"
+            className="rounded-full border border-border/40 dark:bg-black/50 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/80 hover:bg-gray-200/80 h-9 w-9"
           >
             {isMobileMenuOpen ? (
               <X className="h-4 w-4" />
@@ -290,7 +298,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.2 }}
-          className="md:hidden bg-background/95 backdrop-blur-md border-t border-border/20 shadow-lg"
+          className="md:hidden dark:bg-black/95 bg-white/95 backdrop-blur-md border-t border-border/20 shadow-lg"
         >
           <div className="container mx-auto px-4 py-6 space-y-2">
              {/* Liens de navigation principaux Mobile */}
@@ -301,7 +309,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block rounded-full px-4 py-2.5 text-base font-medium hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="block rounded-full px-4 py-2.5 text-base font-medium hover:bg-primary/10 hover:text-primary transition-colors dark:text-foreground"
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToSection(item.href, item.isExternal);

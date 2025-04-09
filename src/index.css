@@ -102,7 +102,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-black text-foreground overflow-x-hidden;
+    @apply bg-background text-foreground overflow-x-hidden;
   }
 
   /* Ensure text is readable in dark mode */
@@ -119,11 +119,16 @@
   body,
   * {
     transition-property: background-color, border-color, color, fill, stroke;
-    transition-duration: 200ms;
+    transition-duration: 300ms;
     transition-timing-function: ease-in-out;
-
   }
   /* Supprimé car déjà appliqué plus haut */
+
+  /* Classe pour désactiver les transitions pendant le changement de thème */
+  .disable-transitions,
+  .disable-transitions * {
+    transition: none !important;
+  }
 
   /* Classe pour limiter la largeur du contenu */
   .content-container {

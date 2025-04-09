@@ -85,7 +85,7 @@ const HeroSection = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-base xs:text-lg md:text-xl lg:text-2xl font-medium text-blue-200 mb-3 md:mb-6"
+              className="text-base xs:text-lg md:text-xl lg:text-2xl font-medium text-primary mb-3 md:mb-6"
             >
               {title}
             </motion.h2>
@@ -125,7 +125,7 @@ const HeroSection = ({
                   delay: 0.8
                 }}
                 onClick={() => window.open('https://github.com/andriantahiry2024', '_blank')}
-                className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/10 flex items-center justify-center"
+                className="p-2.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/10 flex items-center justify-center"
                 aria-label="Github"
               >
                 <GithubIcon className="w-5 h-5" />
@@ -139,7 +139,7 @@ const HeroSection = ({
                   delay: 0.9
                 }}
                 onClick={() => window.open('https://linkedin.com/in/nomenahasina-andriantahiry', '_blank')}
-                className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/10 flex items-center justify-center"
+                className="p-2.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/10 flex items-center justify-center"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5" />
@@ -153,7 +153,7 @@ const HeroSection = ({
                   delay: 1.0
                 }}
                 onClick={() => window.location.href = 'mailto:contact@andriantahiry.dev'}
-                className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/10 flex items-center justify-center"
+                className="p-2.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/10 flex items-center justify-center"
                 aria-label="Email"
               >
                 <Mail className="w-5 h-5" />

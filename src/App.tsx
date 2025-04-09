@@ -59,7 +59,7 @@ const Loader = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+      className="fixed inset-0 z-50 flex items-center justify-center dark:bg-black bg-white"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
@@ -74,7 +74,7 @@ const Loader = ({ onComplete }: { onComplete: () => void }) => {
             ease: "linear",
           }}
         />
-        <p className="text-white mb-2">Chargement de votre expérience...</p>
+        <p className="text-foreground mb-2">Chargement de votre expérience...</p>
 
         {/* Barre de progression */}
         <div className="w-full bg-gray-800 rounded-full h-2.5 mb-2">
@@ -83,7 +83,7 @@ const Loader = ({ onComplete }: { onComplete: () => void }) => {
             style={{ width: `${progress}%` }}
           ></div>
         </div>
-        <p className="text-white text-sm">{progress}%</p>
+        <p className="text-foreground text-sm">{progress}%</p>
       </div>
     </motion.div>
   );

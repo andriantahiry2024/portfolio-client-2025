@@ -111,7 +111,7 @@ export function AppointmentCalendar() {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-900 text-black dark:text-white">
+    <Card className="w-full max-w-2xl mx-auto bg-card text-card-foreground">
       <h1 className='text-center mt-10 text-2xl font-bold'>Prendre un rendez-vous</h1>
       <CardHeader>
         <CardTitle>Prendre un rendez-vous</CardTitle>

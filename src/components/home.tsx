@@ -29,7 +29,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black home-component">
+    <div className="min-h-screen dark:bg-black bg-white home-component">
       <Navbar />
 
       {/* Main Content */}
@@ -79,7 +79,7 @@ const Home = () => {
         </section>
 
         {/* Appointment Calendar */}
-        <section id="appointment" className="bg-gray-dark dark:bg-dark p-5">
+        <section id="appointment" className="bg-white dark:bg-gray-900 p-5">
           <FadeInView delay={0.1} direction="up">
             <AppointmentCalendar />
           </FadeInView>
