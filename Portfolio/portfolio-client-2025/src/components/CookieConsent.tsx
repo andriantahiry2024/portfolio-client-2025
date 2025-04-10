@@ -199,7 +199,7 @@ const CookieConsent = () => {
                 <Button variant="outline" size="sm" className="h-8 text-xs px-2 dark:text-white dark:hover:text-white dark:border-white/20" onClick={rejectNonEssentialCookies}>
                   Refuser
                 </Button>
-                <Button variant="default" size="sm" className="h-8 text-xs px-2 dark:text-white" onClick={acceptAllCookies}>
+                <Button variant="default" size="sm" className="h-8 text-xs px-2" onClick={acceptAllCookies}>
                   Accepter
                 </Button>
               </div>

@@ -7,7 +7,7 @@ import { ArrowDown, Linkedin, Mail } from "lucide-react";
 // Charger SplineScene paresseusement
 const SplineScene = lazy(() => import("@/components/ui/spline").then(module => ({ default: module.SplineScene })));
 import { Spotlight } from "@/components/ui/spotlight";
-import { useTypedSpotlightEffect } from '@/hooks/useSpotlightEffect';
+// import { useTypedSpotlightEffect } from '@/hooks/useSpotlightEffect'; // Removed hook import
 
 interface HeroSectionProps {
   name?: string;
@@ -27,10 +27,11 @@ const HeroSection = ({
   onCtaClick = () => console.log("CTA clicked"),
 }: HeroSectionProps) => {
   // Utiliser le hook générique avec le bon type pour chaque élément
-  const titleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
-  const titleRef2 = useTypedSpotlightEffect<HTMLHeadingElement>();
-  const subtitleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
-  const descriptionRef = useTypedSpotlightEffect<HTMLParagraphElement>();
+  // Removed hook calls
+  // const titleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
+  // const titleRef2 = useTypedSpotlightEffect<HTMLHeadingElement>();
+  // const subtitleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
+  // const descriptionRef = useTypedSpotlightEffect<HTMLParagraphElement>();
 
   return (
     <div className="w-full h-screen bg-black overflow-hidden relative dark:bg-black" style={{ borderRadius: '50px' }}>
@@ -44,18 +45,12 @@ const HeroSection = ({
         <div className="absolute h-2 w-2 rounded-full bg-blue-400 animate-pulse" style={{ top: '20%', left: '70%', animationDelay: '2.5s' }}></div>
       </div>
 
-      <Spotlight
-        className="-top-40 left-0 md:left-60 md:-top-20"
-        size={900}
-        springOptions={{
-          stiffness: 400,
-          damping: 60
-        }}
-      />
+      {/* Restore Spotlight to original position and remove extra classes */}
+      <Spotlight size={900} />
 
       <div className="flex h-full relative rounded-xl overflow-hidden bg-black dark:bg-black">
         {/* Left content - with improved responsive sizing */}
-        <div className="w-full md:flex-1 px-4 py-8 md:p-8 relative z-10 flex flex-col justify-center rounded-l-xl overflow-hidden bg-black dark:bg-black text-white">
+        <div className="w-full md:flex-1 px-4 py-8 md:p-8 relative z-10 flex flex-col justify-center rounded-l-xl overflow-hidden bg-black dark:bg-black text-white"> {/* Remove pointer-events-none */}
           <div className="w-full max-w-[90%] sm:max-w-md md:max-w-lg">  {/* Improved container constraints */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -66,7 +61,7 @@ const HeroSection = ({
             </motion.div>
 
             <motion.h1
-              ref={titleRef}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -75,7 +70,7 @@ const HeroSection = ({
               Andriantahiry
             </motion.h1>
             <motion.h1
-              ref={titleRef2}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -84,16 +79,16 @@ const HeroSection = ({
               Nomenahasina
             </motion.h1>
             <motion.h2
-              ref={subtitleRef}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-base xs:text-lg md:text-xl lg:text-2xl font-medium text-primary mb-3 md:mb-6"
+              className="text-base xs:text-lg md:text-xl lg:text-2xl font-medium text-gray-600 dark:text-gray-100 mb-3 md:mb-6"
             >
               {title}
             </motion.h2>
             <motion.p
-              ref={descriptionRef}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -166,7 +161,7 @@ const HeroSection = ({
         </div>
 
         {/* Right content */}
-        <div className="flex-1 relative hidden md:block rounded-r-xl overflow-hidden bg-black dark:bg-black">
+        <div className="flex-1 relative hidden md:block rounded-r-xl overflow-hidden bg-black dark:bg-black"> {/* Remove pointer-events-none */}
           <div className="absolute inset-0 z-10">
             {/* Utiliser Suspense pour SplineScene */}
             <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white">Chargement de la scène 3D...</div>}>

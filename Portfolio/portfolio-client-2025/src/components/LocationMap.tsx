@@ -19,7 +19,7 @@ interface LocationMapProps {
 }
 
 const LocationMap: React.FC<LocationMapProps> = ({ 
-  center = [48.8566, 2.3522] as LatLngExpression, // Paris coordinates by default
+  center = [-18.918272938320722, 47.521204401851314] as LatLngExpression, // Paris coordinates by default
   zoom = 13 
 }) => {
   return (
