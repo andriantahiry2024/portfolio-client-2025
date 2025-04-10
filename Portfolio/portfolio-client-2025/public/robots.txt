@@ -1,0 +1,6 @@
+# robots.txt pour le portfolio
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://portfolio.teckforgeek.com/sitemap.xml
