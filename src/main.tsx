@@ -3,7 +3,8 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-import { registerServiceWorker } from "./serviceWorkerRegistration";
+import { registerServiceWorker, unregisterServiceWorker } from "./serviceWorkerRegistration";
+import { clearServiceWorkerCache } from "./lib/clearCache";
 
 // Initialisation des outils de développement
 if (import.meta.env.DEV) {
@@ -37,6 +38,16 @@ if (root) {
   // Supprimer le loader initial après un court délai
   setTimeout(removeInitialLoader, 100);
 
-  // Enregistrer le service worker
-  registerServiceWorker();
+  // Désactiver temporairement le service worker pour résoudre les problèmes
+  // registerServiceWorker();
+
+  // Désinscrire le service worker existant et nettoyer le cache
+  unregisterServiceWorker();
+  clearServiceWorkerCache().then(success => {
+    if (success) {
+      console.log('Service worker désactivé et cache nettoyé avec succès');
+    } else {
+      console.warn('Impossible de nettoyer complètement le cache du service worker');
+    }
+  });
 }

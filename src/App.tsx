@@ -1,15 +1,18 @@
-import { Suspense, lazy, useState, useEffect } from "react";
+import { Suspense, lazy, useState, useEffect, useRef } from "react";
 // import { initFacebookSDK } from "./lib/facebook"; // Temporairement commenté
 import { useRoutes, Routes, Route, useLocation } from "react-router-dom";
-import Home from "./components/home";
 import routes from "tempo-routes";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "./components/ui/toaster";
 import ScrollToTopButton from "./components/ScrollToTopButton";
-import ApiTest from "./components/ApiTest"; // Importer notre composant de test
-import OfflineNotification from "./components/OfflineNotification"; // Importer la notification hors ligne
-import CookieConsent from "./components/CookieConsent"; // Importer le composant de consentement aux cookies
+
+// Chargement dynamique des composants non critiques
+const ApiTest = lazy(() => import("./components/ApiTest"));
+const OfflineNotification = lazy(() => import("./components/OfflineNotification"));
+const CookieConsent = lazy(() => import("./components/CookieConsent"));
+const Home = lazy(() => import("./components/home"));
+const ServiceWorkerErrorHandler = lazy(() => import("./components/ServiceWorkerErrorHandler"));
 
 // Fonction de préchargement pour les composants importants
 const preloadComponent = (importFn: () => Promise<any>) => {
@@ -65,7 +68,7 @@ const Loader = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center dark:bg-black bg-white dark:text-white" // Supprimer text-black
+      className="fixed inset-0 z-50 flex items-center justify-center dark:bg-black bg-white dark:text-white"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
@@ -99,6 +102,8 @@ function App() {
   const location = useLocation();
   const [showLoader, setShowLoader] = useState(true);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [hasServiceWorkerError, setHasServiceWorkerError] = useState(false);
+  const errorDetectionTimeout = useRef<number | null>(null);
 
   // Initialiser le thème depuis localStorage
   useEffect(() => {
@@ -106,6 +111,38 @@ function App() {
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
     setTheme(savedTheme);
   }, []);
+
+  // Détecter les erreurs de service worker
+  useEffect(() => {
+    // Vérifier si des erreurs de service worker se produisent
+    const handleError = (event: ErrorEvent) => {
+      if (
+        event.message.includes('service-worker') ||
+        event.message.includes('Failed to fetch') ||
+        event.filename?.includes('service-worker')
+      ) {
+        setHasServiceWorkerError(true);
+      }
+    };
+
+    // Écouter les erreurs
+    window.addEventListener('error', handleError);
+
+    // Définir un timeout pour vérifier si l'application se charge correctement
+    errorDetectionTimeout.current = window.setTimeout(() => {
+      // Si l'application n'est pas chargée après 10 secondes, considérer qu'il y a un problème
+      if (showLoader) {
+        setHasServiceWorkerError(true);
+      }
+    }, 10000);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      if (errorDetectionTimeout.current) {
+        window.clearTimeout(errorDetectionTimeout.current);
+      }
+    };
+  }, [showLoader]);
 
   // // Initialiser Facebook SDK lorsque le composant est monté - Temporairement commenté
   // useEffect(() => {
@@ -166,6 +203,13 @@ function App() {
       <Toaster />
       <OfflineNotification />
       <CookieConsent />
+
+      {/* Afficher le gestionnaire d'erreurs de service worker si nécessaire */}
+      {hasServiceWorkerError && (
+        <Suspense fallback={<div>Chargement du gestionnaire d'erreurs...</div>}>
+          <ServiceWorkerErrorHandler />
+        </Suspense>
+      )}
     </div>
   );
 }
