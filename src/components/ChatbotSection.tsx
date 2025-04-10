@@ -463,7 +463,7 @@ const ChatbotSection: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Tapez votre message ici..."
-            className="flex-1 p-4 rounded-full border border-input bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
+            className="flex-1 p-4 rounded-full border border-input bg-background text-foreground dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
             // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
           />
           <button
