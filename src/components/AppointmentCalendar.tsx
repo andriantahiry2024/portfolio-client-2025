@@ -11,6 +11,7 @@ import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
+// import { trackFacebookEvent } from '@/lib/facebook'; // Temporairement commenté
 
 interface TimeSlot {
   time: string;
@@ -78,6 +79,12 @@ export function AppointmentCalendar() {
 
       // Succès
       setSubmitStatus('success');
+// // Suivre l'événement avec Facebook - Temporairement commenté
+// trackFacebookEvent('AppointmentBooked', {
+//   appointmentDate: format(selectedDate, 'yyyy-MM-dd'),
+//   appointmentTime: selectedTime
+// });
+
 
       // Afficher un toast de succès
       toast({
@@ -150,11 +157,12 @@ export function AppointmentCalendar() {
                           type="button"
                           variant={selectedTime === slot.time ? 'default' : 'outline'}
                           className={cn(
-                            'w-full',
+                            'w-full dark:text-white',
                             !slot.available && 'opacity-50 cursor-not-allowed'
                           )}
                           onClick={() => slot.available && setSelectedTime(slot.time)}
                           disabled={!slot.available}
+                          /* Removed inline style forcing white text */
                         >
                           {slot.time}
                         </Button>

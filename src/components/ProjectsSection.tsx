@@ -138,7 +138,7 @@ const ProjectsSection = ({
   };
 
   return (
-    <section id="projects" className="py-20 bg-background">
+    <section id="projects" className="py-20" style={{ backgroundColor: 'var(--background)' }}>
       <div>
         <div className="text-center mb-16">
           <motion.h2

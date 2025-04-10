@@ -108,32 +108,11 @@ const SkillsSection = ({
 
   // Composant optimisé pour la barre de compétence avec getSkillIcon passé en prop
   const AnimatedSkill = React.memo(({ skill, index }: { skill: { name: string; level: number }; index: number }) => {
-    const [count, setCount] = React.useState(0);
+    // Supprimer useState et useEffect pour l'animation du compteur
     const ref = React.useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.5, margin: "50px" });
 
-    // Optimisation : Animation plus efficace avec RAF
-    React.useEffect(() => {
-      if (!isInView) return;
-
-      let rafId: number;
-      const startTime = performance.now();
-      const duration = 1000; // Réduit à 1 seconde
-
-      const animate = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-
-        setCount(Math.floor(progress * skill.level));
-
-        if (progress < 1) {
-          rafId = requestAnimationFrame(animate);
-        }
-      };
-
-      rafId = requestAnimationFrame(animate);
-      return () => cancelAnimationFrame(rafId);
-    }, [isInView, skill.level]);
+    // Le hook useInView est conservé pour déclencher l'animation globale de l'item
 
     const transformStyle = {
       transform: 'translate3d(0,0,0)',
@@ -160,14 +139,14 @@ const SkillsSection = ({
             <span className="font-medium">{skill.name}</span>
           </div>
           <span className="text-sm bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full min-w-[40px] text-center">
-            {count}%
+            {skill.level}%
           </span>
         </div>
         <div className="h-3 w-full bg-secondary/30 dark:bg-black/40 rounded-full overflow-hidden backdrop-blur-sm shadow-inner mt-2 mb-1 border border-border/10">
           <motion.div
             className="h-full bg-gradient-to-r from-primary/80 via-primary to-blue-500 relative rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: isInView ? `${skill.level}%` : 0 }}
+            initial={{ scaleX: 0 }} // Animer scaleX au lieu de width
+            animate={{ scaleX: isInView ? skill.level / 100 : 0 }} // Valeur entre 0 et 1
             transition={{
               duration: 0.8,
               delay: index * 0.05,

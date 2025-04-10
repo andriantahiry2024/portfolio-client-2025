@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import useInView from '../hooks/useInView';
 
 interface FadeInViewProps {
   children: React.ReactNode;
@@ -25,13 +24,6 @@ const FadeInView: React.FC<FadeInViewProps> = ({
   distance = 50,
   style = {},
 }) => {
-  // Utiliser notre hook personnalisé
-  const [ref, isInView] = useInView({
-    threshold,
-    triggerOnce,
-    rootMargin: '0px',
-  });
-
   // Calculer les variations initiales selon la direction
   const getInitialVariant = () => {
     switch (direction) {
@@ -67,9 +59,9 @@ const FadeInView: React.FC<FadeInViewProps> = ({
 
   return (
     <motion.div
-      ref={ref}
       initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
+      whileInView="visible" // Utiliser whileInView
+      viewport={{ once: triggerOnce, amount: threshold }} // Configurer la détection
       variants={variants}
       className={className}
       style={style}

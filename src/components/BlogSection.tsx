@@ -71,7 +71,7 @@ const BlogSection = ({
   };
 
   return (
-    <section id="blog" className="py-20 bg-background w-full">
+    <section id="blog" className="py-20 w-full" style={{ backgroundColor: 'var(--background)' }}>
       <div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

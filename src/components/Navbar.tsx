@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu, X, LogOut, User } from "lucide-react";
@@ -42,6 +42,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     { name: "Compétences", href: "#skills" },
     { name: "Interactif", href: "#interactive" },
     { name: "Projets", href: "#projects" },
+    { name: "Passions", href: "#passions" }, // Ajouter le lien Passions
     { name: "Blog", href: "/blog", isExternal: true },
     { name: "Admin", href: "/admin", isExternal: true },
     { name: "Contact", href: "#contact" },
@@ -166,8 +167,8 @@ const Navbar = ({ className = "" }: NavbarProps) => {
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
         isScrolled
-          ? "dark:bg-black/80 bg-white/90 backdrop-blur-md border-b border-border/40 shadow-sm"
-          : "dark:bg-black bg-white",
+          ? "dark:bg-black/90 dark:text-white bg-white/90 backdrop-blur-md border-b border-border/40 shadow-sm text-black"
+          : "dark:bg-black/70 dark:text-white bg-white/90 backdrop-blur-sm text-black",
         className,
       )}
     >
@@ -183,14 +184,14 @@ const Navbar = ({ className = "" }: NavbarProps) => {
             }}
           >
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">NA</div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 font-extrabold">Portfolio</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 font-extrabold dark:from-blue-400 dark:to-purple-500">Portfolio</span>
           </a>
         </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1 overflow-x-auto"> {/* Ajuster space-x si besoin */}
           {/* Liens de navigation principaux */}
-          <div className="dark:bg-black/30 bg-gray-100 backdrop-blur-sm rounded-full px-2 py-1.5 dark:border-white/10 border-gray-200 border flex flex-wrap">
+          <div id="desktop-nav-links-container" className="bg-gray-100 dark:bg-neutral-800/60 backdrop-blur-sm rounded-full px-2 py-1.5 border border-gray-200 dark:border-neutral-700 flex flex-wrap text-neutral-700 dark:text-white"> {/* Correction des styles dark/light */}
             {navItems
               .filter(item => !(item.name === 'Admin' && (!userData || !['ADMIN', 'SUPERADMIN'].includes(userData.role)))) // Filtrer Admin si non autorisé
               .filter(item => !(item.name === 'Blog' && location.pathname.startsWith('/blog'))) // Optionnel: Cacher Blog si déjà sur une page de blog
@@ -198,7 +199,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-sm font-medium hover:text-primary transition-colors px-3 py-1.5 rounded-full dark:hover:bg-white/10 hover:bg-gray-200"
+                  className="text-sm font-medium hover:text-primary transition-colors px-3 py-1.5 rounded-full dark:hover:bg-white/20 hover:bg-gray-200 dark:text-white/90 dark:hover:text-white"
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToSection(item.href, item.isExternal);
@@ -231,14 +232,14 @@ const Navbar = ({ className = "" }: NavbarProps) => {
               </>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild className="rounded-full dark:hover:bg-white/10 hover:bg-gray-100">
+                <Button variant="ghost" size="sm" asChild className="rounded-full dark:hover:bg-white/10 hover:bg-gray-100 dark:text-white dark:border-white/10">
                   <Link to="/login">Connexion</Link>
                 </Button>
                 <Button
                   variant="default"
                   size="sm"
                   asChild
-                  className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-md hover:shadow-blue-500/20 border-none"
+                  className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-md hover:shadow-blue-500/20 border-none text-white"
                 >
                    <Link to="/create-user">S'inscrire</Link>
                  </Button>
@@ -249,7 +250,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
               size="icon"
               onClick={toggleTheme}
               aria-label="Toggle theme"
-              className="rounded-full border border-border/40 dark:bg-black/50 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/80 hover:bg-gray-200/80"
+              className="rounded-full border border-border/40 dark:bg-black/70 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/90 hover:bg-gray-200/80 dark:text-white dark:border-white/20"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -267,7 +268,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
             size="icon"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="rounded-full border border-border/40 dark:bg-black/50 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/80 hover:bg-gray-200/80 h-9 w-9"
+            className="rounded-full border border-border/40 dark:bg-black/70 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/90 hover:bg-gray-200/80 h-9 w-9 dark:text-white dark:border-white/20"
           >
             {theme === "dark" ? (
               <Sun className="h-4 w-4" />
@@ -280,7 +281,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
-            className="rounded-full border border-border/40 dark:bg-black/50 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/80 hover:bg-gray-200/80 h-9 w-9"
+            className="rounded-full border border-border/40 dark:bg-black/70 bg-gray-100/80 backdrop-blur-sm dark:hover:bg-black/90 hover:bg-gray-200/80 h-9 w-9 dark:text-white dark:border-white/20"
           >
             {isMobileMenuOpen ? (
               <X className="h-4 w-4" />
@@ -298,7 +299,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.2 }}
-          className="md:hidden dark:bg-black/95 bg-white/95 backdrop-blur-md border-t border-border/20 shadow-lg"
+          className="md:hidden dark:bg-black/95 dark:text-white bg-white/95 backdrop-blur-md border-t border-border/30 shadow-lg"
         >
           <div className="container mx-auto px-4 py-6 space-y-2">
              {/* Liens de navigation principaux Mobile */}
@@ -309,7 +310,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block rounded-full px-4 py-2.5 text-base font-medium hover:bg-primary/10 hover:text-primary transition-colors dark:text-foreground"
+                  className="block rounded-full px-4 py-2.5 text-base font-medium hover:bg-primary/10 hover:text-primary transition-colors dark:text-white/90 dark:hover:text-white"
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToSection(item.href, item.isExternal);

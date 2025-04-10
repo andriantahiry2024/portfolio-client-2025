@@ -2,6 +2,7 @@ import React, { useState } from "react"; // Importer useState
 import { useForm } from "react-hook-form";
 import { Send, Mail, Phone, MapPin, CheckCircle, AlertCircle } from "lucide-react"; // Importer des icônes supplémentaires
 import { useToast } from "@/components/ui/use-toast";
+// import { trackFacebookEvent } from '@/lib/facebook'; // Temporairement commenté
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,11 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
       // Succès
       setSubmitStatus('success');
       form.reset(); // Réinitialiser le formulaire
+// // Suivre l'événement avec Facebook - Temporairement commenté
+// trackFacebookEvent('ContactFormSubmitted', {
+//   subject: data.subject || 'Sans sujet'
+// });
+
 
       // Afficher un toast de succès
       toast({
@@ -93,7 +99,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
   return (
     <section
       id={id}
-      className="py-20 px-4 md:px-8 lg:px-12 bg-background w-full min-h-screen flex items-center"
+      className="py-20 px-4 md:px-8 lg:px-12 w-full min-h-screen flex items-center" style={{ backgroundColor: 'var(--background)' }}
     >
       <div className="max-w-6xl mx-auto w-full">
         <div className="text-center mb-12">
@@ -293,7 +299,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                   )}
                 />
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isLoading}> {/* Rely on default variant */}
                   {isLoading ? (
                     <>
                       <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

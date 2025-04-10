@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button"; // Importer buttonVariants
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import LocationMap from "./LocationMap";
@@ -117,7 +117,7 @@ const AboutSection = ({
   ],
 }: AboutSectionProps) => {
   return (
-    <section id="about" className="py-20 bg-background w-full">
+    <section id="about" className="py-20 w-full" style={{ backgroundColor: 'var(--background)' }}>
       <div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -147,9 +147,14 @@ const AboutSection = ({
                 </p>
               ))}
               <div className="mt-6 space-y-4">
-                <Button variant="outline">
+                {/* Transformer le bouton en lien de téléchargement */}
+                <a
+                  href="/CV NOMENAHASINA ANDRIANTAHIRY.pdf" // Chemin relatif depuis public
+                  download="CV_Nomenahasina_Andriantahiry.pdf" // Nom suggéré pour le fichier téléchargé
+                  className={cn(buttonVariants({ variant: "outline" }), "inline-flex items-center dark:text-foreground")} // Ajouter couleur texte dark mode
+                >
                   Télécharger CV
-                </Button>
+                </a>
                 <div className="w-full h-[300px] rounded-lg overflow-hidden">
                   <LocationMap />
                 </div>
@@ -163,7 +168,7 @@ const AboutSection = ({
             transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <Card className="overflow-hidden border border-border/40 bg-background/60 backdrop-blur-sm">
+            <Card className="overflow-hidden border border-border/40 bg-card">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Compétences</h3>
                 <div className="flex flex-wrap gap-2">

@@ -20,7 +20,7 @@ const RUNTIME_CACHE_PATTERNS = [
 // Installation du service worker
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Installation');
-  
+
   // Mettre en cache les ressources essentielles
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -35,7 +35,7 @@ self.addEventListener('install', (event) => {
 // Activation du service worker
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] Activation');
-  
+
   // Supprimer les anciens caches
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -55,15 +55,24 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Ignorer les requêtes non GET
   if (event.request.method !== 'GET') return;
-  
+
   // Ignorer les requêtes de l'API backend
   if (event.request.url.includes('/api/')) return;
-  
+
+  // Ignorer les extensions Chrome
+  try {
+    const requestUrl = new URL(event.request.url);
+    if (requestUrl.protocol === 'chrome-extension:') return;
+  } catch (error) {
+    console.error('[Service Worker] Erreur lors de la vérification de l\'URL:', error);
+    return;
+  }
+
   // Stratégie de mise en cache pour les ressources statiques
-  const shouldCacheResource = RUNTIME_CACHE_PATTERNS.some(pattern => 
+  const shouldCacheResource = RUNTIME_CACHE_PATTERNS.some(pattern =>
     pattern.test(event.request.url)
   );
-  
+
   if (shouldCacheResource) {
     // Stratégie "Cache First, Network Fallback" pour les ressources statiques
     event.respondWith(
@@ -73,7 +82,7 @@ self.addEventListener('fetch', (event) => {
             // Ressource trouvée dans le cache
             return cachedResponse;
           }
-          
+
           // Ressource non trouvée dans le cache, la récupérer depuis le réseau
           return fetch(event.request)
             .then((networkResponse) => {
@@ -81,14 +90,24 @@ self.addEventListener('fetch', (event) => {
               if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
                 return networkResponse;
               }
-              
+
+              // Vérifier si l'URL est valide pour la mise en cache (pas d'extensions Chrome)
+              const requestUrl = new URL(event.request.url);
+              if (requestUrl.protocol === 'chrome-extension:') {
+                return networkResponse;
+              }
+
               // Mettre en cache la nouvelle ressource
               const responseToCache = networkResponse.clone();
               caches.open(CACHE_NAME)
                 .then((cache) => {
-                  cache.put(event.request, responseToCache);
+                  try {
+                    cache.put(event.request, responseToCache);
+                  } catch (error) {
+                    console.error('[Service Worker] Erreur lors de la mise en cache:', error);
+                  }
                 });
-                
+
               return networkResponse;
             });
         })
@@ -121,7 +140,7 @@ self.addEventListener('periodicsync', (event) => {
 // Fonction pour mettre à jour le cache
 async function updateCache() {
   const cache = await caches.open(CACHE_NAME);
-  
+
   // Mettre à jour les ressources essentielles
   for (const url of PRECACHE_ASSETS) {
     try {

@@ -66,7 +66,7 @@ export function Spotlight({
       ref={containerRef}
       className={cn(
         'pointer-events-none absolute rounded-full bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops),transparent_80%)] blur-2xl transition-opacity duration-300',
-        'from-white/40 via-white/20 to-transparent',
+        'from-white/40 via-white/20 to-transparent', // Restore original white gradient
         isHovered ? 'opacity-100' : 'opacity-60',
         className
       )}
@@ -75,7 +75,7 @@ export function Spotlight({
         height: size,
         left: spotlightLeft,
         top: spotlightTop,
-        mixBlendMode: 'screen',
+        mixBlendMode: 'screen', // Restore blend mode
       }}
     />
   );

@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Calendar Dark Mode Text Fix */
+.dark .rdp { /* Target react-day-picker root in dark mode */
+  color: hsl(var(--foreground)); /* Set default text to light */
+}
+/* Explicitly set default day number color targeting button within table */
+.dark section[id="appointment"] .rdp .rdp-table .rdp-button:not([disabled]):not(.rdp-day_selected):not(.rdp-day_today) {
+  color: hsl(var(--foreground)) !important; /* Force light color */
+}
+/* Ensure muted elements remain muted but readable */
+.dark .rdp-head_cell,
+.dark .rdp-day_outside,
+.dark .rdp-day_disabled {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.6; /* Slightly increase opacity for muted */
+}
+/* Selected/Today text colors are handled by their specific classes */
+
 /* Styles pour le loader initial et les transitions */
 .initial-loader {
   transition: opacity 0.5s ease-out;
@@ -67,13 +84,13 @@
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 3%; /* Slightly off-black */
+    --foreground: 210 40% 98%; /* Keep light */
 
-    --card: 222.2 84% 4.9%;
+    --card: 220 15% 10%; /* Darker card */
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 220 15% 10%; /* Darker popover */
     --popover-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
@@ -83,7 +100,7 @@
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 215 20.2% 75.1%; /* Slightly brighter muted text */
 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
@@ -91,28 +108,363 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 217.2 32.6% 25.5%; /* Brighter border */
+    --input: 217.2 32.6% 17.5%; /* Keep */
     --ring: 212.7 26.8% 83.9%;
   }
-}
 
-@layer base {
+  /* Base element styles */
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
+    /* Apply general styles, but background/color will be handled more specifically */
+    @apply overflow-x-hidden;
+    background-color: hsl(var(--background)); /* Default light mode */
+    color: hsl(var(--foreground)); /* Default light mode */
   }
+
+/* Explicitly set dark mode body styles */
+.dark body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
 
   /* Ensure text is readable in dark mode */
   .dark .text-muted-foreground {
-    color: hsl(215 20.2% 75.1%);
+    color: hsl(215 20.2% 85.1%); /* Increased lightness */
   }
 
-  /* Improve contrast for card backgrounds in dark mode */
-  .dark .bg-card {
-    background-color: hsl(0, 0%, 0%);
+  /* Ensure text is readable in light mode */
+  .text-muted-foreground {
+    color: hsl(215 20.2% 35%);
+  }
+
+  /* Improve contrast for card backgrounds in dark mode - Handled by --card variable */
+  /* Removed redundant rule:
+   .dark .bg-card { background-color: hsl(0, 0%, 0%); } */
+
+  /* Improve contrast for card backgrounds in light mode */
+  .bg-card {
+    background-color: hsl(0, 0%, 100%);
+  }
+
+  /* Button text color should be handled by variants or inherit */
+
+  /* Ensure inputs are visible in dark mode */
+  .dark input,
+  .dark textarea,
+  .dark select,
+  .dark .bg-background {
+    color: white;
+    background-color: #1f1f1f; /* Slightly lighter dark gray */
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Styles spécifiques pour les créneaux horaires du formulaire de rendez-vous */
+  .dark section[id="appointment"] div[class*="grid-cols-2"] button {
+    color: white !important;
+    background-color: #1a1a1a !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Créneau horaire sélectionné */
+  .dark section[id="appointment"] div[class*="grid-cols-2"] button[data-state="active"],
+  .dark section[id="appointment"] div[class*="grid-cols-2"] button[aria-pressed="true"] {
+    background-color: hsl(var(--primary)) !important;
+    color: white !important;
+  }
+
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important; /* Brighter placeholder */
+  }
+
+  /* Corriger les boutons avec fond blanc et texte blanc en mode sombre */
+  .dark button[class*="bg-white"],
+  .dark button[class*="bg-background"],
+  .dark .bg-white,
+  .dark .bg-background,
+  .dark button.bg-white,
+  .dark button.bg-background,
+  .dark button.white,
+  .dark button.text-black {
+    color: black;
+    text-shadow: none;
+  }
+
+  /* Styles spécifiques pour les boutons dans les paramètres de cookies */
+  .dark [role="dialog"] button[class*="bg-white"],
+  .dark [role="dialog"] button.bg-white {
+    color: black !important;
+    background-color: white !important;
+  }
+
+  .dark [role="dialog"] button[class*="bg-primary"],
+  .dark [role="dialog"] button.bg-primary {
+    color: hsl(var(--primary-foreground)) !important; /* Force dark text */
+    background-color: hsl(var(--primary)) !important; /* Keep background override */
+  }
+
+  /* Corriger les boutons outline en mode sombre */
+  .dark button[class*="border"],
+  .dark [class*="variant-outline"] {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: transparent;
+    color: hsl(var(--foreground)); /* Ensure text is light */
+  }
+
+  /* Corriger les boutons avec fond noir et texte noir en mode sombre */
+  .dark button[class*="bg-black"],
+  .dark .bg-black,
+  .dark button.bg-black,
+  .dark button.black,
+  .dark [class*="bg-black"],
+  .dark [class*="black"] {
+    color: white !important;
+    text-shadow: none !important;
+  }
+
+  /* Corriger les boutons ghost en mode sombre */
+  .dark button[class*="ghost"],
+  .dark [class*="variant-ghost"] {
+    background-color: transparent;
+    color: white;
+  }
+
+  /* Corriger les boutons secondary en mode sombre */
+  .dark button[class*="secondary"],
+  .dark [class*="variant-secondary"] {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+  }
+
+  /* Ensure buttons are visible in light mode */
+  button {
+    color: black;
+  }
+
+  /* Corriger les boutons avec des classes Tailwind en mode sombre */
+  .dark .bg-white {
+    color: black;
+  }
+
+  .dark .text-black {
+    color: white;
+  }
+
+  .dark .hover\:bg-white:hover {
+    color: black;
+  }
+
+  .dark .hover\:text-black:hover {
+    color: white;
+  }
+
+  /* Corriger les boutons dans la section interactive */
+  .dark #interactive button,
+  .dark [id="interactive"] button,
+  .dark section[id="interactive"] button {
+    color: white !important;
+    background-color: #121212 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .dark #interactive button.bg-white,
+  .dark [id="interactive"] button.bg-white,
+  .dark #interactive button[class*="bg-white"],
+  .dark [id="interactive"] button[class*="bg-white"],
+  .dark section[id="interactive"] button.bg-white,
+  .dark section[id="interactive"] button[class*="bg-white"] {
+    color: black !important;
+    background-color: white !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Corriger les boutons dans les cartes de projets */
+  .dark .group-hover\:opacity-100 button.bg-white,
+  .dark .group-hover\:opacity-100 button[class*="bg-white"] {
+    color: black !important;
+    text-shadow: none !important;
+  }
+
+  .dark .group-hover\:opacity-100 button.bg-black,
+  .dark .group-hover\:opacity-100 button[class*="bg-black"],
+  .dark .group-hover\:opacity-100 button.backdrop-blur-sm {
+    color: white !important;
+    text-shadow: none !important;
+  }
+
+  /* Corriger les boutons de filtrage dans les sections de projets */
+  .dark [role="tablist"] button,
+  .dark .tabs button,
+  .dark .filter-buttons button {
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .dark [role="tablist"] button[data-state="active"],
+  .dark .tabs button[data-state="active"],
+  .dark .filter-buttons button.active,
+  .dark .filter-buttons button[class*="active"] {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white !important;
+  }
+
+  /* Corriger les boutons dans les filtres de projets */
+  .dark .project-filters button,
+  .dark [class*="project-filters"] button {
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .project-filters button.active,
+  .dark .project-filters button[class*="active"],
+  .dark [class*="project-filters"] button.active,
+  .dark [class*="project-filters"] button[class*="active"] {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white !important;
+  }
+
+  /* Améliorer la visibilité des boîtes de dialogue en mode sombre */
+  .dark [role="dialog"] {
+    color: white;
+    background-color: #1f1f1f; /* Match input background */
+  }
+
+  /* Améliorer la visibilité des boîtes de dialogue en mode clair */
+  [role="dialog"] {
+    color: black;
+    background-color: #ffffff;
+  }
+
+  .dark [role="dialog"] .bg-background {
+    background-color: #1f1f1f; /* Match input background */
+  }
+
+  [role="dialog"] .bg-background {
+    background-color: #ffffff;
+  }
+
+  .dark [role="dialog"] h2,
+  .dark [role="dialog"] h3,
+  .dark [role="dialog"] h4 {
+    color: white;
+  }
+
+  [role="dialog"] h2,
+  [role="dialog"] h3,
+  [role="dialog"] h4 {
+    color: black;
+  }
+
+  .dark [role="dialog"] p {
+    color: rgba(255, 255, 255, 0.85); /* Brighter paragraph text */
+  }
+
+  [role="dialog"] p {
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  .dark [role="dialog"] .text-muted-foreground {
+    color: rgba(255, 255, 255, 0.75); /* Brighter muted text */
+  }
+
+  [role="dialog"] .text-muted-foreground {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  /* Améliorer la visibilité des boutons dans les boîtes de dialogue */
+  .dark [role="dialog"] button {
+    /* Text color handled by variants */
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  [role="dialog"] button {
+    /* Text color handled by variants */
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .dark [role="dialog"] button[data-state="checked"] {
+    background-color: hsl(var(--primary));
+    color: white;
+  }
+
+  [role="dialog"] button[data-state="checked"] {
+    background-color: hsl(var(--primary));
+    color: white;
+  }
+
+  /* Explicitly style switches within dark dialogs */
+  .dark [role="dialog"] [data-state="unchecked"] {
+    background-color: hsl(var(--input)) !important; /* Force dark input background */
+  }
+  /* Checked state uses primary color by default, which is correct */
+
+  /* Améliorer la visibilité des onglets */
+  .dark [role="dialog"] [role="tablist"] {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  [role="dialog"] [role="tablist"] {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .dark [role="dialog"] [role="tab"] {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  [role="dialog"] [role="tab"] {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .dark [role="dialog"] [role="tab"][data-state="active"] {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  [role="dialog"] [role="tab"][data-state="active"] {
+    color: black;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Améliorer la visibilité des listes */
+  .dark [role="dialog"] ul,
+  .dark [role="dialog"] ol {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  [role="dialog"] ul,
+  [role="dialog"] ol {
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  .dark [role="dialog"] li {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  [role="dialog"] li {
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  .dark [role="dialog"] strong {
+    color: white;
+  }
+
+  [role="dialog"] strong {
+    color: black;
+  }
+
+  /* Ensure links are visible in dark mode */
+  .dark a:not([class*="text-"]) {
+    color: white;
+  }
+
+  /* Ensure links are visible in light mode */
+  a:not([class*="text-"]) {
+    color: black;
   }
 
   /* Add smooth transitions for theme changes */
@@ -142,6 +494,27 @@
   /* 3D transform styles */
   .transform-style-3d {
     transform-style: preserve-3d;
+  }
+
+  /* Embla Carousel Base Styles */
+  .embla {
+    overflow: hidden;
+  }
+  .embla__container {
+    display: flex;
+  }
+  .embla__slide {
+    flex: 0 0 100%; /* Chaque slide prend 100% de la largeur du conteneur */
+    min-width: 0;
+    position: relative;
+  }
+} /* End of single @layer base */
+
+@layer components {
+  /* Force dark background for the desktop navbar link container */
+  .dark header nav > div[class*="bg-gray-100"] {
+    background-color: rgba(0, 0, 0, 0.7) !important; /* Force dark semi-transparent background */
+    border-color: rgba(255, 255, 255, 0.2) !important; /* Ensure border is visible */
   }
   .preserve-3d {
     transform-style: preserve-3d;

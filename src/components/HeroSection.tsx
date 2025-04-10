@@ -1,10 +1,13 @@
 'use client'
 
+import { lazy, Suspense } from "react"; // Importer lazy et Suspense
 import { motion } from "framer-motion";
-import { ArrowDown, GithubIcon, Linkedin, Mail } from "lucide-react";
-import { SplineScene } from "@/components/ui/spline";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { ArrowDown, Linkedin, Mail } from "lucide-react";
+// Charger SplineScene paresseusement
+const SplineScene = lazy(() => import("@/components/ui/spline").then(module => ({ default: module.SplineScene })));
 import { Spotlight } from "@/components/ui/spotlight";
-import { useTypedSpotlightEffect } from '@/hooks/useSpotlightEffect';
+// import { useTypedSpotlightEffect } from '@/hooks/useSpotlightEffect'; // Removed hook import
 
 interface HeroSectionProps {
   name?: string;
@@ -24,13 +27,14 @@ const HeroSection = ({
   onCtaClick = () => console.log("CTA clicked"),
 }: HeroSectionProps) => {
   // Utiliser le hook générique avec le bon type pour chaque élément
-  const titleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
-  const titleRef2 = useTypedSpotlightEffect<HTMLHeadingElement>();
-  const subtitleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
-  const descriptionRef = useTypedSpotlightEffect<HTMLParagraphElement>();
+  // Removed hook calls
+  // const titleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
+  // const titleRef2 = useTypedSpotlightEffect<HTMLHeadingElement>();
+  // const subtitleRef = useTypedSpotlightEffect<HTMLHeadingElement>();
+  // const descriptionRef = useTypedSpotlightEffect<HTMLParagraphElement>();
 
   return (
-    <div className="w-full h-screen bg-black overflow-hidden relative" style={{ borderRadius: '40px' }}>
+    <div className="w-full h-screen bg-black overflow-hidden relative dark:bg-black" style={{ borderRadius: '50px' }}>
       {/* Ajout d'un effet de particules subtil */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute h-2 w-2 rounded-full bg-blue-400 animate-pulse" style={{ top: '10%', left: '20%', animationDelay: '0s' }}></div>
@@ -41,29 +45,23 @@ const HeroSection = ({
         <div className="absolute h-2 w-2 rounded-full bg-blue-400 animate-pulse" style={{ top: '20%', left: '70%', animationDelay: '2.5s' }}></div>
       </div>
 
-      <Spotlight
-        className="-top-40 left-0 md:left-60 md:-top-20"
-        size={900}
-        springOptions={{
-          stiffness: 400,
-          damping: 60
-        }}
-      />
+      {/* Restore Spotlight to original position and remove extra classes */}
+      <Spotlight size={900} />
 
-      <div className="flex h-full relative rounded-xl overflow-hidden">
+      <div className="flex h-full relative rounded-xl overflow-hidden bg-black dark:bg-black">
         {/* Left content - with improved responsive sizing */}
-        <div className="w-full md:flex-1 px-4 py-8 md:p-8 relative z-10 flex flex-col justify-center rounded-l-xl overflow-hidden">
+        <div className="w-full md:flex-1 px-4 py-8 md:p-8 relative z-10 flex flex-col justify-center rounded-l-xl overflow-hidden bg-black dark:bg-black text-white"> {/* Remove pointer-events-none */}
           <div className="w-full max-w-[90%] sm:max-w-md md:max-w-lg">  {/* Improved container constraints */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="inline-block px-3 py-1 mb-4 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 backdrop-blur-sm">
-              <span className="text-xs md:text-sm text-white/90 font-medium">Développeur Full Stack</span>
+              className="inline-block px-3 py-1 mb-4 rounded-full bg-gradient-to-r from-purple-500/30 to-blue-500/30 border border-purple-500/40 backdrop-blur-sm dark:from-purple-500/40 dark:to-blue-500/40 dark:border-purple-500/50">
+              <span className="text-xs md:text-sm text-white font-medium dark:text-white">Développeur Full Stack</span>
             </motion.div>
 
             <motion.h1
-              ref={titleRef}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -72,7 +70,7 @@ const HeroSection = ({
               Andriantahiry
             </motion.h1>
             <motion.h1
-              ref={titleRef2}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -81,16 +79,16 @@ const HeroSection = ({
               Nomenahasina
             </motion.h1>
             <motion.h2
-              ref={subtitleRef}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-base xs:text-lg md:text-xl lg:text-2xl font-medium text-primary mb-3 md:mb-6"
+              className="text-base xs:text-lg md:text-xl lg:text-2xl font-medium text-gray-600 dark:text-gray-100 mb-3 md:mb-6"
             >
               {title}
             </motion.h2>
             <motion.p
-              ref={descriptionRef}
+              // ref removed
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -128,7 +126,7 @@ const HeroSection = ({
                 className="p-2.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/10 flex items-center justify-center"
                 aria-label="Github"
               >
-                <GithubIcon className="w-5 h-5" />
+                <GitHubLogoIcon className="w-5 h-5" />
               </motion.button>
 
               <motion.button
@@ -163,14 +161,20 @@ const HeroSection = ({
         </div>
 
         {/* Right content */}
-        <div className="flex-1 relative hidden md:block rounded-r-xl overflow-hidden">
-          <div className="absolute inset-0 z-10">
-            <SplineScene
-              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              className="w-full h-full"
-              allowScroll={true}
-            />
-          </div>
+        <div className="flex-1 relative hidden md:block rounded-r-xl overflow-hidden bg-black dark:bg-black"> {/* Remove pointer-events-none */}
+          {/* Conditionally render SplineScene only on md+ screens */}
+          {/* TODO: Replace this with a proper useMediaQuery hook */}
+          {typeof window !== 'undefined' && window.innerWidth >= 768 && (
+            <div className="absolute inset-0 z-10">
+              <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white">Chargement de la scène 3D...</div>}>
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="w-full h-full"
+                  allowScroll={true}
+                />
+              </Suspense>
+            </div>
+          )}
         </div>
       </div>
 

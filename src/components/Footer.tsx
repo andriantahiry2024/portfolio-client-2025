@@ -81,6 +81,15 @@ const Footer = ({ className }: FooterProps = {}) => {
             </ul>
           </div>
 
+          <div>
+            <h3 className="font-semibold text-lg mb-4">Légal</h3>
+            <ul className="space-y-2">
+              <li><a href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">Politique de confidentialité</a></li>
+              <li><a href="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors">Conditions d'utilisation</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); const cookieSettingsBtn = document.querySelector('button[aria-label="Paramètres des cookies"]'); if (cookieSettingsBtn instanceof HTMLButtonElement) { cookieSettingsBtn.click(); } else { alert('Les paramètres de cookies ne sont pas disponibles pour le moment.'); } }} className="text-muted-foreground hover:text-primary transition-colors">Paramètres des cookies</a></li>
+            </ul>
+          </div>
+
           <div className="sm:col-span-2 md:col-span-1">
             <h3 className="font-semibold text-lg mb-4">Contact</h3>
             <ul className="space-y-2 max-w-xs">

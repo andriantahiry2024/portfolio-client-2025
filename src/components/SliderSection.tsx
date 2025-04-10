@@ -28,7 +28,7 @@ const SliderSection = ({
   const opacity = opacityValue / 100; // 0 to 1
 
   return (
-    <section className={cn("py-20 bg-background w-full", className)}>
+    <section className={cn("py-20 w-full", className)} style={{ backgroundColor: 'var(--background)' }}>
       <div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

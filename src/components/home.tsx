@@ -1,17 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react"; // Ajout de lazy et Suspense
 import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "./Navbar";
-import HeroSection from "./HeroSection";
-import AboutSection from "./AboutSection";
-import SkillsSection from "./SkillsSection";
-import ProjectsSection from "./ProjectsSection";
-import ContactSection from "./ContactSection";
-import Footer from "./Footer";
-import BlogSection from "./BlogSection";
-import SliderSection from "./SliderSection";
-import AppointmentCalendar from "./AppointmentCalendar";
-import ChatbotSection from "./ChatbotSection";
+// Chargement paresseux des sections
+const HeroSection = lazy(() => import("./HeroSection"));
+const AboutSection = lazy(() => import("./AboutSection"));
+const SkillsSection = lazy(() => import("./SkillsSection"));
+const ProjectsSection = lazy(() => import("./ProjectsSection"));
+const ContactSection = lazy(() => import("./ContactSection"));
+const Footer = lazy(() => import("./Footer"));
+const BlogSection = lazy(() => import("./BlogSection"));
+const SliderSection = lazy(() => import("./SliderSection"));
+const AppointmentCalendar = lazy(() => import("./AppointmentCalendar"));
+const ChatbotSection = lazy(() => import("./ChatbotSection"));
+const PassionsSection = lazy(() => import("./PassionsSection")); // Importer la nouvelle section
 import FadeInView from "./FadeInView";
+
+// Composant de fallback simple pour Suspense
+const SectionLoader = () => <div className="min-h-[200px] flex items-center justify-center"><p>Chargement de la section...</p></div>;
 
 const Home = () => {
   const { scrollYProgress } = useScroll();
@@ -29,14 +34,16 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen dark:bg-black bg-white home-component">
+    <div className="min-h-screen home-component" style={{ backgroundColor: 'var(--background)' }}>
       <Navbar />
 
       {/* Main Content */}
       <main className="max-w-[1280px] mx-auto px-4">
         {/* Hero Section with Parallax Effect */}
         <section id="home" className="relative h-screen p-4 mb-8">
-          <HeroSection />
+          <Suspense fallback={<SectionLoader />}>
+            <HeroSection />
+          </Suspense>
           <motion.div
             style={{ opacity }}
             className="absolute inset-0 pointer-events-none"
@@ -45,64 +52,89 @@ const Home = () => {
 
         {/* About Section */}
         <section id="about">
-          <FadeInView>
-            <AboutSection />
+          <Suspense fallback={<SectionLoader />}>
+            <FadeInView>
+              <AboutSection />
           </FadeInView>
+          </Suspense>
         </section>
 
         {/* Skills Section */}
         <section id="skills">
-          <FadeInView delay={0.1}>
-            <SkillsSection />
+          <Suspense fallback={<SectionLoader />}>
+            <FadeInView delay={0.1}>
+              <SkillsSection />
           </FadeInView>
+          </Suspense>
         </section>
 
         {/* Slider Section */}
         <section id="interactive">
-          <FadeInView delay={0.2} direction="right">
-            <SliderSection />
+          <Suspense fallback={<SectionLoader />}>
+            <FadeInView delay={0.2} direction="right">
+              <SliderSection />
           </FadeInView>
+          </Suspense>
         </section>
 
         {/* Projects Section */}
         <section id="projects">
-          <FadeInView delay={0.1} direction="left">
-            <ProjectsSection />
+          <Suspense fallback={<SectionLoader />}>
+            <FadeInView delay={0.1} direction="left">
+              <ProjectsSection />
           </FadeInView>
+          </Suspense>
         </section>
 
         {/* Blog Section */}
         <section id="blog">
-          <FadeInView delay={0.2}>
-            <BlogSection />
+          <Suspense fallback={<SectionLoader />}>
+            <FadeInView delay={0.2}>
+              <BlogSection />
           </FadeInView>
+          </Suspense>
+        </section>
+
+        {/* Passions Section */}
+        <section id="passions">
+          <Suspense fallback={<SectionLoader />}>
+            <PassionsSection />
+          </Suspense>
         </section>
 
         {/* Appointment Calendar */}
-        <section id="appointment" className="bg-white dark:bg-gray-900 p-5">
-          <FadeInView delay={0.1} direction="up">
-            <AppointmentCalendar />
+        <section id="appointment" className="p-5" style={{ backgroundColor: 'var(--background)' }}>
+          <Suspense fallback={<SectionLoader />}>
+            <FadeInView delay={0.1} direction="up">
+              <AppointmentCalendar />
           </FadeInView>
+          </Suspense>
         </section>
 
         {/* Chatbot Section */}
         <section id="chatbot">
           {/* <FadeInView delay={0.2} direction="right"> {/* Temporairement supprimé pour tester le scroll */}
-            <ChatbotSection />
+            <Suspense fallback={<SectionLoader />}>
+              <ChatbotSection />
+            </Suspense>
           {/* </FadeInView> */}
         </section>
 
         {/* Contact Section */}
         <section id="contact">
           {/* <FadeInView delay={0.1} direction="up"> {/* Temporairement supprimé pour tester le scroll */}
-            <ContactSection />
+            <Suspense fallback={<SectionLoader />}>
+              <ContactSection />
+            </Suspense>
           {/* </FadeInView> */}
         </section>
       </main>
 
-      <FadeInView delay={0.3} direction="none">
-        <Footer />
+      <Suspense fallback={<SectionLoader />}>
+        <FadeInView delay={0.3} direction="none">
+          <Footer />
       </FadeInView>
+      </Suspense>
     </div>
   );
 };
