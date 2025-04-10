@@ -162,16 +162,19 @@ const HeroSection = ({
 
         {/* Right content */}
         <div className="flex-1 relative hidden md:block rounded-r-xl overflow-hidden bg-black dark:bg-black"> {/* Remove pointer-events-none */}
-          <div className="absolute inset-0 z-10">
-            {/* Utiliser Suspense pour SplineScene */}
-            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white">Chargement de la scène 3D...</div>}>
-              <SplineScene
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                className="w-full h-full"
-                allowScroll={true}
-              />
-            </Suspense>
-          </div>
+          {/* Conditionally render SplineScene only on md+ screens */}
+          {/* TODO: Replace this with a proper useMediaQuery hook */}
+          {typeof window !== 'undefined' && window.innerWidth >= 768 && (
+            <div className="absolute inset-0 z-10">
+              <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white">Chargement de la scène 3D...</div>}>
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="w-full h-full"
+                  allowScroll={true}
+                />
+              </Suspense>
+            </div>
+          )}
         </div>
       </div>
 
