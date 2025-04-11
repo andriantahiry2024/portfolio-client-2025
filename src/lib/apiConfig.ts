@@ -18,7 +18,7 @@ export const CORS_PROXY = 'https://corsproxy.io/?';
 
 // Fonction pour déterminer si nous devons utiliser le proxy CORS
 // En production, utiliser le proxy CORS pour contourner les problèmes CORS
-export const shouldUseProxy = import.meta.env.MODE === 'production';
+export const shouldUseProxy = false; // Désactiver définitivement le proxy CORS
 
 // Fonction utilitaire pour construire une URL d'API
 export const getApiUrl = (endpoint: string): string => {
