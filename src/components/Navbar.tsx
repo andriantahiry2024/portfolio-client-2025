@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from "react";
+import { fetchWithAuth } from '../lib/apiConfig';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu, X, LogOut, User } from "lucide-react";
@@ -68,14 +69,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
       }
 
       try {
-        const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/auth/me`;
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await fetchWithAuth('/auth/me');
 
         if (response.ok) {
           const userData = await response.json();

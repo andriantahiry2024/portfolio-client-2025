@@ -1,4 +1,5 @@
 import React, { useState } from "react"; // Importer useState
+import { fetchApi } from '../lib/apiConfig';
 import { useForm } from "react-hook-form";
 import { Send, Mail, Phone, MapPin, CheckCircle, AlertCircle } from "lucide-react"; // Importer des icônes supplémentaires
 import { useToast } from "@/components/ui/use-toast";
@@ -46,8 +47,8 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
     console.log('Envoi du formulaire de contact:', data);
 
     try {
-      // Simplifier la requête pour qu'elle soit similaire à celle du formulaire de rendez-vous
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/contact`, {
+      // Utiliser la fonction fetchApi du fichier apiConfig.ts
+      const response = await fetchApi('/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

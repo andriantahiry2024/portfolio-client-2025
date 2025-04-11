@@ -1,5 +1,6 @@
 // Client/src/pages/LoginPage.tsx
 import React, { useState } from 'react';
+import { fetchApi } from '../lib/apiConfig';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom'; // Pour la redirection et le lien
 import { Button } from "@/components/ui/button";
@@ -44,10 +45,8 @@ const LoginPage: React.FC = () => {
     setError('');
     setIsLoading(true);
 
-    const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/login`;
-
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetchApi('/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

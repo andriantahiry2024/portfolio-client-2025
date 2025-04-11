@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { fetchApi } from '../lib/apiConfig';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -63,8 +64,8 @@ export function AppointmentCalendar() {
     };
 
     try {
-      // Remplacer par l'URL de votre API backend
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/appointments`, {
+      // Utiliser la fonction fetchApi du fichier apiConfig.ts
+      const response = await fetchApi('/appointments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

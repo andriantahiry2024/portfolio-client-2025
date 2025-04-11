@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchWithAuth, API_URL } from '../lib/apiConfig';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Users, FileText, Calendar, MessageSquare, Globe, Map } from 'lucide-react';
 
@@ -40,11 +41,7 @@ const AdminDashboardStats: React.FC = () => {
 
         // Récupérer les statistiques depuis le backend
         // Note: Cette API devra être implémentée côté backend
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admin/stats`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetchWithAuth('/admin/stats');
 
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) {
@@ -74,15 +71,12 @@ const AdminDashboardStats: React.FC = () => {
         const token = localStorage.getItem('authToken');
         if (!token) return;
 
-        const headers = { 'Authorization': `Bearer ${token}` };
-        const baseUrl = import.meta.env.VITE_BACKEND_URL;
-
         // Récupérer les données en parallèle
         const [usersRes, postsRes, appointmentsRes, contactsRes] = await Promise.all([
-          fetch(`${baseUrl}/api/admin/users`, { headers }),
-          fetch(`${baseUrl}/api/admin/posts`, { headers }),
-          fetch(`${baseUrl}/api/admin/appointments`, { headers }),
-          fetch(`${baseUrl}/api/admin/contacts`, { headers })
+          fetchWithAuth('/admin/users'),
+          fetchWithAuth('/admin/posts'),
+          fetchWithAuth('/admin/appointments'),
+          fetchWithAuth('/admin/contacts')
         ]);
 
         // Traiter les réponses si elles sont OK

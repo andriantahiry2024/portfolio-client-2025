@@ -1,5 +1,6 @@
 // Client/src/components/BlogPostDetail.tsx
 import React, { useEffect, useState } from "react";
+import { fetchApi } from '../lib/apiConfig';
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
@@ -28,16 +29,16 @@ interface PostDetail {
 // Fonction simple pour décoder et nettoyer le HTML
 const prepareHtmlContent = (content: string | null | undefined): string => {
   if (!content) return '';
-  
+
   // Si le contenu semble contenir des balises HTML non interprétées
-  if (typeof content === 'string' && 
+  if (typeof content === 'string' &&
       (content.includes('&lt;') || content.includes('&gt;'))) {
     // Utiliser un élément textarea pour décoder les entités HTML
     const textarea = document.createElement('textarea');
     textarea.innerHTML = content;
     return textarea.value;
   }
-  
+
   return content;
 };
 
@@ -57,10 +58,8 @@ const BlogPostDetail = () => {
       }
       setIsLoading(true);
       setError(null);
-      const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/posts/${slug}`; // Endpoint public
-
       try {
-        const response = await fetch(apiUrl);
+        const response = await fetchApi(`/posts/${slug}`);
         if (!response.ok) {
           if (response.status === 404) {
              throw new Error("Article non trouvé.");
@@ -69,7 +68,7 @@ const BlogPostDetail = () => {
           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
         const data: PostDetail = await response.json();
-        
+
         // On ne modifie pas data.content ici pour éviter de perdre les données originales
         setPost(data);
       } catch (err: any) {
@@ -117,7 +116,7 @@ const BlogPostDetail = () => {
   }
 
   if (!post) return null;
-  
+
   // Préparer le contenu HTML seulement quand nécessaire (au moment du rendu)
   const cleanContent = prepareHtmlContent(post.content);
 

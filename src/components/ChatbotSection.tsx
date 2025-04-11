@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
+import { API_URL } from '../lib/apiConfig';
 // Fonction pour nettoyer et préparer le texte pour le markdown
 function prepareMarkdown(text: string): string {
   // Nettoyer les caractères spéciaux indésirables tout en préservant les blocs de code
@@ -91,9 +92,9 @@ interface Message {
   timestamp: Date;
 }
 
-// Définir l'URL du backend selon l'environnement
-// Utilise la variable d'environnement définie dans .env
-const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api`;
+// Utiliser l'URL du backend depuis le fichier de configuration centralisé
+// Note: API_URL inclut déjà le segment '/api'
+const BACKEND_URL = API_URL;
 
 // Mode debug pour suivre les appels
 console.log('Mode:', import.meta.env.MODE);
@@ -296,6 +297,7 @@ const ChatbotSection: React.FC = () => {
 
     try {
       // Appel au backend avec le message et l'historique
+      // Note: Nous utilisons '/chat' et non '/api/chat' car API_URL inclut déjà '/api'
       const response = await fetch(`${BACKEND_URL}/chat`, {
         method: 'POST',
         headers: {

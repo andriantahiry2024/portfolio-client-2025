@@ -1,5 +1,6 @@
 // Client/src/components/AdminDashboard.tsx
 import React, { useState, useEffect, useCallback } from "react";
+import { fetchWithAuth } from "../lib/apiConfig";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Card, CardContent, CardDescription, CardHeader, CardTitle,
@@ -98,45 +99,38 @@ const AdminDashboard = () => {
   // État pour l'exportation de données
   const [isExporting, setIsExporting] = useState(false);
 
-  // Fonction utilitaire pour les appels API (évite la répétition)
+  // Fonction utilitaire pour les appels API (utilise fetchWithAuth du fichier apiConfig.ts)
   const fetchApi = async (url: string, method: string = 'GET', body?: any) => {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      throw new Error("Non authentifié."); // Gérer l'absence de token
-    }
+    try {
+      const options: RequestInit = {
+        method,
+        ...(body && { body: JSON.stringify(body) })
+      };
 
-    const apiUrl = `${import.meta.env.VITE_BACKEND_URL}${url}`;
+      const response = await fetchWithAuth(url, options);
 
-    const options: RequestInit = {
-      method,
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
-
-    const response = await fetch(apiUrl, options);
-
-    // Gérer les réponses sans contenu (ex: DELETE 204)
-    if (response.status === 204) {
-        return null; // Ou un objet indiquant le succès si nécessaire
-    }
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      // Gérer les erreurs spécifiques (token invalide/expiré)
-      if (response.status === 401 || response.status === 403) {
-         localStorage.removeItem('authToken');
-         localStorage.removeItem('userData');
-         navigate('/login'); // Rediriger
+      // Gérer les réponses sans contenu (ex: DELETE 204)
+      if (response.status === 204) {
+        return null;
       }
-      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Gérer les erreurs spécifiques (token invalide/expiré)
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
+          navigate('/login'); // Rediriger
+        }
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error(`Erreur lors de l'appel API ${url}:`, error);
+      throw error;
     }
-    return data;
   };
 
 
