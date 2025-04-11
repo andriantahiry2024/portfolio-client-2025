@@ -1,6 +1,19 @@
-# robots.txt pour le portfolio
-User-agent: *
+# Allow major search engines
+User-agent: Googlebot
 Allow: /
 
-# Sitemap
-Sitemap: https://portfolio.teckforgeek.com/sitemap.xml
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Disallow all other bots from scraping
+User-agent: *
+Disallow: /
