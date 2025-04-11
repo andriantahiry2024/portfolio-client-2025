@@ -291,46 +291,63 @@ const ChatbotSection: React.FC = () => {
     const historyToSend = [...chatHistory, userHistoryItem];
 
     try {
-      // Appel au backend avec le message et l'historique
-      // Utiliser le mode 'no-cors' pour contourner les problèmes CORS
-      // Note: Cela rendra la réponse "opaque" et vous ne pourrez pas accéder à son contenu directement
+      // Appel standard au backend (CORS est géré côté serveur maintenant)
+      const requestBody = {
+        message: input,
+        history: historyToSend
+      };
+      // Log du corps de la requête AVANT l'envoi
+      console.log('Sending request body to backend:', JSON.stringify(requestBody, null, 2));
+
       const response = await fetch(getApiUrl('/chat'), {
-        mode: 'no-cors',
+        // mode: 'no-cors', // Supprimé !
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        // Envoyer le message actuel ET l'historique
-        body: JSON.stringify({
-          message: input,
-          history: historyToSend // Envoyer l'historique préparé
-        })
+        body: JSON.stringify(requestBody) // Utiliser l'objet préparé
       });
 
-      // Avec le mode 'no-cors', nous ne pouvons pas vérifier response.ok ou accéder à response.json()
-      // Nous devons donc simuler une réponse
-      console.log('Réponse du backend (opaque avec no-cors):', response);
+      // Vérifier si la réponse HTTP est OK (status 200-299)
+      if (!response.ok) {
+        // Essayer de lire le message d'erreur du backend s'il existe
+        let errorMessage = `Erreur HTTP ${response.status} (${response.statusText})`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch (jsonError) {
+          // Ignorer si le corps n'est pas du JSON valide
+          console.warn('Impossible de parser la réponse d\'erreur JSON:', jsonError);
+        }
+        // Lancer une erreur pour être attrapée par le bloc catch
+        throw new Error(errorMessage);
+      }
 
-      // Message de réponse par défaut
-      const defaultMessage = "Désolé, en raison de problèmes techniques (CORS), je ne peux pas générer de réponse complète. Veuillez contacter l'administrateur du site.";
+      // Lire la réponse JSON du backend
+      const data = await response.json();
 
+      if (!data.message) {
+        throw new Error("Réponse du backend invalide: message manquant.");
+      }
+
+      // Utiliser le message reçu du backend
       const botMessage: Message = {
-        text: defaultMessage,
+        text: data.message,
         isBot: true,
         timestamp: new Date(),
       };
 
       // Préparer la réponse du bot pour l'historique Gemini
       const botHistoryItem: GeminiHistoryItem = {
-        role: 'model', // 'model' est le rôle pour les réponses de Gemini
-        parts: [{ text: defaultMessage }]
+        role: 'model',
+        parts: [{ text: data.message }]
       };
 
       // Mettre à jour l'historique complet (utilisateur + bot)
       setChatHistory([...historyToSend, botHistoryItem]);
 
       setIsTyping(false);
-      setLastBotMessage(botMessage); // Garder ceci pour l'affichage immédiat
+      setLastBotMessage(botMessage);
       setResponseKey(prev => prev + 1);
       setIsOffline(false);
 
@@ -338,13 +355,15 @@ const ChatbotSection: React.FC = () => {
       // maintainScroll(); // Appel supprimé car la fonction n'existe plus
 
     } catch (error) {
-      console.error('Error:', error);
+      // Afficher l'erreur spécifique attrapée (soit fetch error, soit !response.ok)
+      console.error('Erreur lors de la communication avec le backend:', error);
       setIsTyping(false);
       setIsOffline(true);
 
       // Message d'erreur pour l'utilisateur
       setLastBotMessage({
-        text: "Je suis désolé, je rencontre des difficultés de connexion. Pourriez-vous réessayer dans quelques instants ?",
+        // Afficher un message plus informatif si possible
+        text: `Je suis désolé, une erreur est survenue: ${error instanceof Error ? error.message : 'Erreur inconnue'}. Veuillez réessayer.`,
         isBot: true,
         timestamp: new Date(),
       });
