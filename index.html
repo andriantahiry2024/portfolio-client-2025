@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Portfolio professionnel présentant mes compétences, projets et expériences dans le développement web." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Portfolio" />
+    <link rel="apple-touch-icon" href="/vite.svg" />
+
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="max-age=86400" />
+
+    <!-- Préchargement des ressources critiques -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Préchargement du script principal -->
+    <link rel="modulepreload" href="data:application/octet-stream;base64,aW1wb3J0IFJlYWN0IGZyb20gInJlYWN0IjsKaW1wb3J0IFJlYWN0RE9NIGZyb20gInJlYWN0LWRvbS9jbGllbnQiOwppbXBvcnQgQXBwIGZyb20gIi4vQXBwLnRzeCI7CmltcG9ydCAiLi9pbmRleC5jc3MiOwppbXBvcnQgeyBCcm93c2VyUm91dGVyIH0gZnJvbSAicmVhY3Qtcm91dGVyLWRvbSI7CmltcG9ydCB7IHJlZ2lzdGVyU2VydmljZVdvcmtlciwgdW5yZWdpc3RlclNlcnZpY2VXb3JrZXIgfSBmcm9tICIuL3NlcnZpY2VXb3JrZXJSZWdpc3RyYXRpb24iOwppbXBvcnQgeyBjbGVhclNlcnZpY2VXb3JrZXJDYWNoZSB9IGZyb20gIi4vbGliL2NsZWFyQ2FjaGUiOwoKLy8gSW5pdGlhbGlzYXRpb24gZGVzIG91dGlscyBkZSBkw6l2ZWxvcHBlbWVudAppZiAoaW1wb3J0Lm1ldGEuZW52LkRFVikgewogIGltcG9ydCgidGVtcG8tZGV2dG9vbHMiKS50aGVuKCh7IFRlbXBvRGV2dG9vbHMgfSkgPT4gewogICAgVGVtcG9EZXZ0b29scy5pbml0KCk7CiAgfSk7Cn0KCmNvbnN0IGJhc2VuYW1lID0gaW1wb3J0Lm1ldGEuZW52LkJBU0VfVVJMOwoKLy8gU3VwcHJpbWVyIGxlIGxvYWRlciBpbml0aWFsCmNvbnN0IHJlbW92ZUluaXRpYWxMb2FkZXIgPSAoKSA9PiB7CiAgY29uc3QgaW5pdGlhbExvYWRlciA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJy5pbml0aWFsLWxvYWRlcicpOwogIGlmIChpbml0aWFsTG9hZGVyKSB7CiAgICBpbml0aWFsTG9hZGVyLmNsYXNzTGlzdC5hZGQoJ2ZhZGUtb3V0Jyk7CiAgICBzZXRUaW1lb3V0KCgpID0+IHsKICAgICAgaW5pdGlhbExvYWRlci5yZW1vdmUoKTsKICAgIH0sIDUwMCk7CiAgfQp9OwoKLy8gUmVuZHUgZGUgbCdhcHBsaWNhdGlvbgpjb25zdCByb290ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInJvb3QiKTsKaWYgKHJvb3QpIHsKICBSZWFjdERPTS5jcmVhdGVSb290KHJvb3QpLnJlbmRlcigKICAgIDxCcm93c2VyUm91dGVyIGJhc2VuYW1lPXtiYXNlbmFtZX0+CiAgICAgIDxBcHAgLz4KICAgIDwvQnJvd3NlclJvdXRlcj4KICApOwoKICAvLyBTdXBwcmltZXIgbGUgbG9hZGVyIGluaXRpYWwgYXByw6hzIHVuIGNvdXJ0IGTDqWxhaQogIHNldFRpbWVvdXQocmVtb3ZlSW5pdGlhbExvYWRlciwgMTAwKTsKCiAgLy8gRMOpc2FjdGl2ZXIgdGVtcG9yYWlyZW1lbnQgbGUgc2VydmljZSB3b3JrZXIgcG91ciByw6lzb3VkcmUgbGVzIHByb2Jsw6htZXMKICAvLyByZWdpc3RlclNlcnZpY2VXb3JrZXIoKTsKCiAgLy8gRMOpc2luc2NyaXJlIGxlIHNlcnZpY2Ugd29ya2VyIGV4aXN0YW50IGV0IG5ldHRveWVyIGxlIGNhY2hlCiAgdW5yZWdpc3RlclNlcnZpY2VXb3JrZXIoKTsKICBjbGVhclNlcnZpY2VXb3JrZXJDYWNoZSgpLnRoZW4oc3VjY2VzcyA9PiB7CiAgICBpZiAoc3VjY2VzcykgewogICAgICBjb25zb2xlLmxvZygnU2VydmljZSB3b3JrZXIgZMOpc2FjdGl2w6kgZXQgY2FjaGUgbmV0dG95w6kgYXZlYyBzdWNjw6hzJyk7CiAgICB9IGVsc2UgewogICAgICBjb25zb2xlLndhcm4oJ0ltcG9zc2libGUgZGUgbmV0dG95ZXIgY29tcGzDqHRlbWVudCBsZSBjYWNoZSBkdSBzZXJ2aWNlIHdvcmtlcicpOwogICAgfQogIH0pOwp9Cg==" />
+
+    <title>Portfolio - Développeur Web Full Stack</title>
+
+    <!-- Styles critiques inline pour éviter le flash de contenu non stylé -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #000;
+        color: #fff;
+      }
+      #root {
+        min-height: 100vh;
+      }
+      .initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #000;
+        z-index: 9999;
+      }
+      .initial-loader-spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-BO6rIt2l.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-CAIQhEhM.js">
+    <link rel="modulepreload" crossorigin href="/assets/ui-components-DfywtIQG.js">
+    <link rel="modulepreload" crossorigin href="/assets/framer-motion-DP8BS7SU.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-Cu0ymMSp.css">
+  </head>
+  <body>
+    <div id="root">
+      <!-- Loader initial qui sera remplacé par React -->
+      <div class="initial-loader">
+        <div class="initial-loader-spinner"></div>
+      </div>
+    </div>
+
+    <!-- Script principal avec priorité haute -->
+
+    <!-- Scripts non critiques chargés de manière asynchrone -->
+    <script src="https://api.tempolabs.ai/proxy-asset?url=https://storage.googleapis.com/tempo-public-assets/error-handling.js" async defer></script>
+  </body>
+</html>
