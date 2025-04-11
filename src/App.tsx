@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { AnimatePresence, motion } from "framer-motion";
 import { Toaster } from "./components/ui/toaster";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import useDevToolsBlocker from "./hooks/useDevToolsBlocker"; // Importer le nouveau hook
 
 // Chargement dynamique des composants non critiques
 const ApiTest = lazy(() => import("./components/ApiTest"));
@@ -105,6 +106,9 @@ function App() {
   const [hasServiceWorkerError, setHasServiceWorkerError] = useState(false);
   const errorDetectionTimeout = useRef<number | null>(null);
 
+  // Activer/désactiver le blocage des outils de développement via variable d'environnement
+  const isDevToolsBlockingEnabled = import.meta.env.VITE_DISABLE_DEVTOOLS === 'true';
+  useDevToolsBlocker(isDevToolsBlockingEnabled);
   // Initialiser le thème depuis localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" || "dark";
