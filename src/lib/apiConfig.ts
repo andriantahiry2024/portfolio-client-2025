@@ -71,4 +71,4 @@ export default {
   getApiUrl,
   fetchWithAuth,
   fetchApi
-};
+}
