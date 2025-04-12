@@ -177,8 +177,11 @@ const Navbar = ({ className = "" }: NavbarProps) => {
               navigate("/");
             }}
           >
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">NA</div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 font-extrabold dark:from-blue-400 dark:to-purple-500">Portfolio</span>
+            <img
+              src={theme === "dark" ? "/logo/logo-dark.png" : "/logo/logo-light.png"}
+              alt="Portfolio Logo"
+              className="h-24 w-auto" // Augmentation significative de la taille du logo à h-24
+            />
           </a>
         </div>
 

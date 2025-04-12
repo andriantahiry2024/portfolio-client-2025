@@ -2,18 +2,6 @@ import { useEffect } from 'react';
 
 const useDevToolsBlocker = (enabled: boolean = false): void => {
   useEffect(() => {
-    if (!enabled) {
-      // Si désactivé, ne rien faire et nettoyer les éventuels écouteurs précédents
-      const cleanup = () => {
-        document.removeEventListener('contextmenu', preventDefault);
-        document.removeEventListener('keydown', handleKeyDown);
-        // Arrêter la détection si elle était active
-        // (Nécessite une variable pour stocker l'intervalle/timeout si utilisé)
-      };
-      cleanup(); // Appeler immédiatement au cas où l'état enabled change
-      return cleanup; // Retourner la fonction de nettoyage pour useEffect
-    }
-
     // Fonction pour empêcher l'action par défaut (ex: clic droit)
     const preventDefault = (e: Event) => {
       e.preventDefault();
@@ -34,6 +22,18 @@ const useDevToolsBlocker = (enabled: boolean = false): void => {
         e.preventDefault();
       }
     };
+
+    if (!enabled) {
+      // Si désactivé, ne rien faire et nettoyer les éventuels écouteurs précédents
+      const cleanup = () => {
+        document.removeEventListener('contextmenu', preventDefault);
+        document.removeEventListener('keydown', handleKeyDown);
+        // Arrêter la détection si elle était active
+        // (Nécessite une variable pour stocker l'intervalle/timeout si utilisé)
+      };
+      cleanup(); // Appeler immédiatement au cas où l'état enabled change
+      return cleanup; // Retourner la fonction de nettoyage pour useEffect
+    }
 
     // --- Détection de l'ouverture des DevTools (méthode simple) ---
     // Cette méthode est basique et peut être contournée.
