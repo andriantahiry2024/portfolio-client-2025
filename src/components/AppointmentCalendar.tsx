@@ -138,6 +138,14 @@ export function AppointmentCalendar() {
                 disabled={disabledDays}
                 locale={fr}
                 className="rounded-md border"
+                modifiersStyles={{
+                  selected: {
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.5)'
+                  }
+                }}
               />
             </div>
 
@@ -157,6 +165,7 @@ export function AppointmentCalendar() {
                         <Button
                           type="button"
                           variant={selectedTime === slot.time ? 'default' : 'outline'}
+                          style={selectedTime === slot.time ? { backgroundColor: '#3b82f6', color: 'white', borderColor: '#3b82f6', boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.5)' } : {}}
                           className={cn(
                             'w-full dark:text-white',
                             !slot.available && 'opacity-50 cursor-not-allowed'
@@ -203,7 +212,7 @@ export function AppointmentCalendar() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Détails supplémentaires..."
-                  className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground dark:text-white ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>
             </div>

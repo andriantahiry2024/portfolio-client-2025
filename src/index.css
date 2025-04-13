@@ -17,6 +17,34 @@
   color: hsl(var(--muted-foreground));
   opacity: 0.6; /* Slightly increase opacity for muted */
 }
+/* Fix selected day in dark mode - Force styles with higher specificity */
+.dark .rdp-day_selected,
+.dark .rdp-day_selected:hover,
+.dark .rdp-day_selected:focus,
+.dark .rdp button[aria-selected="true"],
+.dark .rdp button.rdp-day_selected,
+.dark section[id="appointment"] .rdp button[aria-selected="true"] {
+  background-color: #3b82f6 !important; /* Bleu plus visible */
+  color: white !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  border-color: #3b82f6 !important;
+}
+/* Fix today indicator in dark mode */
+.dark .rdp-day_today:not(.rdp-day_selected) {
+  border-color: #3b82f6;
+  color: hsl(var(--foreground)) !important;
+}
+/* Force styles for selected day with inline style override */
+.dark section[id="appointment"] .rdp-day_selected button,
+.dark section[id="appointment"] .rdp button[aria-selected="true"] {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  border-color: #3b82f6 !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+}
+
 /* Selected/Today text colors are handled by their specific classes */
 
 /* Styles pour le loader initial et les transitions */
@@ -168,11 +196,15 @@
     border-color: rgba(255, 255, 255, 0.2) !important;
   }
 
-  /* Créneau horaire sélectionné */
+  /* Créneau horaire sélectionné - Amélioration de la visibilité */
   .dark section[id="appointment"] div[class*="grid-cols-2"] button[data-state="active"],
-  .dark section[id="appointment"] div[class*="grid-cols-2"] button[aria-pressed="true"] {
-    background-color: hsl(var(--primary)) !important;
+  .dark section[id="appointment"] div[class*="grid-cols-2"] button[aria-pressed="true"],
+  .dark section[id="appointment"] div[class*="grid-cols-2"] button[variant="default"] {
+    background-color: #3b82f6 !important; /* Bleu plus visible */
     color: white !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+    font-weight: bold;
   }
 
   .dark input::placeholder,
