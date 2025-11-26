@@ -34,6 +34,3 @@ core
 
 .env
 .vercel
-
-# Backend (séparé dans son propre repo)
-server/
