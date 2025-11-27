@@ -1,0 +1,56 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond général -->
+  <rect x="2" y="2" width="60" height="60" rx="18" fill="#020617"/>
+  <!-- Bordure blanche légère -->
+  <rect x="2.75" y="2.75" width="58.5" height="58.5" rx="17.25" stroke="#F9FAFB" stroke-width="1.3" opacity="0.9"/>
+
+  <!-- Carré arrondi principal (icône type loader) -->
+  <rect
+    x="12"
+    y="12"
+    width="40"
+    height="40"
+    rx="14"
+    fill="#020617"
+    stroke="#111827"
+    stroke-width="1.2"
+  />
+
+  <!-- Carré arrondi interne légèrement tourné -->
+  <g transform="translate(32 32) rotate(-8) translate(-32 -32)">
+    <rect
+      x="16"
+      y="16"
+      width="32"
+      height="32"
+      rx="12"
+      fill="none"
+      stroke="#4B5563"
+      stroke-width="1"
+    />
+  </g>
+
+  <!-- Cercle central -->
+  <circle
+    cx="32"
+    cy="32"
+    r="9"
+    fill="none"
+    stroke="#9CA3AF"
+    stroke-width="1.4"
+  />
+
+  <!-- Ombre douce au centre -->
+  <circle cx="32" cy="32" r="11" fill="url(#innerGlow)" opacity="0.55" />
+
+  <defs>
+    <!-- Glow blanc doux -->
+    <radialGradient id="innerGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(32 28) rotate(90) scale(16)">
+      <stop offset="0" stop-color="#F9FAFB" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+

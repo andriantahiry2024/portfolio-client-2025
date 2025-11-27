@@ -199,10 +199,17 @@ const AboutSection = ({
                     nouvelles technologies pour améliorer mes compétences et l'automatisation.
                   </p>
                 </div>
-                <Button className="w-full mt-6 bg-primary text-primary-foreground hover:bg-primary/90">
-                  <Download className="w-4 h-4 mr-2" />
-                  Télécharger CV
-                </Button>
+                <a
+                  href="/CV_NOMENAHASINA_ANDRIANTAHIRY.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block mt-6"
+                >
+                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Download className="w-4 h-4 mr-2" />
+                    Télécharger mon CV (PDF)
+                  </Button>
+                </a>
               </Card>
             </motion.div>
 

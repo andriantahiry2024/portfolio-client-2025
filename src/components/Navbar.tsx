@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu, X } from "lucide-react";
+import logo from "/logo-portfolio.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface NavbarProps {
@@ -143,16 +144,18 @@ const Navbar = ({ className = "" }: NavbarProps) => {
           )}
         >
           {/* Logo */}
-          <a
-            href="/"
-            className="text-sm md:text-base font-semibold tracking-[0.25em] uppercase text-black dark:text-white hover:opacity-70 transition-opacity"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/");
-            }}
+          <button
+            type="button"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            onClick={() => navigate("/")}
+            aria-label="Retour à l'accueil du portfolio Andriantahiry"
           >
-            Portfolio
-          </a>
+            <img
+              src={logo}
+              alt="Logo Andriantahiry Portfolio 2025"
+              className="h-7 w-auto md:h-8"
+            />
+          </button>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1.5">
