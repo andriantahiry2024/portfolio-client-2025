@@ -31,7 +31,7 @@ const ProjectsSection = ({
       title: "Site e-commerce Shopify",
       description:
         "Web design, refonte complète et ajout de fonctionnalités sur mesure",
-      image: "/Portfolio-2025/temple-des-oracles.jpg",
+      image: "/temple-des-oracles.jpg",
       technologies: ["Shopify", "Liquid", "CSS", "JavaScript"],
       githubUrl: "",
       liveUrl: "https://templedesoracles.com/",
@@ -42,7 +42,7 @@ const ProjectsSection = ({
       title: "Développement front-end & WordPress",
       description:
         "Intégration de maquettes (HTML, CSS, JavaScript), création et personnalisation de thème WordPress from scratch",
-      image: "/Portfolio-2025/uwandzani.jpg",
+      image: "/uwandzani.jpg",
       technologies: ["WordPress", "PHP", "HTML", "CSS", "JavaScript"],
       githubUrl: "",
       liveUrl: "https://www.uwandzani.com/",
@@ -53,7 +53,7 @@ const ProjectsSection = ({
       title: "Golf Fang",
       description:
         "Site vitrine original pour les passionnés de golf, dans une esthétique gothique et vampirique assumée",
-      image: "/Portfolio-2025/golfang.jpg",
+      image: "/golfang.jpg",
       technologies: ["Web Design", "Frontend", "Creative"],
       githubUrl: "",
       liveUrl: "https://golffang.co.uk/",
@@ -64,7 +64,7 @@ const ProjectsSection = ({
       title: "Satisfactory",
       description:
         "Responsable production applicative : conception de questionnaires personnalisés, maintenance et évolution des fonctionnalités.",
-      image: "/Portfolio-2025/satisfactory.png",
+      image: "/satisfactory.png",
       technologies: ["Production Applicative", "Maintenance", "Gestion de Projet"],
       githubUrl: "",
       liveUrl: "https://satisfactory.fr/",
@@ -75,7 +75,7 @@ const ProjectsSection = ({
         title: "SeraNay – Réseau social hybride e-commerce",
         description:
           "Plateforme hybride mêlant réseau social créatif, marketplace pour produits physiques, digitaux et formations, messagerie temps réel et accompagnement par l’IA. Architecture moderne (React 18, TypeScript, Supabase Realtime, PWA) pensée pour la collaboration (collections, moodboards, conversations guidées) et la monétisation des créateurs. Projet en cours de développement.",
-        image: "/Portfolio-2025/temple-des-oracles.jpg",
+        image: "/temple-des-oracles.jpg",
         technologies: ["React", "TypeScript", "Supabase", "Realtime", "PWA", "IA"],
         githubUrl: "",
         liveUrl: "https://seranay.vercel.app",
@@ -87,7 +87,7 @@ const ProjectsSection = ({
         title: "Food Tracker Calorie – Création de recettes & suivi nutritionnel",
         description:
           "Application mobile moderne (React Native, Expo, TypeScript) pour créer des recettes, analyser les aliments via reconnaissance d’image, suivre les calories au quotidien et planifier ses repas. Intégration avec Supabase pour l’authentification, la synchronisation multi-appareils et la gestion des plannings de repas. Projet en cours de développement, axé sur l’équilibre alimentaire et l’expérience utilisateur.",
-        image: "/Portfolio-2025/satisfactory.png",
+        image: "/satisfactory.png",
         technologies: [
           "React Native",
           "Expo",
