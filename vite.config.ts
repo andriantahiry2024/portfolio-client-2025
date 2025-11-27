@@ -4,7 +4,8 @@ import react from "@vitejs/plugin-react-swc";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/Portfolio-2025/',
+  // Pour Vercel (déploiement à la racine du domaine), pas de sous-répertoire
+  base: '/',
   optimizeDeps: {
     entries: ["src/main.tsx", "src/tempobook/**/*"],
   },
