@@ -155,6 +155,9 @@ const Navbar = ({ className = "" }: NavbarProps) => {
               alt="Logo Andriantahiry Portfolio 2025"
               className="h-7 w-auto md:h-8"
             />
+            <span className="text-[10px] md:text-xs font-semibold tracking-[0.28em] uppercase text-black dark:text-white">
+              Nomena
+            </span>
           </button>
 
           {/* Desktop Navigation */}

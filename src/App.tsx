@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/home";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
@@ -33,6 +33,8 @@ function App() {
 
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
+          {/* Redirection de l'ancien chemin GitHub Pages /Portfolio-2025/ vers la racine */}
+          <Route path="/Portfolio-2025/*" element={<Navigate to="/" replace />} />
           <Route path="/" element={<Home />} errorElement={<ErrorBoundary />} />
           <Route path="/blog" element={<BlogPage />} errorElement={<ErrorBoundary />} />
           {/* Modifier la route pour utiliser :slug au lieu de :id */}
