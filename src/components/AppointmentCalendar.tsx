@@ -10,6 +10,18 @@ import { format, addDays, setHours, setMinutes, isBefore, isAfter } from 'date-f
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
 interface TimeSlot {
   time: string;
@@ -25,15 +37,33 @@ const timeSlots: TimeSlot[] = [
   { time: '16:00', available: true },
 ];
 
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Le nom doit contenir au moins 2 caractères.",
+  }),
+  email: z.string().email({
+    message: "Veuillez entrer une adresse email valide.",
+  }),
+  message: z.string().optional(),
+});
+
+type AppointmentFormValues = z.infer<typeof formSchema>;
+
 export function AppointmentCalendar() {
   const [selectedDate, setSelectedDate] = React.useState<Date>();
   const [selectedTime, setSelectedTime] = React.useState<string>();
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [message, setMessage] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = React.useState('');
+
+  const form = useForm<AppointmentFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
+  });
 
   // Désactiver les dates passées et les week-ends
   const disabledDays = React.useCallback((date: Date) => {
@@ -43,57 +73,57 @@ export function AppointmentCalendar() {
     return isBefore(date, today) || day === 0 || day === 6;
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedDate || !selectedTime || !name || !email) return;
+  const onSubmit = async (data: AppointmentFormValues) => {
+    if (!selectedDate || !selectedTime) {
+      setErrorMessage("Veuillez sélectionner une date et une heure.");
+      setSubmitStatus('error');
+      return;
+    }
 
     setIsLoading(true);
     setSubmitStatus('idle');
     setErrorMessage('');
 
-    const appointmentData = {
-      date: format(selectedDate, 'dd/MM/yyyy'), // Format attendu par le backend
-      time: selectedTime,
-      name,
-      email,
-      message,
-    };
+    const appointmentDate = format(selectedDate, 'dd/MM/yyyy');
+    const appointmentDatetime = `${appointmentDate} ${selectedTime}`;
 
     try {
-      // Remplacer par l'URL de votre API backend
-      const response = await fetch('http://localhost:3001/api/appointments', {
+      // Configuration Telegram
+      const botToken = '7885369993:AAHw-K6e5c20fmRb02aMsfI9fPgXsmmIG5M';
+      const chatId = '6147303305'; // ⚠️ À REMPLACER : Envoyez un message à votre bot et récupérez votre ID
+
+      const text = `📅 Nouveau Rendez-vous !\n\n👤 Nom: ${data.name}\n📧 Email: ${data.email}\n📅 Date: ${appointmentDate}\n⏰ Heure: ${selectedTime}\n📝 Message: ${data.message || 'Aucun message'}`;
+
+      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(appointmentData),
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text,
+        }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-      }
-
-      // Succès
+      // On considère l'envoi comme réussi (Pabbly reçoit bien la requête).
       setSubmitStatus('success');
-      // Optionnel: Réinitialiser le formulaire ou afficher un message de succès
       setSelectedDate(undefined);
       setSelectedTime(undefined);
-      setName('');
-      setEmail('');
-      setMessage('');
-
+      form.reset();
     } catch (error: any) {
       console.error('Erreur lors de la prise de rendez-vous:', error);
       setSubmitStatus('error');
-      setErrorMessage(error.message || 'Une erreur est survenue.');
+      setErrorMessage(
+        error.message ||
+        "Une erreur est survenue lors de l'envoi du rendez-vous. Veuillez réessayer."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-900 text-black dark:text-white"> 
+    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-900 text-black dark:text-white">
       <h1 className='text-center mt-10 text-2xl font-bold'>Prendre un rendez-vous</h1>
       <CardHeader>
         <CardTitle>Prendre un rendez-vous</CardTitle>
@@ -102,119 +132,133 @@ export function AppointmentCalendar() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                disabled={disabledDays}
-                locale={fr}
-                className="rounded-md border"
-              />
-            </div>
-            
-            <div className="flex-1 space-y-4">
-              <div className="space-y-2">
-                <Label>Créneaux disponibles</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <AnimatePresence>
-                    {timeSlots.map((slot) => (
-                      <motion.div
-                        key={slot.time}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <Button
-                          type="button"
-                          variant={selectedTime === slot.time ? 'default' : 'outline'}
-                          className={cn(
-                            'w-full',
-                            !slot.available && 'opacity-50 cursor-not-allowed'
-                          )}
-                          onClick={() => slot.available && setSelectedTime(slot.time)}
-                          disabled={!slot.available}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={disabledDays}
+                  locale={fr}
+                  className="rounded-md border"
+                />
+              </div>
+
+              <div className="flex-1 space-y-4">
+                <div className="space-y-2">
+                  <Label>Créneaux disponibles</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <AnimatePresence>
+                      {timeSlots.map((slot) => (
+                        <motion.div
+                          key={slot.time}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.2 }}
                         >
-                          {slot.time}
-                        </Button>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                          <Button
+                            type="button"
+                            variant={selectedTime === slot.time ? 'default' : 'outline'}
+                            className={cn(
+                              'w-full',
+                              !slot.available && 'opacity-50 cursor-not-allowed'
+                            )}
+                            onClick={() => slot.available && setSelectedTime(slot.time)}
+                            disabled={!slot.available}
+                          >
+                            {slot.time}
+                          </Button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="name">Nom complet</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Votre nom"
-                  required
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom complet</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Votre nom" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.com"
-                  required
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="votre@email.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="message">Message (optionnel)</Label>
-                <textarea
-                  id="message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Détails supplémentaires..."
-                  className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message (optionnel)</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Détails supplémentaires..."
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              disabled={!selectedDate || !selectedTime || !name || !email || isLoading}
-              className="w-full md:w-auto"
-            >
-              {isLoading ? 'Envoi en cours...' : 'Confirmer le rendez-vous'}
-            </Button>
-          </div>
-          {/* Affichage des messages de statut */}
-          <AnimatePresence>
-            {submitStatus === 'success' && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-green-600 dark:text-green-400 text-center"
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                disabled={!selectedDate || !selectedTime || isLoading}
+                className="w-full md:w-auto"
               >
-                Rendez-vous confirmé avec succès !
-              </motion.p>
-            )}
-            {submitStatus === 'error' && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-red-600 dark:text-red-400 text-center"
-              >
-                Erreur : {errorMessage}
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </form>
+                {isLoading ? 'Envoi en cours...' : 'Confirmer le rendez-vous'}
+              </Button>
+            </div>
+            {/* Affichage des messages de statut */}
+            <AnimatePresence>
+              {submitStatus === 'success' && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-green-600 dark:text-green-400 text-center"
+                >
+                  Rendez-vous confirmé avec succès !
+                </motion.p>
+              )}
+              {submitStatus === 'error' && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-red-600 dark:text-red-400 text-center"
+                >
+                  Erreur : {errorMessage}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </form>
+        </Form>
       </CardContent>
       <CardFooter className="text-sm text-muted-foreground">
         Les rendez-vous sont disponibles du lundi au vendredi, de 9h à 17h.

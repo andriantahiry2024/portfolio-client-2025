@@ -13,6 +13,7 @@ interface Project {
   githubUrl?: string;
   liveUrl?: string;
   category: string;
+  variant?: "default" | "social" | "nutrition";
 }
 
 interface ProjectsSectionProps {
@@ -68,6 +69,37 @@ const ProjectsSection = ({
       githubUrl: "",
       liveUrl: "https://satisfactory.fr/",
       category: "web",
+      },
+      {
+        id: 5,
+        title: "SeraNay – Réseau social hybride e-commerce",
+        description:
+          "Plateforme hybride mêlant réseau social créatif, marketplace pour produits physiques, digitaux et formations, messagerie temps réel et accompagnement par l’IA. Architecture moderne (React 18, TypeScript, Supabase Realtime, PWA) pensée pour la collaboration (collections, moodboards, conversations guidées) et la monétisation des créateurs. Projet en cours de développement.",
+        image: "/Portfolio-2025/temple-des-oracles.jpg",
+        technologies: ["React", "TypeScript", "Supabase", "Realtime", "PWA", "IA"],
+        githubUrl: "",
+        liveUrl: "https://seranay.vercel.app",
+        category: "web",
+        variant: "social",
+      },
+      {
+        id: 6,
+        title: "Food Tracker Calorie – Création de recettes & suivi nutritionnel",
+        description:
+          "Application mobile moderne (React Native, Expo, TypeScript) pour créer des recettes, analyser les aliments via reconnaissance d’image, suivre les calories au quotidien et planifier ses repas. Intégration avec Supabase pour l’authentification, la synchronisation multi-appareils et la gestion des plannings de repas. Projet en cours de développement, axé sur l’équilibre alimentaire et l’expérience utilisateur.",
+        image: "/Portfolio-2025/satisfactory.png",
+        technologies: [
+          "React Native",
+          "Expo",
+          "TypeScript",
+          "Supabase",
+          "Nutrition",
+          "Mobile",
+        ],
+        githubUrl: "https://github.com/andriantahiry2024/Food-tracking-Calories",
+        liveUrl: "",
+        category: "mobile",
+        variant: "nutrition",
     },
   ],
 }: ProjectsSectionProps) => {
@@ -166,6 +198,7 @@ const ProjectsSection = ({
                     technologies={project.technologies}
                     githubUrl={project.githubUrl}
                     liveUrl={project.liveUrl}
+                    variant={project.variant}
                   />
                 </motion.div>
               ))}

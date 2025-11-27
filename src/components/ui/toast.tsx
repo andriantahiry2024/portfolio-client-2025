@@ -28,6 +28,9 @@ const toastVariants = cva(
     variants: {
       variant: {
         default: "border bg-background text-foreground",
+        // Style pour les toasts de succès (utilisé dans ContactSection)
+        success:
+          "group border border-emerald-500/60 bg-emerald-500/10 text-emerald-700 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-200",
         destructive:
           "destructive group border-destructive bg-destructive text-destructive-foreground",
       },

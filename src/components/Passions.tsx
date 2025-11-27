@@ -58,23 +58,23 @@ const PassionCard = ({ title, description, icon, children, tags, delay }: Passio
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay }}
-            className="bg-[#0f0f13] border border-white/5 rounded-3xl p-6 flex flex-col h-full hover:border-white/10 transition-colors group"
+            className="bg-gray-50 dark:bg-[#0f0f13] border border-black/5 dark:border-white/5 rounded-3xl p-6 flex flex-col h-full hover:border-black/10 dark:hover:border-white/10 transition-colors group shadow-sm dark:shadow-none"
         >
             <div className="flex items-start gap-4 mb-4">
-                <div className="p-3 bg-white/5 rounded-xl text-white group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 bg-black/5 dark:bg-white/5 rounded-xl text-black dark:text-white group-hover:scale-110 transition-transform duration-300">
                     {icon}
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-white mb-1">{title}</h3>
+                    <h3 className="text-xl font-bold text-black dark:text-white mb-1">{title}</h3>
                 </div>
             </div>
 
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
                 {description}
             </p>
 
             {/* Zone de contenu hauteur fixe */}
-            <div className="flex-grow mb-6 rounded-xl overflow-hidden bg-black/20 relative flex items-center justify-center min-h-[352px]">
+            <div className="flex-grow mb-6 rounded-xl overflow-hidden bg-black/5 dark:bg-black/20 relative flex items-center justify-center min-h-[352px]">
                 {children}
             </div>
 
@@ -87,9 +87,9 @@ const PassionCard = ({ title, description, icon, children, tags, delay }: Passio
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: i * 0.1 }}
-                            className="flex items-center text-sm text-gray-500"
+                            className="flex items-center text-sm text-gray-500 dark:text-gray-500"
                         >
-                            <span className="w-1.5 h-1.5 rounded-full bg-gray-600 mr-3" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-600 mr-3" />
                             {tag}
                         </motion.li>
                     ))}
@@ -120,15 +120,74 @@ const SpotifyEmbed = () => (
 const PlayableChessBoard = () => {
     const [game, setGame] = useState(new Chess());
     const [fen, setFen] = useState(game.fen());
+    const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
 
-    const makeRandomMove = useCallback(() => {
-        const possibleMoves = game.moves();
+    // Fonction d'évaluation simple pour le niveau Difficile
+    const evaluateBoard = (game: Chess) => {
+        const pieceValues: { [key: string]: number } = {
+            p: 1, n: 3, b: 3, r: 5, q: 9, k: 0,
+            P: -1, N: -3, B: -3, R: -5, Q: -9, K: 0
+        };
+        let totalEvaluation = 0;
+        const board = game.board();
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                const piece = board[i][j];
+                if (piece) {
+                    totalEvaluation += pieceValues[piece.type] * (piece.color === 'w' ? 1 : -1);
+                }
+            }
+        }
+        return totalEvaluation;
+    };
+
+    const makeComputerMove = useCallback(() => {
+        const possibleMoves = game.moves({ verbose: true });
         if (game.isGameOver() || game.isDraw() || possibleMoves.length === 0) return;
-        const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-        game.move(possibleMoves[randomIndex]);
-        setGame(new Chess(game.fen()));
-        setFen(game.fen());
-    }, [game]);
+
+        let chosenMove;
+
+        if (difficulty === 'easy') {
+            // Facile : Coup totalement aléatoire
+            const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+            chosenMove = possibleMoves[randomIndex];
+        } else if (difficulty === 'medium') {
+            // Moyen : Essaie de capturer une pièce si possible, sinon aléatoire
+            const captureMoves = possibleMoves.filter(move => move.flags.includes('c') || move.flags.includes('e'));
+            if (captureMoves.length > 0) {
+                const randomIndex = Math.floor(Math.random() * captureMoves.length);
+                chosenMove = captureMoves[randomIndex];
+            } else {
+                const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+                chosenMove = possibleMoves[randomIndex];
+            }
+        } else {
+            // Difficile : Cherche le meilleur coup immédiat (profondeur 1)
+            let bestMove = null;
+            let bestValue = Infinity; // L'IA joue les noirs, elle cherche à MINIMISER le score
+
+            // Mélanger les coups pour varier les parties si égalité
+            possibleMoves.sort(() => Math.random() - 0.5);
+
+            for (const move of possibleMoves) {
+                game.move(move.san);
+                const boardValue = evaluateBoard(game);
+                game.undo();
+
+                if (boardValue < bestValue) {
+                    bestValue = boardValue;
+                    bestMove = move;
+                }
+            }
+            chosenMove = bestMove || possibleMoves[0];
+        }
+
+        if (chosenMove) {
+            game.move(chosenMove.san);
+            setGame(new Chess(game.fen()));
+            setFen(game.fen());
+        }
+    }, [game, difficulty]);
 
     function onDrop(sourceSquare: string, targetSquare: string) {
         try {
@@ -136,7 +195,7 @@ const PlayableChessBoard = () => {
             if (move === null) return false;
             setGame(new Chess(game.fen()));
             setFen(game.fen());
-            setTimeout(makeRandomMove, 200);
+            setTimeout(makeComputerMove, 250);
             return true;
         } catch (error) { return false; }
     }
@@ -148,8 +207,8 @@ const PlayableChessBoard = () => {
     };
 
     return (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-[#111]">
-            <div className="w-[280px] h-[280px]">
+        <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 dark:bg-[#111]">
+            <div className="w-[280px] h-[280px] mb-2">
                 <Chessboard
                     position={fen}
                     onPieceDrop={onDrop}
@@ -158,18 +217,28 @@ const PlayableChessBoard = () => {
                     customLightSquareStyle={{ backgroundColor: "#ebecd0" }}
                 />
             </div>
-            <button onClick={resetGame} className="mt-4 text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-full transition-colors">
-                Reset
-            </button>
+
+            <div className="flex gap-2 items-center">
+                <select
+                    value={difficulty}
+                    onChange={(e) => setDifficulty(e.target.value as any)}
+                    className="text-xs bg-white dark:bg-black border border-gray-300 dark:border-white/20 rounded-md px-2 py-1 text-black dark:text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                >
+                    <option value="easy">Facile</option>
+                    <option value="medium">Moyen</option>
+                    <option value="hard">Difficile</option>
+                </select>
+
+                <button onClick={resetGame} className="text-xs bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 text-black dark:text-white px-3 py-1 rounded-md transition-colors">
+                    Reset
+                </button>
+            </div>
         </div>
     );
 };
 
 // --- 3. Slider Divertissement (Modifié pour recevoir l'index du parent) ---
 const EntertainmentSlider = ({ currentIndex }: { currentIndex: number }) => {
-    // Note: Le setInterval est géré par le parent maintenant, ou on l'affiche juste ici.
-    // Pour une meilleure synchro, l'affichage dépend purement de `currentIndex`.
-
     return (
         <div className="w-full h-[352px] relative overflow-hidden rounded-xl group cursor-pointer">
             <AnimatePresence mode="wait">
@@ -240,14 +309,14 @@ const PassionsSection = () => {
     }, []);
 
     return (
-        <section className="py-24 bg-[#050505] text-white">
+        <section className="py-24 bg-white dark:bg-[#050505] text-black dark:text-white transition-colors duration-300">
             <div className="container px-4 md:px-6 mx-auto">
 
                 <div className="flex flex-col items-center text-center mb-16">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-400 mb-4"
+                        className="px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-medium text-gray-600 dark:text-gray-400 mb-4"
                     >
                         Au-delà du Code
                     </motion.span>
@@ -263,7 +332,7 @@ const PassionsSection = () => {
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-gray-400 max-w-[600px] text-lg"
+                        className="text-gray-600 dark:text-gray-400 max-w-[600px] text-lg"
                     >
                         Ce qui m'anime en dehors du développement.
                     </motion.p>

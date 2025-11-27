@@ -27,11 +27,15 @@ npm install
 Créez un fichier `.env` à la racine du projet :
 
 ```env
-# URL du backend API
+# URL du backend API (si vous utilisez encore le backend)
 VITE_BACKEND_URL=http://localhost:3001
 
 # Token d'authentification admin (optionnel)
 VITE_ADMIN_TOKEN=ton-token-admin
+
+# URL du webhook Pabbly Connect pour les rendez-vous (optionnel)
+# Si non défini, utilise l'URL par défaut
+VITE_PABBLY_WEBHOOK_URL=https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjcwNTZkMDYzNjA0Mzc1MjZjNTUzNTUxMzYi_pc
 ```
 
 ## 🏃 Lancer le projet

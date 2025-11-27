@@ -3,6 +3,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { SplineScene } from "@/components/ui/spline";
 
@@ -12,6 +18,7 @@ interface HeroSectionProps {
   description?: string;
   ctaText?: string;
   onCtaClick?: () => void;
+  onLoaded?: () => void;
 }
 
 const HeroSection = ({
@@ -20,6 +27,7 @@ const HeroSection = ({
   description = "Développeur polyvalent passionné par la création d'applications web complètes, pas vraiment un pro et actuellement en quête de spécialisation pour approfondir mon expertise et maximiser mon impact.",
   ctaText = "Voir mes projets",
   onCtaClick = () => console.log("CTA clicked"),
+  onLoaded,
 }: HeroSectionProps) => {
   return (
     <div className="w-full h-screen bg-black overflow-hidden relative flex items-center">
@@ -71,12 +79,38 @@ const HeroSection = ({
               transition={{ duration: 0.5, delay: 0.4 }}
               className="flex flex-wrap items-center gap-4 pt-4"
             >
-              <Button
-                onClick={onCtaClick}
-                className="bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
-              >
-                {ctaText}
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    onClick={onCtaClick}
+                    className="bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+                  >
+                    Me contacter
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const el = document.getElementById("appointment");
+                      if (el) {
+                        el.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                  >
+                    Prendre rendez-vous
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const el = document.getElementById("contact");
+                      if (el) {
+                        el.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                  >
+                    Me contacter directement
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <div className="flex items-center gap-3">
                 <button
@@ -117,6 +151,7 @@ const HeroSection = ({
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
               className="w-full h-full"
               allowScroll={true}
+              onLoad={onLoaded}
             />
           </motion.div>
         </div>

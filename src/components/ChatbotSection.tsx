@@ -366,7 +366,7 @@ const ChatbotSection: React.FC = () => {
           Assistant Virtuel
           {isOffline && <span className="text-xs ml-2 text-red-500">(mode hors-ligne)</span>}
         </h2>
-        <h4 className="text-center mb-8 text-gray-800 dark:text-white">Modèle de Gemini light</h4>
+        <h4 className="text-center mb-8 text-gray-800 dark:text-white">Le bot n'est pas disponible pour le moment</h4>
         
         <div className="h-72 mb-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
           <ChatbotAnimation />

@@ -4,36 +4,22 @@ import { Suspense, lazy, useRef, useEffect } from 'react'
 const Spline = lazy(() => import('@splinetool/react-spline'))
 
 interface SplineSceneProps {
-  scene: string
-  className?: string
-  allowScroll?: boolean
+  scene: string;
+  className?: string;
+  allowScroll?: boolean;
+  onLoad?: () => void;
 }
 
-export function SplineScene({ scene, className, allowScroll = true }: SplineSceneProps) {
+export function SplineScene({
+  scene,
+  className,
+  allowScroll = true,
+  onLoad,
+}: SplineSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Désactiver la capture des événements de défilement
-  useEffect(() => {
-    if (!allowScroll || !containerRef.current) return;
-    
-    const container = containerRef.current;
-    
-    // Fonction pour gérer le défilement tout en permettant l'interaction
-    const handleWheel = (e: WheelEvent) => {
-      // Ne pas empêcher la propagation par défaut
-      // Permettre le défilement de la page
-      window.scrollBy({
-        top: e.deltaY
-      });
-    };
-    
-    // Écouter les événements wheel avec passive true pour de meilleures performances
-    container.addEventListener('wheel', handleWheel, { passive: true });
-    
-    return () => {
-      container.removeEventListener('wheel', handleWheel);
-    };
-  }, [allowScroll]);
+  // Ancien code de gestion custom du scroll supprimé pour laisser le navigateur gérer
+  // le défilement de façon native (plus fluide).
 
   return (
     <div 
@@ -59,6 +45,7 @@ export function SplineScene({ scene, className, allowScroll = true }: SplineScen
             width: '100%',
             height: '100%'
           }}
+          onLoad={onLoad}
         />
       </Suspense>
     </div>

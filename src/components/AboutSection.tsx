@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Download, MapPin, Star } from "lucide-react";
 import LocationMap from "./LocationMap";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from "./ui/carousel";
 
 interface AboutSectionProps {
   title?: string;
@@ -94,6 +100,58 @@ const AboutSection = ({
       period: "2010-2011",
     },
   ];
+
+  const testimonials = [
+    {
+      name: "Marc",
+      role: "Freelance",
+      company: "Golffang",
+      tagline: "En tant que créateur, il était indispensable.",
+      text: "Développeur compétent et créatif. Refaire sites WordPress fonctionnel performant grâce à son expertise.",
+      initials: "M",
+    },
+    {
+      name: "Temple des Oracles",
+      role: "Fondatrice",
+      company: "E‑commerce Shopify",
+      tagline: "Un accompagnement technique et design de bout en bout.",
+      text: "Refonte complète de notre boutique, ajout de fonctionnalités sur mesure et optimisation du parcours client sans casser notre univers visuel.",
+      initials: "TO",
+    },
+    {
+      name: "Uwandzani",
+      role: "Responsable communication",
+      company: "Site vitrine & blog",
+      tagline: "Une interface claire, moderne et facile à maintenir.",
+      text: "Intégration pixel‑perfect, amélioration des performances et mise en place d’un back‑office WordPress vraiment exploitable au quotidien.",
+      initials: "U",
+    },
+    {
+      name: "Satisfactory",
+      role: "Chef de projet",
+      company: "Plateforme de questionnaires",
+      tagline: "Stabilisation et évolutions continues de la plateforme.",
+      text: "Capable de prendre en main un existant complexe, de le fiabiliser et de proposer des évolutions concrètes pour les utilisateurs finaux.",
+      initials: "S",
+    },
+  ];
+
+  const [testimonialApi, setTestimonialApi] = useState<CarouselApi | null>(null);
+
+  useEffect(() => {
+    if (!testimonialApi) return;
+
+    const interval = setInterval(() => {
+      if (!testimonialApi) return;
+      if (testimonialApi.canScrollNext()) {
+        testimonialApi.scrollNext();
+      } else {
+        testimonialApi.scrollTo(0);
+      }
+    }, 7000); // 7s par avis
+
+    return () => clearInterval(interval);
+  }, [testimonialApi]);
 
   return (
     <section id="about" className="py-20 bg-background">
@@ -221,30 +279,51 @@ const AboutSection = ({
               viewport={{ once: true }}
             >
               <Card className="bg-card border-border p-6">
-                <h3 className="text-xl font-bold text-foreground mb-4">
+                <h3 className="text-xl font-bold text-foreground mb-2">
                   💬 Les clients en témoignent...
                 </h3>
-                <p className="text-muted-foreground text-sm italic mb-4">
-                  En tant que créateur, il était indispensable.
-                </p>
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-foreground text-foreground" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground text-sm mb-2">
-                  "Développeur compétent et créatif. Refaire sites WordPress fonctionnel
-                  performant grâce à son expertise."
-                </p>
-                <div className="flex items-center gap-3 mt-4">
-                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground font-bold">
-                    M
-                  </div>
-                  <div>
-                    <p className="text-foreground text-sm font-semibold">Marc</p>
-                    <p className="text-muted-foreground text-xs">Freelance, Golffang</p>
-                  </div>
-                </div>
+
+                <Carousel
+                  setApi={setTestimonialApi}
+                  opts={{ loop: true, align: "start" }}
+                  className="mt-4"
+                >
+                  <CarouselContent>
+                    {testimonials.map((t, index) => (
+                      <CarouselItem key={index}>
+                        <div className="space-y-4">
+                          <p className="text-muted-foreground text-sm italic">
+                            {t.tagline}
+                          </p>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className="w-4 h-4 fill-foreground text-foreground"
+                              />
+                            ))}
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-2">
+                            “{t.text}”
+                          </p>
+                          <div className="flex items-center gap-3 mt-4">
+                            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground font-bold text-xs">
+                              {t.initials}
+                            </div>
+                            <div>
+                              <p className="text-foreground text-sm font-semibold">
+                                {t.name}
+                              </p>
+                              <p className="text-muted-foreground text-xs">
+                                {t.role}, {t.company}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                </Carousel>
               </Card>
             </motion.div>
           </div>
