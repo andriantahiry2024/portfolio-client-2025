@@ -106,7 +106,7 @@ const Home = () => {
       {!isHeroLoaded && (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-start pt-32 bg-black">
           <HeroLoader3D />
-         
+
         </div>
       )}
 
@@ -186,9 +186,7 @@ const Home = () => {
         </section>
       </main>
 
-      <FadeInView delay={0.3} direction="none">
-        <Footer />
-      </FadeInView>
+      <Footer />
     </div>
   );
 };

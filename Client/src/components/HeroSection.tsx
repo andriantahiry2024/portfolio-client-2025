@@ -22,9 +22,9 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({
-  name = "ANDRIANTAHIRY NOMENAHASINA",
+  name = "TECKFORGEEK",
   title = "Full Stack Developer",
-  description = "Développeur polyvalent passionné par la création d'applications web complètes, pas vraiment un pro et actuellement en quête de spécialisation pour approfondir mon expertise et maximiser mon impact.",
+  description = "Application officielle de portfolio et de services digitaux Teckforgeek. Découvrez mes projets Full Stack, mes compétences, et prenez rendez-vous pour vos besoins technologiques.",
   ctaText = "Voir mes projets",
   onCtaClick = () => console.log("CTA clicked"),
   onLoaded,
