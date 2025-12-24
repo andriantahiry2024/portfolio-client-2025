@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface FooterProps {
   className?: string;
@@ -27,7 +28,7 @@ const Footer = ({ className }: FooterProps = {}) => {
     },
     {
       icon: <Mail className="h-5 w-5" />,
-      href: "mailto:contact@example.com",
+      href: "mailto:andriantahirynomena@gmail.com",
       label: "Email",
     },
   ];
@@ -35,13 +36,23 @@ const Footer = ({ className }: FooterProps = {}) => {
   return (
     <footer
       className={cn(
-        "w-full py-6 px-4 md:px-8 border-t bg-background",
+        "w-full py-8 px-4 md:px-8 border-t bg-background/50 backdrop-blur-md",
         className,
       )}
     >
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="text-sm text-muted-foreground">
-          © {currentYear} Portfolio. All rights reserved.
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="flex flex-col items-center md:items-start gap-2">
+          <div className="text-sm text-foreground font-medium">
+            © {currentYear} Teckforgeek. Tous droits réservés.
+          </div>
+          <div className="flex space-x-4 text-xs text-muted-foreground">
+            <Link to="/politique-de-confidentialite" className="hover:text-primary transition-colors">
+              Politique de confidentialité
+            </Link>
+            <Link to="/conditions-utilisation" className="hover:text-primary transition-colors">
+              Conditions d'utilisation
+            </Link>
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">
