@@ -8,13 +8,9 @@ import ScrollToTop from "./components/ScrollToTop";
 // Lazy load components
 const BlogPage = lazy(() => import("./components/BlogPage"));
 const BlogPostDetail = lazy(() => import("./components/BlogPostDetail"));
-const AdminDashboard = lazy(() => import("./components/AdminDashboard"));
-const CreateUserPage = lazy(() => import("./pages/CreateUserPage")); // Importer la nouvelle page
-const LoginPage = lazy(() => import("./pages/LoginPage")); // Importer la page de login
 const BlogPostDetailPage = lazy(() => import("./components/BlogPostDetail"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
-import ProtectedRoute from "./components/ProtectedRoute"; // Importer ProtectedRoute
 
 function App() {
   // Suspense fallback component
@@ -41,13 +37,6 @@ function App() {
           <Route path="/blog" element={<BlogPage />} errorElement={<ErrorBoundary />} />
           {/* Modifier la route pour utiliser :slug au lieu de :id */}
           <Route path="/blog/:slug" element={<BlogPostDetail />} errorElement={<ErrorBoundary />} />
-          {/* Route Admin protégée */}
-          <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPERADMIN']} />}>
-            <Route path="/admin" element={<AdminDashboard />} errorElement={<ErrorBoundary />} />
-            {/* Ajoutez d'autres routes admin ici si nécessaire */}
-          </Route>
-          <Route path="/create-user" element={<CreateUserPage />} errorElement={<ErrorBoundary />} />
-          <Route path="/login" element={<LoginPage />} errorElement={<ErrorBoundary />} />
           <Route path="/politique-de-confidentialite" element={<PrivacyPolicy />} errorElement={<ErrorBoundary />} />
           <Route path="/conditions-utilisation" element={<TermsOfService />} errorElement={<ErrorBoundary />} />
         </Routes>

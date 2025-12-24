@@ -33,13 +33,12 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     setTheme(savedTheme);
   }, []);
 
-  const navItems = [
+  const navItems: { name: string; href: string; isExternal?: boolean }[] = [
     { name: "Accueil", href: "#home" },
     { name: "À propos", href: "#about" },
     { name: "Compétences", href: "#skills" },
     { name: "Interactif", href: "#interactive" },
     { name: "Projets", href: "#projects" },
-    { name: "Admin", href: "/admin", isExternal: true },
     { name: "Contact", href: "#contact" },
   ];
 
