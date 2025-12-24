@@ -30,7 +30,8 @@ const AdminAppointmentsPage: React.FC = () => {
           throw new Error('Utilisateur non authentifié');
         }
 
-        const response = await fetch('http://localhost:3001/api/admin/appointments', {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+        const response = await fetch(`${backendUrl}/api/admin/appointments`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -38,7 +39,7 @@ const AdminAppointmentsPage: React.FC = () => {
 
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) {
-             throw new Error('Accès non autorisé. Vérifiez vos permissions.');
+            throw new Error('Accès non autorisé. Vérifiez vos permissions.');
           }
           const errorData = await response.json();
           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
@@ -99,7 +100,7 @@ const AdminAppointmentsPage: React.FC = () => {
                   <TableCell>{appointment.email}</TableCell>
                   <TableCell>{appointment.message || '-'}</TableCell>
                   <TableCell>
-                     {format(new Date(appointment.created_at), 'Pp', { locale: fr })}
+                    {format(new Date(appointment.created_at), 'Pp', { locale: fr })}
                   </TableCell>
                 </TableRow>
               ))}

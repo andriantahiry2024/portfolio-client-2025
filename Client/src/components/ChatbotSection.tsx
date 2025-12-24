@@ -13,38 +13,38 @@ function prepareMarkdown(text: string): string {
     .replace(/\*\*/g, '**')    // Conserver l'emphase forte
     .replace(/\*/g, '*')       // Conserver l'emphase
     .trim();
-  
+
   // Sauvegarder les blocs de code existants avant traitement
   const existingCodeBlocks: string[] = [];
   cleanedText = cleanedText.replace(/```([\s\S]*?)```/g, (match) => {
     existingCodeBlocks.push(match);
     return `__EXISTING_CODE_BLOCK_${existingCodeBlocks.length - 1}__`;
   });
-  
+
   // Identifier les titres en majuscules et les formater en markdown
-  cleanedText = cleanedText.replace(/^([A-Z][A-Z\s]+)$/gm, (match) => 
+  cleanedText = cleanedText.replace(/^([A-Z][A-Z\s]+)$/gm, (match) =>
     `## ${match.trim()}`
   );
-  
+
   // Formater les sous-sections numérotées en markdown
   cleanedText = cleanedText.replace(/^(\d+\.\s+)([A-Z][A-Z\s]+)$/gm, (match, number, title) =>
     `### ${number}${title}`
   );
-  
+
   // Conserver le format des listes à puces
   cleanedText = cleanedText.replace(/^(\s*)-\s+(.+)$/gm, (match, space, content) =>
     `${space}- ${content.trim()}`
   );
-  
+
   // Détecter et envelopper le code Python qui n'est pas déjà dans des blocs de code
   const sections = cleanedText.split(/\n\n+/);
-  
+
   const processedSections = sections.map(section => {
     // Si la section contient des marqueurs de code, ne pas la traiter
     if (section.includes('__EXISTING_CODE_BLOCK_')) {
       return section;
     }
-    
+
     // Détection automatique du code Python par motifs courants
     const pythonPatterns = [
       /^import\s+[\w_.]+/m,                   // import statements
@@ -62,26 +62,26 @@ function prepareMarkdown(text: string): string {
       /^\s*print\(/m,                         // print statements
       /^ydl_opts\s*=/m                        // ydl_opts assignments (specific to the use case)
     ];
-    
+
     // Si la section contient un ou plusieurs de ces motifs, c'est probablement du code Python
     const isPythonCode = pythonPatterns.some(pattern => pattern.test(section));
-    
+
     if (isPythonCode) {
       // Envelopper dans un bloc de code Python
       return `\`\`\`python\n${section}\n\`\`\``;
     }
-    
+
     return section;
   });
-  
+
   // Reconstituer le texte
   cleanedText = processedSections.join('\n\n');
-  
+
   // Restaurer les blocs de code existants
   cleanedText = cleanedText.replace(/__EXISTING_CODE_BLOCK_(\d+)__/g, (match, index) => {
     return existingCodeBlocks[parseInt(index)];
   });
-  
+
   return cleanedText;
 }
 
@@ -92,11 +92,9 @@ interface Message {
 }
 
 // Définir l'URL du backend selon l'environnement
-const BACKEND_URL = import.meta.env.MODE === 'development' 
-  ? 'http://localhost:3001/api' 
-  : import.meta.env.PROD && window.location.hostname.includes('vercel.app')
-    ? `https://portfolio-backend-eta-ten.vercel.app/api`
-    : 'https://portfolio-backend-eta-ten.vercel.app/api';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+  ? `${import.meta.env.VITE_BACKEND_URL}/api`
+  : 'http://localhost:3001/api';
 
 // Mode debug pour suivre les appels
 console.log('Mode:', import.meta.env.MODE);
@@ -113,7 +111,7 @@ interface CodeProps {
 // Composant pour le bouton de copie
 const CopyButton: React.FC<{ content: string }> = ({ content }) => {
   const [copied, setCopied] = useState(false);
-  
+
   const handleCopy = () => {
     navigator.clipboard.writeText(content)
       .then(() => {
@@ -124,7 +122,7 @@ const CopyButton: React.FC<{ content: string }> = ({ content }) => {
         console.error('Failed to copy: ', err);
       });
   };
-  
+
   return (
     <button
       onClick={handleCopy}
@@ -157,29 +155,29 @@ function extractCodeText(rawMarkdown: string, language: string, codeContent: str
   if (typeof codeContent === 'string' && !codeContent.includes('[object Object]')) {
     return codeContent;
   }
-  
+
   // Sinon, essayons d'extraire le code du markdown original
   try {
     // Recherche des blocs de code dans le markdown brut
     const regex = new RegExp('```' + language + '\\n([\\s\\S]*?)```', 'g');
     const matches = [...rawMarkdown.matchAll(regex)];
-    
+
     // Retourne le contenu du premier bloc correspondant
     if (matches.length > 0 && matches[0][1]) {
       return matches[0][1].trim();
     }
-    
+
     // Si on ne trouve pas de bloc avec la langue spécifiée, chercher n'importe quel bloc
     const genericRegex = /```(?:\w*)\n([\s\S]*?)```/g;
     const genericMatches = [...rawMarkdown.matchAll(genericRegex)];
-    
+
     if (genericMatches.length > 0 && genericMatches[0][1]) {
       return genericMatches[0][1].trim();
     }
   } catch (error) {
     console.error('Error extracting code:', error);
   }
-  
+
   // Fallback: essai de nettoyage basique
   return String(codeContent).replace(/\[object Object\]/g, '').replace(/,/g, '').trim();
 }
@@ -222,7 +220,7 @@ const ChatbotSection: React.FC = () => {
 
   // État pour stocker l'historique de la conversation pour Gemini
   const [chatHistory, setChatHistory] = useState<GeminiHistoryItem[]>([]);
-  
+
   // Fonction pour maintenir le scroll sur la zone de saisie
   // const maintainScroll = () => { // Fonction entièrement supprimée pour tester
   //   if (inputSectionRef.current) {
@@ -234,12 +232,12 @@ const ChatbotSection: React.FC = () => {
   //     }, 50);
   //   }
   // };
-  
+
   // Appeler maintainScroll après chaque nouvelle réponse
   // useEffect(() => { // Temporairement supprimé pour tester le comportement par défaut
   //   maintainScroll();
   // }, [lastBotMessage, isTyping]);
-  
+
   // Mettre à jour le markdown brut quand le message du bot change
   useEffect(() => {
     if (lastBotMessage && lastBotMessage.text) {
@@ -259,9 +257,9 @@ const ChatbotSection: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!input.trim()) return;
-    
+
     // Capturer la position actuelle du scroll
     const scrollPos = window.scrollY;
 
@@ -284,7 +282,7 @@ const ChatbotSection: React.FC = () => {
     setTimeout(() => {
       titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 300); // Délai de 300ms
-    
+
     // S'assurer que la position du scroll reste la même
     // window.scrollTo(0, scrollPos); // Commenté car maintainScroll devrait gérer le positionnement
 
@@ -316,7 +314,7 @@ const ChatbotSection: React.FC = () => {
       }
 
       const data = await response.json();
-      
+
       const botMessage: Message = {
         text: data.message,
         isBot: true,
@@ -328,7 +326,7 @@ const ChatbotSection: React.FC = () => {
         role: 'model', // 'model' est le rôle pour les réponses de Gemini
         parts: [{ text: data.message }]
       };
-      
+
       // Mettre à jour l'historique complet (utilisateur + bot)
       setChatHistory([...historyToSend, botHistoryItem]);
 
@@ -336,15 +334,15 @@ const ChatbotSection: React.FC = () => {
       setLastBotMessage(botMessage); // Garder ceci pour l'affichage immédiat
       setResponseKey(prev => prev + 1);
       setIsOffline(false);
-      
+
       // Forcer le maintien de la position du chatbot
       // maintainScroll(); // Appel supprimé car la fonction n'existe plus
-      
+
     } catch (error) {
       console.error('Error:', error);
       setIsTyping(false);
       setIsOffline(true);
-      
+
       // Message d'erreur pour l'utilisateur
       setLastBotMessage({
         text: "Je suis désolé, je rencontre des difficultés de connexion. Pourriez-vous réessayer dans quelques instants ?",
@@ -352,7 +350,7 @@ const ChatbotSection: React.FC = () => {
         timestamp: new Date(),
       });
       setResponseKey(prev => prev + 1);
-      
+
       // Forcer le maintien de la position du chatbot
       // maintainScroll(); // Appel supprimé car la fonction n'existe plus
     }
@@ -367,7 +365,7 @@ const ChatbotSection: React.FC = () => {
           {isOffline && <span className="text-xs ml-2 text-red-500">(mode hors-ligne)</span>}
         </h2>
         <h4 className="text-center mb-8 text-gray-800 dark:text-white">Le bot n'est pas disponible pour le moment</h4>
-        
+
         <div className="h-72 mb-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
           <ChatbotAnimation />
         </div>
@@ -401,27 +399,27 @@ const ChatbotSection: React.FC = () => {
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeHighlight]}
                         components={{
-                          h2: ({node, ...props}) => <h2 className="text-2xl font-bold my-6 text-indigo-600 dark:text-indigo-400 tracking-wide" {...props} />,
-                          h3: ({node, ...props}) => <h3 className="text-xl font-semibold my-4 text-gray-700 dark:text-gray-300" {...props} />,
-                          ul: ({node, ...props}) => <ul className="my-4 space-y-2 list-none" {...props} />,
-                          li: ({node, ...props}) => (
+                          h2: ({ node, ...props }) => <h2 className="text-2xl font-bold my-6 text-indigo-600 dark:text-indigo-400 tracking-wide" {...props} />,
+                          h3: ({ node, ...props }) => <h3 className="text-xl font-semibold my-4 text-gray-700 dark:text-gray-300" {...props} />,
+                          ul: ({ node, ...props }) => <ul className="my-4 space-y-2 list-none" {...props} />,
+                          li: ({ node, ...props }) => (
                             <li className="flex items-start space-x-2 my-2" {...props}>
                               <span className="text-indigo-500 dark:text-indigo-400 mt-1">•</span>
                               <span className="text-gray-700 dark:text-gray-300">{props.children}</span>
                             </li>
                           ),
-                          code: ({node, inline, className, children, ...props}: CodeProps) => {
+                          code: ({ node, inline, className, children, ...props }: CodeProps) => {
                             const match = /language-(\w+)/.exec(className || '');
                             const language = match ? match[1] : 'plaintext';
-                            
+
                             // Utilise une valeur de secours pour le contenu affiché
                             const displayContent = children || '';
-                            
+
                             // Pour la copie, utilise la fonction d'extraction sur le markdown brut
-                            const codeContent = match 
+                            const codeContent = match
                               ? extractCodeText(rawMarkdown, language, String(displayContent))
                               : String(displayContent);
-                            
+
                             return !inline && match ? (
                               <div className="relative">
                                 <CopyButton content={codeContent} />
@@ -455,10 +453,10 @@ const ChatbotSection: React.FC = () => {
           ref={inputSectionRef} // Attacher la référence ici
           onSubmit={handleSubmit}
           className="flex gap-2"
-          // onClick={(e) => { // Supprimé car onSubmit gère déjà preventDefault
-          //   e.stopPropagation();
-          //   e.preventDefault();
-          // }}
+        // onClick={(e) => { // Supprimé car onSubmit gère déjà preventDefault
+        //   e.stopPropagation();
+        //   e.preventDefault();
+        // }}
         >
           <input
             ref={inputFieldRef} // Attacher la référence ici
@@ -467,13 +465,13 @@ const ChatbotSection: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Tapez votre message ici..."
             className="flex-1 p-4 rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm"
-            // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
+          // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
           />
           <button
             type="submit"
             className="px-6 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-medium rounded-full shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             disabled={isTyping}
-            // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
+          // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />

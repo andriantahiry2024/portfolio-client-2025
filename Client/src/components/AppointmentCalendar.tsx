@@ -89,8 +89,8 @@ export function AppointmentCalendar() {
 
     try {
       // Configuration Telegram
-      const botToken = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN as string;
-      const chatId = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID as string;
+      const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+      const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
       const text = `📅 Nouveau Rendez-vous !\n\n👤 Nom: ${data.name}\n📧 Email: ${data.email}\n📅 Date: ${appointmentDate}\n⏰ Heure: ${selectedTime}\n📝 Message: ${data.message || 'Aucun message'}`;
 

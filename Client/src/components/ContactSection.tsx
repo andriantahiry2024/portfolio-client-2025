@@ -62,8 +62,8 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
 
     try {
       // Configuration Telegram
-      const botToken = '7885369993:AAHw-K6e5c20fmRb02aMsfI9fPgXsmmIG5M';
-      const chatId = '6147303305';
+      const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+      const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
       const text = `📩 Nouveau Message de Contact !\n\n👤 Nom: ${data.name}\n📧 Email: ${data.email}\n📝 Sujet: ${data.subject}\n💬 Message: ${data.message}`;
 

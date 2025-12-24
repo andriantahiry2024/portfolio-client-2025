@@ -130,9 +130,9 @@ const LoginPage: React.FC = () => {
             </form>
           </Form>
           {/* Optionnel: Lien vers la page d'inscription */}
-           <p className="mt-4 text-center text-sm">
+          <p className="mt-4 text-center text-sm">
             Pas encore de compte ? <Link to="/create-user" className="text-indigo-600 hover:underline">Inscrivez-vous</Link>
-          </p> 
+          </p>
         </div>
       </main>
       <Footer />

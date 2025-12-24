@@ -28,16 +28,16 @@ interface PostDetail {
 // Fonction simple pour décoder et nettoyer le HTML
 const prepareHtmlContent = (content: string | null | undefined): string => {
   if (!content) return '';
-  
+
   // Si le contenu semble contenir des balises HTML non interprétées
-  if (typeof content === 'string' && 
-      (content.includes('&lt;') || content.includes('&gt;'))) {
+  if (typeof content === 'string' &&
+    (content.includes('&lt;') || content.includes('&gt;'))) {
     // Utiliser un élément textarea pour décoder les entités HTML
     const textarea = document.createElement('textarea');
     textarea.innerHTML = content;
     return textarea.value;
   }
-  
+
   return content;
 };
 
@@ -64,13 +64,13 @@ const BlogPostDetail = () => {
         const response = await fetch(apiUrl);
         if (!response.ok) {
           if (response.status === 404) {
-             throw new Error("Article non trouvé.");
+            throw new Error("Article non trouvé.");
           }
           const errorData = await response.json();
           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
         const data: PostDetail = await response.json();
-        
+
         // On ne modifie pas data.content ici pour éviter de perdre les données originales
         setPost(data);
       } catch (err: any) {
@@ -85,12 +85,12 @@ const BlogPostDetail = () => {
   }, [slug]);
 
   const formatDate = (dateString: string) => {
-      const options: Intl.DateTimeFormatOptions = {
-       year: "numeric",
-       month: "long",
-       day: "numeric",
-     };
-     return new Date(dateString).toLocaleDateString('fr-FR', options);
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return new Date(dateString).toLocaleDateString('fr-FR', options);
   };
 
   if (isLoading) {
@@ -102,23 +102,23 @@ const BlogPostDetail = () => {
   }
 
   if (error) {
-     return (
-        <div className="min-h-screen bg-background text-foreground">
-          <Navbar />
-          <main className="pt-24 pb-20">
-            <div className="container mx-auto px-4 text-center">
-               <h1 className="text-2xl font-bold mb-4 text-destructive">Erreur</h1>
-               <p className="text-muted-foreground mb-4">{error}</p>
-               <Button onClick={() => navigate("/blog")}>Retour au Blog</Button>
-            </div>
-          </main>
-          <Footer />
-        </div>
-     );
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <main className="pt-24 pb-20">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-2xl font-bold mb-4 text-destructive">Erreur</h1>
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <Button onClick={() => navigate("/blog")}>Retour au Blog</Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   if (!post) return null;
-  
+
   // Préparer le contenu HTML seulement quand nécessaire (au moment du rendu)
   const cleanContent = prepareHtmlContent(post.content);
 
@@ -139,22 +139,22 @@ const BlogPostDetail = () => {
             transition={{ duration: 0.5 }}
           >
             <header className="mb-8">
-               {post.category && (
-                 <Badge className="mb-2">{post.category}</Badge>
-               )}
-               <h1 className="text-4xl font-bold tracking-tight lg:text-5xl mb-4">{post.title}</h1>
-               <div className="flex items-center text-sm text-muted-foreground space-x-4">
-                 <div className="flex items-center">
-                   <Calendar className="h-4 w-4 mr-1" />
-                   <span>Publié le {formatDate(post.createdAt)}</span>
-                 </div>
-                 {(post.author?.firstName || post.author?.lastName) && (
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-1" />
-                      <span>Par {post.author.firstName} {post.author.lastName}</span>
-                    </div>
-                 )}
-               </div>
+              {post.category && (
+                <Badge className="mb-2">{post.category}</Badge>
+              )}
+              <h1 className="text-4xl font-bold tracking-tight lg:text-5xl mb-4">{post.title}</h1>
+              <div className="flex items-center text-sm text-muted-foreground space-x-4">
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  <span>Publié le {formatDate(post.createdAt)}</span>
+                </div>
+                {(post.author?.firstName || post.author?.lastName) && (
+                  <div className="flex items-center">
+                    <User className="h-4 w-4 mr-1" />
+                    <span>Par {post.author.firstName} {post.author.lastName}</span>
+                  </div>
+                )}
+              </div>
             </header>
 
             {/* Utiliser le contenu nettoyé */}

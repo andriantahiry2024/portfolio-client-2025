@@ -30,15 +30,16 @@ const AdminContactsPage: React.FC = () => {
           throw new Error('Utilisateur non authentifié');
         }
 
-        const response = await fetch('http://localhost:3001/api/admin/contacts', {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+        const response = await fetch(`${backendUrl}/api/admin/contacts`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-           if (response.status === 401 || response.status === 403) {
-             throw new Error('Accès non autorisé. Vérifiez vos permissions.');
+          if (response.status === 401 || response.status === 403) {
+            throw new Error('Accès non autorisé. Vérifiez vos permissions.');
           }
           const errorData = await response.json();
           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
@@ -47,7 +48,7 @@ const AdminContactsPage: React.FC = () => {
         const data: Contact[] = await response.json();
         setContacts(data);
       } catch (err: any) {
-         console.error("Erreur lors de la récupération des contacts:", err);
+        console.error("Erreur lors de la récupération des contacts:", err);
         setError(err.message || 'Une erreur est survenue.');
       } finally {
         setIsLoading(false);
@@ -92,8 +93,8 @@ const AdminContactsPage: React.FC = () => {
             <TableBody>
               {contacts.map((contact) => (
                 <TableRow key={contact.id}>
-                   <TableCell>
-                     {format(new Date(contact.created_at), 'Pp', { locale: fr })}
+                  <TableCell>
+                    {format(new Date(contact.created_at), 'Pp', { locale: fr })}
                   </TableCell>
                   <TableCell>{contact.name}</TableCell>
                   <TableCell>{contact.email}</TableCell>
