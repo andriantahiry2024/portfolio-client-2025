@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+      - PABBLY_WEBHOOK_URL=${PABBLY_WEBHOOK_URL}
+      - WHATSAPP_TOKEN=${WHATSAPP_TOKEN}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - WHATSAPP_ADMIN_NUMBER=${WHATSAPP_ADMIN_NUMBER}
+    volumes:
+      - appointments-data:/app/data
+    networks:
+      - portfolio-network
+
+  frontend:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+      args:
+        - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+    restart: always
+    depends_on:
+      - backend
+    networks:
+      - portfolio-network
+    # Coolify will manage the domain mapping to this service effectively
+    # You can map teckforgeek.com to this service in Coolify UI
+
+networks:
+  portfolio-network:
+    driver: bridge
+
+volumes:
+  appointments-data:

@@ -1,0 +1,335 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+/* ================ STYLES BLOG ================ */
+
+/* Styles généraux pour l'affichage des articles */
+.prose code {
+  background-color: hsl(var(--muted));
+  padding: 0.1em 0.3em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.prose pre {
+  background-color: hsl(var(--secondary));
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.prose h1, .prose h2, .prose h3 {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.prose p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.5;
+}
+
+.prose ul, .prose ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+.prose li > p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.prose a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose img {
+  border-radius: var(--radius);
+}
+
+/* Corriger l'espacement entre éléments */
+.prose > * + * {
+  margin-top: 0.75em;
+}
+
+/* Styles spécifiques pour l'affichage de l'article */
+.blog-content {
+  line-height: 1.5;
+}
+
+.blog-content p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.blog-content h1 {
+  font-size: 1.8em;
+  margin-top: 0.8em;
+  margin-bottom: 0.5em;
+}
+
+.blog-content h2 {
+  font-size: 1.5em;
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
+}
+
+.blog-content h3 {
+  font-size: 1.3em;
+  margin-top: 0.7em;
+  margin-bottom: 0.4em;
+}
+
+.blog-content ul, .blog-content ol {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.blog-content li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+.blog-content li > p {
+  margin-top: 0.15em;
+  margin-bottom: 0.15em;
+}
+
+/* Styles pour la prévisualisation dans le formulaire */
+.blog-preview {
+  font-size: 0.9rem;
+}
+
+.blog-preview p {
+  margin-top: 0.35em;
+  margin-bottom: 0.35em;
+  line-height: 1.4;
+}
+
+.blog-preview h1 {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.blog-preview h2 {
+  font-size: 1.3em;
+  margin-bottom: 0.4em;
+}
+
+.blog-preview h3 {
+  font-size: 1.1em;
+  margin-bottom: 0.3em;
+}
+
+.blog-preview ul, .blog-preview ol {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+.blog-preview li {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+/* ================ STYLES REACT QUILL ================ */
+
+/* Styles de base pour l'éditeur */
+.ql-container {
+  font-family: inherit !important;
+  font-size: 0.95rem;
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+.ql-toolbar {
+  border-top-left-radius: var(--radius);
+  border-top-right-radius: var(--radius);
+  background-color: hsl(var(--secondary));
+  border-color: hsl(var(--border));
+}
+
+.ql-editor {
+  min-height: 150px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+
+/* Correction des marges pour les paragraphes dans l'éditeur */
+.ql-editor p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.5;
+}
+
+/* Styles spécifiques pour les sauts de ligne */
+.ql-editor br {
+  line-height: 1;
+}
+
+/* Style compact pour l'éditeur */
+.editor-compact .ql-editor {
+  line-height: 1.4;
+  padding: 0.75rem 0.9rem;
+}
+
+.editor-compact .ql-editor p {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+.editor-compact .ql-editor p + p {
+  margin-top: 0.4em;
+}
+
+.editor-compact .ql-editor h1 {
+  font-size: 1.6em;
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
+}
+
+.editor-compact .ql-editor h2 {
+  font-size: 1.4em;
+  margin-top: 0.7em;
+  margin-bottom: 0.3em;
+}
+
+.editor-compact .ql-editor h3 {
+  font-size: 1.2em;
+  margin-top: 0.6em;
+  margin-bottom: 0.3em;
+}
+
+.editor-compact .ql-editor ul, 
+.editor-compact .ql-editor ol {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+  padding-left: 1.2em;
+}
+
+.editor-compact .ql-editor li {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+/* Styles pour éviter l'espacement excessif */
+.ql-editor br + br {
+  display: none;
+}
+
+/* Styles pour la barre d'outils ReactQuill en mode sombre */
+.dark .ql-toolbar {
+  background-color: hsl(var(--secondary));
+  border-color: hsl(var(--border));
+}
+
+.dark .ql-toolbar .ql-stroke {
+  stroke: hsl(var(--foreground));
+}
+
+.dark .ql-toolbar .ql-fill {
+  fill: hsl(var(--foreground));
+}
+
+.dark .ql-toolbar .ql-picker {
+  color: hsl(var(--foreground));
+}
+
+.dark .ql-picker-options {
+  background-color: hsl(var(--popover));
+  border-color: hsl(var(--border));
+}
+
+/* ================ STYLES LEAFLET ================ */
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.leaflet-control {
+  z-index: 2;
+}
+
+.leaflet-popup {
+  z-index: 3;
+}
+
+.leaflet-popup-content-wrapper {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border-radius: var(--radius);
+  padding: 0.5rem;
+}
+
+.leaflet-popup-tip {
+  background: hsl(var(--background));
+} 
