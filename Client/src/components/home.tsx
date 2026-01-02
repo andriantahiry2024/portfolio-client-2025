@@ -1,19 +1,21 @@
 import React, { useEffect, lazy, Suspense, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Navbar from "./Navbar";
-import HeroSection from "./HeroSection";
-import AboutSection from "./AboutSection";
-import SkillsSection from "./SkillsSection";
-import ProjectsSection from "./ProjectsSection";
-import ContactSection from "./ContactSection";
 import Footer from "./Footer";
 import TickerSection from "./TickerSection";
-import SliderSection from "./SliderSection";
-import Scene3D from "./Scene3D";
-import AppointmentCalendar from "./AppointmentCalendar";
-const ChatbotSection = lazy(() => import("./ChatbotSection"));
 import FadeInView from "./FadeInView";
-import PassionsSection from "./Passions";
+
+// Lazy load heavy components
+const HeroSection = lazy(() => import("./HeroSection"));
+const AboutSection = lazy(() => import("./AboutSection"));
+const SkillsSection = lazy(() => import("./SkillsSection"));
+const PassionsSection = lazy(() => import("./Passions"));
+const SliderSection = lazy(() => import("./SliderSection"));
+const ProjectsSection = lazy(() => import("./ProjectsSection"));
+const Scene3D = lazy(() => import("./Scene3D"));
+const AppointmentCalendar = lazy(() => import("./AppointmentCalendar"));
+const ChatbotSection = lazy(() => import("./ChatbotSection"));
+const ContactSection = lazy(() => import("./ContactSection"));
 
 const HeroLoader3D = () => {
   const messages = [
@@ -86,17 +88,21 @@ const Home = () => {
   const [isHeroLoaded, setIsHeroLoaded] = useState(false);
 
   useEffect(() => {
-    // Forcer le scroll en haut sur un rechargement "classique"
+    // Scroll au top par défaut au chargement
     if (!window.location.hash) {
-      window.scrollTo({ top: 0, behavior: "auto" });
-      return;
+      window.scrollTo(0, 0);
+      // Deuxième tentative après un court instant pour contrer les décalages de layout (lazy loading)
+      const timeout = setTimeout(() => window.scrollTo(0, 0), 100);
+      return () => clearTimeout(timeout);
     }
 
-    // Scroll vers une section précise uniquement si un hash est présent dans l'URL
+    // Scroll vers une section précise uniquement si un hash est présent
     const id = window.location.hash.substring(1);
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: "smooth" });
+      }, 500); // Délai plus long pour attendre que les composants lazy-loadés soient prêts
     }
   }, []);
 
@@ -116,7 +122,9 @@ const Home = () => {
       <main>
         {/* Hero Section with Parallax Effect */}
         <section id="home" className="relative h-screen">
-          <HeroSection onLoaded={() => setIsHeroLoaded(true)} />
+          <Suspense fallback={<div className="h-screen w-full bg-black flex items-center justify-center"><HeroLoader3D /></div>}>
+            <HeroSection onLoaded={() => setIsHeroLoaded(true)} />
+          </Suspense>
           <motion.div
             style={{ opacity }}
             className="absolute inset-0 pointer-events-none"
@@ -125,44 +133,56 @@ const Home = () => {
 
         {/* About Section */}
         <section id="about">
-          <FadeInView>
-            <AboutSection />
-          </FadeInView>
+          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
+            <FadeInView>
+              <AboutSection />
+            </FadeInView>
+          </Suspense>
         </section>
 
         {/* Skills Section */}
         <section id="skills">
-          <FadeInView delay={0.1}>
-            <SkillsSection />
-          </FadeInView>
+          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
+            <FadeInView delay={0.1}>
+              <SkillsSection />
+            </FadeInView>
+          </Suspense>
         </section>
 
         {/* Passion Section */}
         <section id="passion">
-          <FadeInView delay={0.1}>
-            <PassionsSection />
-          </FadeInView>
+          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
+            <FadeInView delay={0.1}>
+              <PassionsSection />
+            </FadeInView>
+          </Suspense>
         </section>
 
         {/* Slider Section */}
         <section id="interactive">
-          <FadeInView delay={0.2} direction="right">
-            <SliderSection />
-          </FadeInView>
+          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
+            <FadeInView delay={0.2} direction="right">
+              <SliderSection />
+            </FadeInView>
+          </Suspense>
         </section>
 
         {/* Projects Section */}
         <section id="projects">
-          <FadeInView delay={0.1} direction="left">
-            <ProjectsSection />
-          </FadeInView>
+          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
+            <FadeInView delay={0.1} direction="left">
+              <ProjectsSection />
+            </FadeInView>
+          </Suspense>
         </section>
 
         {/* Appointment Calendar */}
         <section id="appointment" className="bg-gray-dark dark:bg-dark p-5">
-          <FadeInView delay={0.1} direction="up">
-            <AppointmentCalendar />
-          </FadeInView>
+          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
+            <FadeInView delay={0.1} direction="up">
+              <AppointmentCalendar />
+            </FadeInView>
+          </Suspense>
         </section>
 
         {/* Chatbot Section (lazy load) */}
@@ -180,9 +200,9 @@ const Home = () => {
 
         {/* Contact Section */}
         <section id="contact">
-          {/* <FadeInView delay={0.1} direction="up"> {/* Temporairement supprimé pour tester le scroll */}
-          <ContactSection />
-          {/* </FadeInView> */}
+          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
+            <ContactSection />
+          </Suspense>
         </section>
       </main>
 

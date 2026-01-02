@@ -209,7 +209,6 @@ const SliderSection = ({ className }: SliderSectionProps) => {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     className="w-full bg-transparent border-none outline-none text-gray-100 placeholder-gray-600"
-                    autoFocus
                     autoComplete="off"
                     spellCheck="false"
                     disabled={isTyping}
