@@ -39,8 +39,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     { name: "Compétences", href: "#skills" },
     { name: "Interactif", href: "#interactive" },
     { name: "Projets", href: "#projects" },
-    { name: "Streaming", href: "/streaming", isExternal: true },
-    { name: "Contact", href: "#contact" },
+    { name: "Contact", href: "#contact" }
   ];
 
   useEffect(() => {
