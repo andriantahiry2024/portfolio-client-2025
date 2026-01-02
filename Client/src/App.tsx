@@ -11,6 +11,7 @@ const BlogPostDetail = lazy(() => import("./components/BlogPostDetail"));
 const BlogPostDetailPage = lazy(() => import("./components/BlogPostDetail"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const StreamingPage = lazy(() => import("./pages/StreamingPage"));
 
 function App() {
   // Suspense fallback component
@@ -35,10 +36,10 @@ function App() {
           <Route path="/Portfolio-2025/*" element={<Navigate to="/" replace />} />
           <Route path="/" element={<Home />} errorElement={<ErrorBoundary />} />
           <Route path="/blog" element={<BlogPage />} errorElement={<ErrorBoundary />} />
-          {/* Modifier la route pour utiliser :slug au lieu de :id */}
           <Route path="/blog/:slug" element={<BlogPostDetail />} errorElement={<ErrorBoundary />} />
           <Route path="/politique-de-confidentialite" element={<PrivacyPolicy />} errorElement={<ErrorBoundary />} />
           <Route path="/conditions-utilisation" element={<TermsOfService />} errorElement={<ErrorBoundary />} />
+          <Route path="/streaming" element={<StreamingPage />} errorElement={<ErrorBoundary />} />
         </Routes>
 
         <ScrollToTop />

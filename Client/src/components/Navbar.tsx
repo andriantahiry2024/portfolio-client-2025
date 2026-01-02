@@ -39,6 +39,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
     { name: "Compétences", href: "#skills" },
     { name: "Interactif", href: "#interactive" },
     { name: "Projets", href: "#projects" },
+    { name: "Streaming", href: "/streaming", isExternal: true },
     { name: "Contact", href: "#contact" },
   ];
 
@@ -154,9 +155,7 @@ const Navbar = ({ className = "" }: NavbarProps) => {
               alt="Logo Andriantahiry Portfolio 2025"
               className="h-7 w-auto md:h-8"
             />
-            <span className="text-[10px] md:text-xs font-semibold tracking-[0.28em] uppercase text-black dark:text-white">
-              Teckforgeek
-            </span>
+
           </button>
 
           {/* Desktop Navigation */}

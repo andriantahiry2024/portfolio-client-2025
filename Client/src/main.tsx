@@ -6,8 +6,10 @@ import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   // <React.StrictMode> {/* Commenté pour éviter le double rendu en développement */}
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+  <BrowserRouter>
+
+    <App />
+
+  </BrowserRouter>
   // </React.StrictMode>, {/* Commenté pour éviter le double rendu en développement */}
 );
