@@ -64,10 +64,10 @@ const skillsData: Record<CategoryType, Skill[]> = {
 };
 
 const categories: { id: CategoryType; label: string }[] = [
-  { id: "frontend", label: "Frontend" },
-  { id: "backend", label: "Backend" },
-  { id: "design", label: "Design" },
-  { id: "tools", label: "Tools" },
+  { id: "frontend", label: "Apps Web & Mobiles" },
+  { id: "backend", label: "IA & Automation" },
+  { id: "design", label: "UI/UX & Branding" },
+  { id: "tools", label: "Stacks & DevOps" },
 ];
 
 const SkillsSection = () => {
@@ -124,7 +124,7 @@ const SkillsSection = () => {
 
   return (
     <section
-      className="py-24 bg-gray-50 dark:bg-[#0A0A0A] relative overflow-hidden group/section"
+      className="py-16 bg-transparent relative overflow-hidden group/section"
       onMouseMove={handleMouseMove}
     >
       {/* Background Grid Pattern */}
@@ -145,11 +145,11 @@ const SkillsSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-black to-gray-500 dark:from-white dark:to-gray-500">
-              Compétences Techniques
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-foreground">
+              Nos Expertises
             </h2>
             <p className="text-gray-500 dark:text-gray-400 max-w-[600px] mx-auto text-lg">
-              Une expertise affinée à travers des projets complexes et une veille technologique constante.
+              Des solutions technologiques de pointe pour propulser votre business au niveau supérieur.
             </p>
           </motion.div>
         </div>
@@ -169,11 +169,11 @@ const SkillsSection = () => {
                 {activeTab === cat.id && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-black dark:bg-white rounded-full -z-10"
+                    className="absolute inset-0 bg-foreground rounded-full -z-10"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                <span className={activeTab === cat.id ? "text-white dark:text-black" : ""}>
+                <span className={activeTab === cat.id ? "text-background" : ""}>
                   {cat.label}
                 </span>
               </button>

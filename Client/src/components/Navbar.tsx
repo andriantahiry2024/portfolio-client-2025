@@ -35,10 +35,10 @@ const Navbar = ({ className = "" }: NavbarProps) => {
 
   const navItems: { name: string; href: string; isExternal?: boolean }[] = [
     { name: "Accueil", href: "#home" },
-    { name: "À propos", href: "#about" },
-    { name: "Compétences", href: "#skills" },
-    { name: "Interactif", href: "#interactive" },
-    { name: "Projets", href: "#projects" },
+    { name: "L'Agence", href: "#about" },
+    { name: "Nos Expertises", href: "#skills" },
+
+    { name: "Études de Cas", href: "#projects" },
     { name: "Contact", href: "#contact" }
   ];
 
@@ -147,11 +147,11 @@ const Navbar = ({ className = "" }: NavbarProps) => {
             type="button"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             onClick={() => navigate("/")}
-            aria-label="Retour à l'accueil du portfolio Andriantahiry"
+            aria-label="Retour à l'accueil de l'agence Teckforgeek"
           >
             <img
               src={logo}
-              alt="Logo Andriantahiry Portfolio 2025"
+              alt="Logo Teckforgeek Agency 2025"
               className="h-7 w-auto md:h-8"
             />
 

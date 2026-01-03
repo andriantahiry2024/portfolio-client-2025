@@ -23,14 +23,14 @@ interface HeroSectionProps {
 
 const HeroSection = ({
   name = "TECKFORGEEK",
-  title = "Full Stack Developer",
-  description = "Application officielle de portfolio et de services digitaux Teckforgeek. Découvrez mes projets Full Stack, mes compétences, et prenez rendez-vous pour vos besoins technologiques.",
-  ctaText = "Voir mes projets",
+  title = "L'Élite de l'IA & de l'Automation",
+  description = "Propulsez votre entreprise vers l'excellence digitale. Nous concevons des écosystèmes d'Intelligence Artificielle sur mesure, des automatisations intelligentes (n8n, Python) et des applications web/mobiles de haute performance.",
+  ctaText = "Demander un Audit Gratuit",
   onCtaClick = () => console.log("CTA clicked"),
   onLoaded,
 }: HeroSectionProps) => {
   return (
-    <div className="w-full h-screen bg-black overflow-hidden relative flex items-center">
+    <div className="w-full h-screen bg-transparent overflow-hidden relative flex items-center">
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Left content */}
@@ -41,8 +41,8 @@ const HeroSection = ({
               transition={{ duration: 0.5 }}
               className="inline-block"
             >
-              <span className="text-sm text-gray-400 bg-gray-900/50 px-4 py-2 rounded-full border border-gray-800">
-                Bienvenue sur mon portfolio 👋
+              <span className="text-sm text-foreground bg-secondary px-4 py-2 rounded-full border border-border font-medium">
+                Solutions d'Ingénierie IA & Automation ⚡
               </span>
             </motion.div>
 
@@ -59,7 +59,7 @@ const HeroSection = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-2xl md:text-3xl font-semibold text-yellow-500"
+              className="text-2xl md:text-3xl font-semibold text-foreground/90"
             >
               {title}
             </motion.h2>
@@ -83,9 +83,9 @@ const HeroSection = ({
                 <DropdownMenuTrigger asChild>
                   <Button
                     onClick={onCtaClick}
-                    className="bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+                    className="bg-foreground text-background hover:opacity-90 px-8 py-4 rounded-lg font-bold transition-all duration-300 hover:scale-105"
                   >
-                    Me contacter
+                    Demander un Audit Gratuit
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
@@ -130,7 +130,7 @@ const HeroSection = ({
                 </button>
 
                 <button
-                  onClick={() => window.location.href = 'mailto:contact@andriantahiry.dev'}
+                  onClick={() => window.location.href = 'mailto:contact@teckforgeek.com'}
                   className="w-10 h-10 rounded-full bg-gray-900 hover:bg-gray-800 flex items-center justify-center transition-all duration-300 hover:scale-110 border border-gray-800"
                   aria-label="Email"
                 >

@@ -309,16 +309,16 @@ const PassionsSection = () => {
     }, []);
 
     return (
-        <section className="py-24 bg-white dark:bg-[#050505] text-black dark:text-white transition-colors duration-300">
+        <section className="py-12 bg-background text-foreground transition-colors duration-300">
             <div className="container px-4 md:px-6 mx-auto">
 
                 <div className="flex flex-col items-center text-center mb-16">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className="px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-medium text-gray-600 dark:text-gray-400 mb-4"
+                        className="px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-xs font-medium border border-border mb-4"
                     >
-                        Au-delà du Code
+                        Innovation Lab
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 10 }}
@@ -326,7 +326,7 @@ const PassionsSection = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-5xl font-bold mb-4 tracking-tight"
                     >
-                        Mes Passions
+                        Laboratoire d'Innovation
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
@@ -334,41 +334,39 @@ const PassionsSection = () => {
                         transition={{ delay: 0.2 }}
                         className="text-gray-600 dark:text-gray-400 max-w-[600px] text-lg"
                     >
-                        Ce qui m'anime en dehors du développement.
+                        Nos expérimentations techniques et démonstrations d'algorithmes.
                     </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto items-stretch">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto items-stretch mt-12">
 
                     <PassionCard
-                        title="Musique"
-                        description="Les mélodies qui rythment mes journées et boostent ma créativité."
+                        title="Vibe & Audio"
+                        description="Intégration d'API audio et curation de flux pour optimiser focus et créativité."
                         icon={<FaMusic />}
                         delay={0.3}
-                        tags={["Lo-fi Hip Hop", "Synthwave", "OST", "Rock Alternatif"]}
+                        tags={["Audio API", "Mixage Digital", "Focus Flow"]}
                     >
                         <SpotifyEmbed />
                     </PassionCard>
 
                     <PassionCard
-                        title="Échecs"
-                        description="À vous de jouer ! Essayez de battre l'ordinateur (il joue aléatoirement pour vous laisser une chance)."
+                        title="Démonstration Algorithmique"
+                        description="Une implémentation temps réel de logique de jeu complexe (Chess Engine Demo)."
                         icon={<FaChess />}
                         delay={0.4}
-                        tags={["Ouvertures : Sicilienne", "Jeu en ligne", "Stratégie"]}
+                        tags={["Théorie des Graphes", "Logique de Jeu", "Minimax Pattern"]}
                     >
                         <PlayableChessBoard />
                     </PassionCard>
 
                     <PassionCard
-                        title="Divertissement"
-                        description="Ma pause culturelle : Un mélange de cinéma, d'animation et de gaming."
+                        title="Veille Culturelle & IA"
+                        description="Exploration des nouveaux formats de contenus et narration assistée par IA."
                         icon={<BiMoviePlay className="text-xl" />}
                         delay={0.5}
-                        // ICI: On passe les tags dynamiques basés sur l'index actuel
                         tags={entertainmentItems[entertainmentIndex].tags}
                     >
-                        {/* On passe l'index au slider pour qu'il affiche la bonne image */}
                         <EntertainmentSlider currentIndex={entertainmentIndex} />
                     </PassionCard>
 

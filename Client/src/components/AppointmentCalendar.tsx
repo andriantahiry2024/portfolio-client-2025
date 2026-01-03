@@ -123,12 +123,12 @@ export function AppointmentCalendar() {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-900 text-black dark:text-white">
-      <h1 className='text-center mt-10 text-2xl font-bold'>Prendre un rendez-vous</h1>
+    <Card className="w-full max-w-2xl mx-auto bg-card text-card-foreground border-border shadow-none">
+      <h1 className='text-center mt-10 text-2xl font-black text-foreground uppercase tracking-widest'>Audit IA & Automation</h1>
       <CardHeader>
-        <CardTitle>Prendre un rendez-vous</CardTitle>
-        <CardDescription>
-          Choisissez une date et un créneau horaire pour planifier notre rencontre.
+        <CardTitle className="text-center">Réserver votre session (15 min)</CardTitle>
+        <CardDescription className="text-center">
+          Identifions ensemble comment libérer du temps et optimiser vos revenus grâce aux dernières technologies.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -229,9 +229,9 @@ export function AppointmentCalendar() {
               <Button
                 type="submit"
                 disabled={!selectedDate || !selectedTime || isLoading}
-                className="w-full md:w-auto"
+                className="w-full md:w-auto bg-foreground text-background hover:opacity-90 font-bold shadow-none transition-all rounded-md"
               >
-                {isLoading ? 'Envoi en cours...' : 'Confirmer le rendez-vous'}
+                {isLoading ? 'Envoi en cours...' : 'Confirmer mon Audit Gratuit'}
               </Button>
             </div>
             {/* Affichage des messages de statut */}

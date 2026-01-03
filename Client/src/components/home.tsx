@@ -9,8 +9,7 @@ import FadeInView from "./FadeInView";
 const HeroSection = lazy(() => import("./HeroSection"));
 const AboutSection = lazy(() => import("./AboutSection"));
 const SkillsSection = lazy(() => import("./SkillsSection"));
-const PassionsSection = lazy(() => import("./Passions"));
-const SliderSection = lazy(() => import("./SliderSection"));
+
 const ProjectsSection = lazy(() => import("./ProjectsSection"));
 const Scene3D = lazy(() => import("./Scene3D"));
 const AppointmentCalendar = lazy(() => import("./AppointmentCalendar"));
@@ -25,16 +24,33 @@ const HeroLoader3D = () => {
   ];
 
   const [index, setIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const id = setTimeout(() => {
+    // Progression fluide du pourcentage
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) return 100;
+        // Ralentir à la fin pour donner une impression de "finalisation"
+        const increment = prev > 80 ? 0.3 : 0.8;
+        return Math.min(prev + increment, 99);
+      });
+    }, 30);
+
+    // Changement des messages
+    const messageInterval = setInterval(() => {
       setIndex((prev) => (prev + 1) % messages.length);
-    }, 1400); // ~1.4s par message
-    return () => clearTimeout(id);
-  }, [index]);
+    }, 2000);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(messageInterval);
+    };
+  }, []);
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-6">
+      {/* Container 3D Icon */}
       <div className="relative w-24 h-24">
         <motion.div
           className="absolute inset-0 rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-white/10 to-white/5 shadow-[0_0_40px_rgba(0,0,0,0.8)]"
@@ -63,20 +79,33 @@ const HeroLoader3D = () => {
         />
       </div>
 
-      {/* Texte type "console" animé une ligne à la fois */}
-      <div className="mt-4 h-[3rem] font-mono text-[11px] text-left text-white/70 overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={messages[index]}
-            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-            transition={{ duration: 0.6 }}
-            className="uppercase tracking-[0.25em] text-white/60"
-          >
-            {messages[index]}
-          </motion.p>
-        </AnimatePresence>
+      {/* Progress Bar Container */}
+      <div className="w-64 space-y-3">
+        <div className="flex justify-between items-end font-mono text-[10px] tracking-widest text-white/40 uppercase">
+          <span>{messages[index]}</span>
+          <span className="text-[#EAB308] font-bold">{Math.floor(progress)}%</span>
+        </div>
+
+        <div className="relative h-[4px] w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+          <motion.div
+            className="absolute top-0 left-0 h-full bg-gradient-to-r from-white via-[#FACC15] to-[#EAB308] shadow-[0_0_15px_rgba(234,179,8,0.5)]"
+            initial={{ width: "0%" }}
+            animate={{ width: `${progress}%` }}
+            transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          />
+        </div>
+
+        {/* Console shadow effect */}
+        <div className="pt-1 flex gap-1 justify-center">
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-1 h-1 bg-[#EAB308]/40 rounded-full"
+              animate={{ opacity: [0.2, 1, 0.2] }}
+              transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -149,23 +178,7 @@ const Home = () => {
           </Suspense>
         </section>
 
-        {/* Passion Section */}
-        <section id="passion">
-          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
-            <FadeInView delay={0.1}>
-              <PassionsSection />
-            </FadeInView>
-          </Suspense>
-        </section>
 
-        {/* Slider Section */}
-        <section id="interactive">
-          <Suspense fallback={<div className="py-20 text-center text-white/50">Chargement...</div>}>
-            <FadeInView delay={0.2} direction="right">
-              <SliderSection />
-            </FadeInView>
-          </Suspense>
-        </section>
 
         {/* Projects Section */}
         <section id="projects">

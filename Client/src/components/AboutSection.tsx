@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Download, MapPin, Star } from "lucide-react";
 import LocationMap from "./LocationMap";
+import WorkflowVis from "@/components/WorkflowVis";
 import {
   Carousel,
   CarouselApi,
@@ -17,87 +18,53 @@ interface AboutSectionProps {
 }
 
 const AboutSection = ({
-  title = "À propos de moi",
-  subtitle = "Développeur Web Passionné",
+  title = "Propulser l'Innovation",
+  subtitle = "Votre Partenaire IA & Automation",
 }: AboutSectionProps) => {
-  const skills = [
-    { name: "React" },
-    { name: "TypeScript" },
-    { name: "GraphQL" },
-    { name: "MongoDB" },
-    { name: "PostgreSQL" },
+  const expertises = [
+    { name: "IA Artificielle" },
+    { name: "Workflow Automation" },
+    { name: "Next.js & React Native" },
+    { name: "Ecosystème n8n" },
+    { name: "Architecture Cloud" },
   ];
 
-  const experiences = [
+  const valueProps = [
     {
-      title: "Responsable Production Applicative",
-      company: "SATISFACTORY | UPNTECH, MADAGASCAR",
-      period: "Avril 2024 - Aujourd'hui",
-      description: "Conception de questionnaires de satisfaction, développement Front-End, support ZENDESK, déploiement API REST, management Agile, automatisation des services commerciaux.",
+      title: "Vision Stratégique",
+      company: "TECKFORGEEK SOLUTIONS",
+      period: "Focus Business ROI",
+      description: "Nous transformons les défis technologiques en opportunités de croissance. Notre approche est centrée sur le retour sur investissement et l'efficacité opérationnelle.",
     },
     {
-      title: "Développeur et Designer",
-      company: "CARGLASS | FREELANCE | LUXEMBOURG",
-      period: "Septembre 2023 - Décembre 2023 (4 mois)",
-      description: "Conception avec Elementor, développement de thèmes WordPress, déploiement Serveur Linux, intégration d'OpenAI IA, web DigitalAI.",
+      title: "Ingénierie de Pointe",
+      company: "AGENCE TECH PREMIUM",
+      period: "Modern Stack",
+      description: "Utilisation des dernières technologies (LLMs, RAG, Agents) pour concevoir des systèmes robustes, scalables et sécurisés.",
     },
     {
-      title: "Développeur WordPress",
-      company: "GOLFFANG | FREELANCE",
-      period: "Janvier 2023 - Février 2023 (2 mois)",
-      description: "Conception avec Elementor, développement de thèmes, déploiement serveur Linux, intégration d'OpenAI et chatbot IA.",
-    },
-    {
-      title: "Web Designer & Développeur Fullstack",
-      company: "ADITITTI | FREELANCE",
-      period: "Septembre 2022 - Août 2023 (1 an)",
-      description: "Refonte sites e-commerce Shopify, développement applications React, déploiement EC2, automatisation avec Zapier/Make, création designs interfaces.",
-    },
-    {
-      title: "Agent Verbalisateur",
-      company: "ARM MADAGASCAR",
-      period: "Septembre 2018 - Octobre 2020 (2 ans)",
-      description: "Gestion d'équipes, presto-verbaux, comptes rendus, gestion des matériels et stocks.",
-    },
-    {
-      title: "Agent Marketing",
-      company: "INTELCIA",
-      period: "Septembre 2017 - Août 2018 (1 an)",
-      description: "Responsable SAV et Commercial, gestion tickets clients, stocks produits, géolocalisation commandes.",
-    },
-    {
-      title: "Web Designer",
-      company: "UWANDZANI | FREELANCE",
-      period: "Février 2019 - Juin 2019 (5 mois)",
-      description: "Création designs d'interfaces, intégration HTML/CSS/JavaScript, déploiement WordPress et Elementor, gestion d'hébergement.",
+      title: "Accompagnement d'Élite",
+      company: "PARTENARIAT LONG TERME",
+      period: "Support & Évolution",
+      description: "Nous ne sommes pas juste des prestataires, mais votre bras droit technique pour naviguer dans l'ère de l'intelligence artificielle.",
     },
   ];
 
-  const formations = [
+  const stats = [
     {
-      title: "Autodidacte",
-      subtitle: "Formation professionnelle web et marketing",
-      period: "2016-2023",
+      title: "Automatisation",
+      subtitle: "Gain de productivité moyen",
+      period: "+40%",
     },
     {
-      title: "NETPRO WEB",
-      subtitle: "Formation professionnelle administration réseaux et cloud",
-      period: "2021",
+      title: "Disponibilité",
+      subtitle: "Systèmes critiques monitorés",
+      period: "24/7",
     },
     {
-      title: "Faculté DEGS",
-      subtitle: "Licence en Gestion et Administration d'Entreprise",
-      period: "2014-2016",
-    },
-    {
-      title: "CFO (Centre Formation Commerce International)",
-      subtitle: "Formation Professionnelle du Ministère du Commerce",
-      period: "2011-2012",
-    },
-    {
-      title: "Baccalauréat Série D",
-      subtitle: "Mention assez bien",
-      period: "2010-2011",
+      title: "Expertise IA",
+      subtitle: "Modèles déployés & optimisés",
+      period: "Custom",
     },
   ];
 
@@ -154,7 +121,7 @@ const AboutSection = ({
   }, [testimonialApi]);
 
   return (
-    <section id="about" className="py-20 bg-background">
+    <section id="about" className="py-12 bg-background">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -178,42 +145,28 @@ const AboutSection = ({
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <Card className="bg-card border-border p-6">
-                <h3 className="text-xl font-bold text-foreground mb-4">| Profil</h3>
+              <Card className="bg-card border-border p-6 shadow-none hover:border-foreground/20 transition-all">
+                <h3 className="text-xl font-bold text-foreground mb-4">| Notre Mission</h3>
                 <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
                   <p>
-                    Actuellement en poste en tant que responsable production applicative de
-                    réalisation de questionnaires personnalisés. Depuis mon plus jeune âge,
-                    j'ai toujours été fassiné par les nouvelles technologies et j'ai décidé de
-                    me former de façon autodidacte.
+                    Teckforgeek est né d'une passion pour les technologies de rupture. Nous ne créons pas seulement du code ; nous bâtissons les moteurs de croissance de demain.
                   </p>
                   <p>
-                    Mon objectif est de créer des solutions innovantes ayant un impact réel
-                    sur notre société, tout en recherchant sans cesse des défis stimulants
-                    pour continuer à évoluer.
+                    Notre mission est de démocratiser l'IA et l'automation de haut niveau pour les entreprises ambitieuses, en transformant des processus complexes en flux de travail fluides et rentables.
                   </p>
                   <p>
-                    Avec plusieurs années d'expérience dans le développement web full-stack,
-                    j'ai travaillé sur divers projets allant des SPA aux sites e-commerce
-                    complexes. J'aime résoudre des problèmes et apprendre constamment de
-                    nouvelles technologies pour améliorer mes compétences et l'automatisation.
+                    Chaque solution sortant de notre agence est conçue avec une obsession pour la performance, la sécurité et une expérience utilisateur d'élite.
                   </p>
                 </div>
-                <a
-                  href="/CV_NOMENAHASINA_ANDRIANTAHIRY.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block mt-6"
-                >
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                    <Download className="w-4 h-4 mr-2" />
-                    Télécharger mon CV (PDF)
+                <div className="mt-8 pt-6 border-t border-border">
+                  <Button className="w-full bg-foreground text-background hover:opacity-80 transition-opacity font-bold rounded-md">
+                    Réserver un Audit Stratégique
                   </Button>
-                </a>
+                </div>
               </Card>
             </motion.div>
 
-            {/* Skills Card */}
+            {/* Expertises Card */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -221,22 +174,19 @@ const AboutSection = ({
               viewport={{ once: true }}
             >
               <Card className="bg-card border-border p-6">
-                <h3 className="text-xl font-bold text-foreground mb-4">
-                  | Vos technos sont-elles parmi celles-ci ?
+                <h3 className="text-lg font-bold text-foreground mb-4">
+                  | Nos Expertises Clés
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {skills.map((skill, index) => (
+                  {expertises.map((skill, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
+                      className="px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-xs font-semibold border border-border/50"
                     >
                       {skill.name}
                     </span>
                   ))}
                 </div>
-                <p className="text-muted-foreground text-xs mt-4">
-                  Actuellement passionné, je m'adapte rapidement à toutes nouvelles technologies.
-                </p>
               </Card>
             </motion.div>
 
@@ -345,44 +295,30 @@ const AboutSection = ({
               viewport={{ once: true }}
             >
               <Card className="bg-card border-border p-6">
-                <h3 className="text-xl font-bold text-foreground mb-6">| Expérience Professionnelle</h3>
-                <div className="space-y-6">
-                  {experiences.map((exp, index) => (
+                <h3 className="text-2xl font-bold text-foreground mb-8">| Notre Approche Stratégique</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {valueProps.map((exp, index) => (
                     <motion.div
                       key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      transition={{
-                        duration: 0.5,
-                        delay: index * 0.1,
-                        ease: "easeOut"
-                      }}
-                      className="relative pl-6 border-l-2 border-foreground"
+                      className="space-y-3"
                     >
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        whileInView={{ scale: 1 }}
-                        viewport={{ once: true, margin: "-50px" }}
-                        transition={{
-                          duration: 0.3,
-                          delay: index * 0.1 + 0.2,
-                          type: "spring",
-                          stiffness: 200
-                        }}
-                        className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-foreground"
-                      ></motion.div>
-                      <h4 className="text-foreground font-semibold">{exp.title}</h4>
-                      <p className="text-muted-foreground text-sm font-medium">{exp.company}</p>
-                      <p className="text-muted-foreground/70 text-xs mb-2">{exp.period}</p>
-                      <p className="text-muted-foreground text-sm">{exp.description}</p>
+                      <div className="w-10 h-1 rounded-full bg-foreground mb-4 opacity-20"></div>
+                      <h4 className="text-lg font-bold text-foreground uppercase tracking-tight leading-tight">
+                        {exp.title}
+                      </h4>
+                      <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-2">
+                        {exp.company}
+                      </p>
+                      <p className="text-sm text-foreground/80 leading-relaxed">
+                        {exp.description}
+                      </p>
                     </motion.div>
                   ))}
                 </div>
               </Card>
             </motion.div>
 
-            {/* Formation Card */}
+            {/* Formation Card -> KPIs/Stats */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -390,9 +326,9 @@ const AboutSection = ({
               viewport={{ once: true }}
             >
               <Card className="bg-card border-border p-6">
-                <h3 className="text-xl font-bold text-foreground mb-6">| Formation & Diplômes</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {formations.map((formation, index) => (
+                <h3 className="text-xl font-bold text-foreground mb-6">| Impact & Performance</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {stats.map((formation, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, y: 20 }}
@@ -403,12 +339,44 @@ const AboutSection = ({
                         delay: index * 0.1,
                         ease: "easeOut"
                       }}
-                      className="bg-secondary/50 p-4 rounded-lg border border-border hover:border-border/60 transition-colors"
+                      className="bg-secondary/30 p-4 rounded-sm border border-border hover:border-foreground/50 transition-all text-center"
                     >
-                      <h4 className="text-foreground font-semibold mb-1">{formation.title}</h4>
-                      <p className="text-muted-foreground text-sm mb-2">{formation.subtitle}</p>
-                      <p className="text-muted-foreground/70 text-xs">{formation.period}</p>
+                      <p className="text-foreground text-3xl font-black mb-1">{formation.period}</p>
+                      <h4 className="text-foreground font-bold text-sm mb-1">{formation.title}</h4>
+                      <p className="text-muted-foreground text-[10px] uppercase tracking-tighter">{formation.subtitle}</p>
                     </motion.div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
+
+            {/* Interactive Workflow Visualization */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              viewport={{ once: true }}
+            >
+              <WorkflowVis />
+            </motion.div>
+
+            {/* NEW: Tech Stack Section to fill space */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <Card className="bg-card border-border p-8">
+                <h3 className="text-2xl font-bold text-foreground mb-8">| Arsenal Technologique</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {[
+                    "OpenAI", "Anthropic", "n8n", "Make", "Python", "TypeScript",
+                    "React", "Next.js", "Supabase", "Docker", "AWS", "Vercel"
+                  ].map((tech, i) => (
+                    <div key={i} className="flex items-center justify-center p-4 bg-secondary/30 rounded border border-border/50 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary hover:border-foreground/20 transition-all cursor-default">
+                      {tech}
+                    </div>
                   ))}
                 </div>
               </Card>
@@ -416,7 +384,7 @@ const AboutSection = ({
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 };
 

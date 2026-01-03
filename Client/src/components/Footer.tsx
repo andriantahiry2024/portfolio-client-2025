@@ -28,7 +28,7 @@ const Footer = ({ className }: FooterProps = {}) => {
     },
     {
       icon: <Mail className="h-5 w-5" />,
-      href: "mailto:andriantahirynomena@gmail.com",
+      href: "mailto:contact@teckforgeek.com",
       label: "Email",
     },
   ];

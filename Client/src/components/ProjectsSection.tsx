@@ -23,83 +23,52 @@ interface ProjectsSectionProps {
 }
 
 const ProjectsSection = ({
-  title = "Mes Projets",
-  description = "Voici quelques-uns de mes projets récents. Chacun a été soigneusement élaboré avec une attention particulière aux détails et aux technologies modernes.",
+  title = "Études de Cas",
+  description = "Nos solutions technologiques en action. Découvrez comment nous transformons les défis complexes en succès mesurables pour nos clients.",
   projects = [
     {
       id: 1,
-      title: "Site e-commerce Shopify",
+      title: "IA Automatisée - Secteur Immobilier",
       description:
-        "Web design, refonte complète et ajout de fonctionnalités sur mesure",
-      image: "/temple-des-oracles.jpg",
-      technologies: ["Shopify", "Liquid", "CSS", "JavaScript"],
+        "Traitement intelligent des leads et automatisation des réponses. Gain de productivité : 40% sur le flux opérationnel.",
+      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80",
+      technologies: ["n8n", "OpenAI", "Python", "Automation"],
       githubUrl: "",
-      liveUrl: "https://templedesoracles.com/",
-      category: "web",
+      liveUrl: "#",
+      category: "IA & Automation",
     },
     {
       id: 2,
-      title: "Développement front-end & WordPress",
+      title: "Plateforme Mobile Fintech",
       description:
-        "Intégration de maquettes (HTML, CSS, JavaScript), création et personnalisation de thème WordPress from scratch",
-      image: "/uwandzani.jpg",
-      technologies: ["WordPress", "PHP", "HTML", "CSS", "JavaScript"],
+        "Écosystème bancaire sécurisé avec dashboard temps réel. Optimisation de l'UX pour un engagement utilisateur accru.",
+      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80",
+      technologies: ["React Native", "Supabase", "Node.js", "TypeScript"],
       githubUrl: "",
-      liveUrl: "https://www.uwandzani.com/",
-      category: "web",
+      liveUrl: "#",
+      category: "Web & Mobile",
     },
     {
       id: 3,
-      title: "Golf Fang",
+      title: "Supply Chain Excellence",
       description:
-        "Site vitrine original pour les passionnés de golf, dans une esthétique gothique et vampirique assumée",
-      image: "/golfang.jpg",
-      technologies: ["Web Design", "Frontend", "Creative"],
+        "Monitoring et optimisation des flux logistiques. Réduction des erreurs de saisie de 85% via automatisation Python.",
+      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80",
+      technologies: ["Python", "Docker", "ERP Integration"],
       githubUrl: "",
-      liveUrl: "https://golffang.co.uk/",
-      category: "design",
+      liveUrl: "#",
+      category: "Enterprise",
     },
     {
       id: 4,
-      title: "Satisfactory",
+      title: "Rénovation Digitale E-commerce",
       description:
-        "Responsable production applicative : conception de questionnaires personnalisés, maintenance et évolution des fonctionnalités.",
-      image: "/satisfactory.png",
-      technologies: ["Production Applicative", "Maintenance", "Gestion de Projet"],
+        "Refonte stratégique pour Temple des Oracles. Augmentation de la vitesse de chargement et du taux de conversion.",
+      image: "/temple-des-oracles.jpg",
+      technologies: ["Shopify", "Liquid", "Conversion Rate Optimization"],
       githubUrl: "",
-      liveUrl: "https://satisfactory.fr/",
-      category: "web",
-      },
-      {
-        id: 5,
-        title: "SeraNay – Réseau social hybride e-commerce",
-        description:
-          "Plateforme hybride mêlant réseau social créatif, marketplace pour produits physiques, digitaux et formations, messagerie temps réel et accompagnement par l’IA. Architecture moderne (React 18, TypeScript, Supabase Realtime, PWA) pensée pour la collaboration (collections, moodboards, conversations guidées) et la monétisation des créateurs. Projet en cours de développement.",
-        image: "/temple-des-oracles.jpg",
-        technologies: ["React", "TypeScript", "Supabase", "Realtime", "PWA", "IA"],
-        githubUrl: "",
-        liveUrl: "https://seranay.vercel.app",
-        category: "web",
-        variant: "social",
-      },
-      {
-        id: 6,
-        title: "Food Tracker Calorie – Création de recettes & suivi nutritionnel",
-        description:
-          "Application mobile moderne (React Native, Expo, TypeScript) pour créer des recettes, analyser les aliments via reconnaissance d’image, suivre les calories au quotidien et planifier ses repas. Intégration avec Supabase pour l’authentification, la synchronisation multi-appareils et la gestion des plannings de repas. Projet en cours de développement, axé sur l’équilibre alimentaire et l’expérience utilisateur.",
-        image: "/satisfactory.png",
-        technologies: [
-          "React Native",
-          "Expo",
-          "TypeScript",
-          "Supabase",
-          "Nutrition",
-          "Mobile",
-        ],
-        githubUrl: "https://github.com/andriantahiry2024/Food-tracking-Calories",
-        liveUrl: "",
-        category: "mobile",
-        variant: "nutrition",
+      liveUrl: "https://templedesoracles.com/",
+      category: "Web & Mobile",
     },
   ],
 }: ProjectsSectionProps) => {
@@ -142,7 +111,7 @@ const ProjectsSection = ({
   };
 
   return (
-    <section id="projects" className="py-20 bg-background">
+    <section id="projects" className="py-12 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <motion.h2
@@ -150,7 +119,7 @@ const ProjectsSection = ({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold mb-4"
+            className="text-3xl md:text-4xl font-bold mb-4 text-foreground"
           >
             {title}
           </motion.h2>

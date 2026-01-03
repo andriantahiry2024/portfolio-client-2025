@@ -119,14 +119,13 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
   return (
     <section
       id={id}
-      className="py-20 px-4 md:px-8 lg:px-12 w-full min-h-screen flex items-center" style={{ backgroundColor: 'var(--background)' }}
+      className="py-12 px-4 md:px-8 lg:px-12 w-full min-h-screen flex items-center bg-background"
     >
       <div className="max-w-6xl mx-auto w-full">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Me Contacter</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Brief de Projet</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            N'hésitez pas à me contacter si vous avez des questions ou si vous souhaitez
-            collaborer. Je vous répondrai dans les plus brefs délais.
+            Prêt à passer à l'échelle supérieure ? Envoyez-nous les détails de votre projet et nos experts reviendront vers vous avec une proposition stratégique sous 24h.
           </p>
         </div>
 
@@ -168,15 +167,15 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
             </div>
 
             <div className="pt-6">
-              <h3 className="text-2xl font-semibold mb-4">Suivez-moi</h3>
+              <h3 className="text-2xl font-bold mb-4">Rejoindre l'Écosystème</h3>
               <div className="flex space-x-4">
                 {/* Facebook */}
                 <a
                   href="https://www.facebook.com/profile.php?id=61584040226147"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Profil Facebook"
-                  className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer"
+                  aria-label="Teckforgeek Facebook"
+                  className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors cursor-pointer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +187,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-primary"
+                    className="text-foreground"
                   >
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                   </svg>
@@ -196,11 +195,11 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
 
                 {/* LinkedIn */}
                 <a
-                  href="https://www.linkedin.com/in/nomenahasina-andriantahiry-4751a7258/"
+                  href="https://www.linkedin.com/company/teckforgeek"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Profil LinkedIn"
-                  className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer"
+                  aria-label="Teckforgeek LinkedIn"
+                  className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors cursor-pointer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -212,7 +211,7 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-primary"
+                    className="text-[#EAB308]"
                   >
                     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                     <rect width="4" height="12" x="2" y="9"></rect>
@@ -224,8 +223,8 @@ const ContactSection = ({ id = "contact" }: { id?: string }) => {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
-            <h3 className="text-2xl font-semibold mb-6">Envoyez-moi un Message</h3>
+          <div className="bg-card p-6 rounded-xl shadow-none border border-border">
+            <h3 className="text-2xl font-bold mb-6">Démarrer un Projet</h3>
 
             <Form {...form}>
               <form

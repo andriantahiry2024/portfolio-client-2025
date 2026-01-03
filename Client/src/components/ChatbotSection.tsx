@@ -202,7 +202,7 @@ const ChatbotSection: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null); // Ref pour le titre H2
   const [lastUserMessage, setLastUserMessage] = useState<Message | null>(null);
   const [lastBotMessage, setLastBotMessage] = useState<Message>({
-    text: "Bonjour ! Je suis Andriantahiry Nomena Hasina, développeur fullstack, cloud practitioner et spécialiste en automatisation. Comment puis-je vous aider aujourd'hui ?",
+    text: "Bonjour ! Bienvenue chez Teckforgeek Agency. Nous sommes experts en intégration d'IA, automatisation de workflows et développement d'applications d'élite. Comment pouvons-nous vous accompagner dans votre transformation technologique aujourd'hui ?",
     isBot: true,
     timestamp: new Date(),
   });
@@ -260,9 +260,6 @@ const ChatbotSection: React.FC = () => {
 
     if (!input.trim()) return;
 
-    // Capturer la position actuelle du scroll
-    const scrollPos = window.scrollY;
-
     // Sauvegarder le message utilisateur
     const userMessage: Message = {
       text: input,
@@ -270,89 +267,116 @@ const ChatbotSection: React.FC = () => {
       timestamp: new Date(),
     };
 
-
     setLastUserMessage(userMessage);
     setInput('');
-    // Remettre le focus immédiatement après avoir vidé l'input
-    // inputFieldRef.current?.focus(); // Supprimé pour essayer le scrollIntoView de la section
     setIsTyping(true);
-    // Donner le focus à la section sans la faire défiler
-    // chatSectionRef.current?.focus({ preventScroll: true }); // Supprimé, on utilise scrollIntoView sur le titre
-    // Faire défiler vers le titre après un court délai
+
     setTimeout(() => {
       titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300); // Délai de 300ms
+    }, 300);
 
-    // S'assurer que la position du scroll reste la même
-    // window.scrollTo(0, scrollPos); // Commenté car maintainScroll devrait gérer le positionnement
+    // Context for the agency
+    const SYSTEM_PROMPT = `
+Tu es l'Assistant Virtuel de l'agence **Teckforgeek**.
+Ton rôle est d'aider les entreprises à comprendre comment l'IA et l'automatisation peuvent transformer leur business.
 
-    // Préparer le message utilisateur pour l'historique Gemini
+**Tes Domaines d'Expertise :**
+1. **Automation & Workflows** : n8n, Make, Python.
+2. **Développement Web/Mobile** : React, Next.js, Supabase, Applications "Elite".
+3. **Intégration IA** : LLMs, Chatbots, Agents Autonomes.
+
+**Tes Règles :**
+- Tu réponds **UNIQUEMENT** aux questions liées à l'agence, ses services, ou la technologie.
+- Si on te parle de cuisine, de politique ou d'autre chose, ramène poliment le sujet vers le business.
+- Ton ton est **Sobre, Professionnel, Direct**. Pas d'emojis excessifs.
+- Pousse toujours vers l'action : "Voulez-vous réserver un audit gratuit ?"
+- Tu es basé sur le site web actuel de l'agence.
+
+**Modèle** : Tu es propulsé par Grok via Teckforgeek.
+    `;
+
+    // Créer l'historique à envoyer
     const userHistoryItem: GeminiHistoryItem = {
       role: 'user',
       parts: [{ text: input }]
     };
-
-    // Créer l'historique à envoyer (incluant le nouveau message utilisateur)
     const historyToSend = [...chatHistory, userHistoryItem];
 
     try {
-      // Appel au backend avec le message et l'historique
-      const response = await fetch(`${BACKEND_URL}/chat`, {
-        method: 'POST',
+      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+
+      if (!apiKey) {
+        throw new Error("Clé API manquante");
+      }
+
+      // Prepare messages with system prompt
+      const messages = [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...chatHistory.map(h => ({
+          role: h.role === 'model' ? 'assistant' : 'user',
+          content: h.parts[0].text
+        })),
+        { role: "user", content: input }
+      ];
+
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Authorization": `Bearer ${apiKey}`,
+          "HTTP-Referer": window.location.origin,
+          "X-Title": "Teckforgeek Portfolio",
+          "Content-Type": "application/json"
         },
-        // Envoyer le message actuel ET l'historique
         body: JSON.stringify({
-          message: input,
-          history: historyToSend // Envoyer l'historique préparé
+          "model": "x-ai/grok-4.1-fast", // Reverting to beta as user requested
+          "messages": messages,
+          "temperature": 0.7,
+          "max_tokens": 500
         })
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorText = await response.text();
+        throw new Error(`OpenRouter API Error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const data = await response.json();
+      const botResponseText = data.choices[0].message.content;
 
       const botMessage: Message = {
-        text: data.message,
+        text: botResponseText,
         isBot: true,
         timestamp: new Date(),
       };
 
-      // Préparer la réponse du bot pour l'historique Gemini
-      const botHistoryItem: GeminiHistoryItem = {
-        role: 'model', // 'model' est le rôle pour les réponses de Gemini
-        parts: [{ text: data.message }]
+      // Update history
+      const newHistoryItem: GeminiHistoryItem = {
+        role: 'model',
+        parts: [{ text: botResponseText }]
       };
 
-      // Mettre à jour l'historique complet (utilisateur + bot)
-      setChatHistory([...historyToSend, botHistoryItem]);
+      setChatHistory([...historyToSend, newHistoryItem]);
 
       setIsTyping(false);
-      setLastBotMessage(botMessage); // Garder ceci pour l'affichage immédiat
+      setLastBotMessage(botMessage);
       setResponseKey(prev => prev + 1);
       setIsOffline(false);
-
-      // Forcer le maintien de la position du chatbot
-      // maintainScroll(); // Appel supprimé car la fonction n'existe plus
 
     } catch (error) {
       console.error('Error:', error);
       setIsTyping(false);
       setIsOffline(true);
 
-      // Message d'erreur pour l'utilisateur
+      const errorMessage = (!import.meta.env.VITE_OPENROUTER_API_KEY)
+        ? "⚠️ Configuration requise : Ajoutez VITE_OPENROUTER_API_KEY dans votre fichier .env"
+        : "Je rencontre des difficultés à joindre mon cerveau dans le cloud. Veuillez réessayer.";
+
       setLastBotMessage({
-        text: "Je suis désolé, je rencontre des difficultés de connexion. Pourriez-vous réessayer dans quelques instants ?",
+        text: errorMessage,
         isBot: true,
         timestamp: new Date(),
       });
       setResponseKey(prev => prev + 1);
-
-      // Forcer le maintien de la position du chatbot
-      // maintainScroll(); // Appel supprimé car la fonction n'existe plus
     }
   };
 
@@ -364,7 +388,6 @@ const ChatbotSection: React.FC = () => {
           Assistant Virtuel
           {isOffline && <span className="text-xs ml-2 text-red-500">(mode hors-ligne)</span>}
         </h2>
-        <h4 className="text-center mb-8 text-gray-800 dark:text-white">Le bot n'est pas disponible pour le moment</h4>
 
         <div className="h-72 mb-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
           <ChatbotAnimation />
@@ -385,7 +408,7 @@ const ChatbotSection: React.FC = () => {
               </motion.div>
             ) : (
               <motion.div
-                key={`response-${responseKey}`}
+                key={`response - ${responseKey} `}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
