@@ -198,18 +198,10 @@ const Home = () => {
           </Suspense>
         </section>
 
-        {/* Chatbot Section (lazy load) */}
-        <section id="chatbot">
-          <Suspense
-            fallback={
-              <div className="py-16 px-4 text-center text-muted-foreground">
-                Chargement de l’assistant virtuel...
-              </div>
-            }
-          >
-            <ChatbotSection />
-          </Suspense>
-        </section>
+        {/* Chatbot overlay */}
+        <Suspense fallback={null}>
+          <ChatbotSection />
+        </Suspense>
 
         {/* Contact Section */}
         <section id="contact">

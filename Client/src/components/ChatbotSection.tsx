@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X, MessageCircle } from 'lucide-react';
 import Spline from '@splinetool/react-spline';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -195,14 +196,12 @@ const ChatbotAnimation: React.FC = () => {
 };
 
 // Composant pour le chatbot
+// Composant pour le chatbot
 const ChatbotSection: React.FC = () => {
-  const chatSectionRef = useRef<HTMLDivElement>(null); // Ref pour la section entière
-  const inputSectionRef = useRef<HTMLFormElement>(null); // Ref pour le formulaire de saisie
-  const inputFieldRef = useRef<HTMLInputElement>(null); // Ref pour le champ input lui-même
-  const titleRef = useRef<HTMLHeadingElement>(null); // Ref pour le titre H2
-  const [lastUserMessage, setLastUserMessage] = useState<Message | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const chatSectionRef = useRef<HTMLDivElement>(null);
   const [lastBotMessage, setLastBotMessage] = useState<Message>({
-    text: "Bonjour ! Bienvenue chez Teckforgeek Agency. Nous sommes experts en intégration d'IA, automatisation de workflows et développement d'applications d'élite. Comment pouvons-nous vous accompagner dans votre transformation technologique aujourd'hui ?",
+    text: "Bonjour ! Bienvenue chez Teckforgeek Agency. Nous sommes experts en intégration d'IA, automatisation de workflows et développement d'applications d'élite. Comment pouvons-nous vous accompagner ?",
     isBot: true,
     timestamp: new Date(),
   });
@@ -211,113 +210,35 @@ const ChatbotSection: React.FC = () => {
   const [responseKey, setResponseKey] = useState(0);
   const [isOffline, setIsOffline] = useState(false);
   const [rawMarkdown, setRawMarkdown] = useState<string>("");
-
-  // Interface pour l'historique Gemini
-  interface GeminiHistoryItem {
-    role: 'user' | 'model';
-    parts: { text: string }[];
-  }
-
-  // État pour stocker l'historique de la conversation pour Gemini
   const [chatHistory, setChatHistory] = useState<GeminiHistoryItem[]>([]);
 
-  // Fonction pour maintenir le scroll sur la zone de saisie
-  // const maintainScroll = () => { // Fonction entièrement supprimée pour tester
-  //   if (inputSectionRef.current) {
-  //     setTimeout(() => {
-  //       inputSectionRef.current?.scrollIntoView({
-  //         behavior: 'smooth',
-  //         block: 'nearest'
-  //       });
-  //     }, 50);
-  //   }
-  // };
-
-  // Appeler maintainScroll après chaque nouvelle réponse
-  // useEffect(() => { // Temporairement supprimé pour tester le comportement par défaut
-  //   maintainScroll();
-  // }, [lastBotMessage, isTyping]);
-
-  // Mettre à jour le markdown brut quand le message du bot change
   useEffect(() => {
     if (lastBotMessage && lastBotMessage.text) {
       setRawMarkdown(prepareMarkdown(lastBotMessage.text));
     }
   }, [lastBotMessage]);
 
-  // Effet pour redonner le focus à l'input après la réponse
-  // useEffect(() => { // Supprimé pour tester une autre approche de focus
-  //   if (!isTyping && inputFieldRef.current) {
-  //     setTimeout(() => {
-  //       inputFieldRef.current?.focus();
-  //     }, 50);
-  //   }
-  // }, [isTyping]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
+    if (!input.trim() || isTyping) return;
 
-    if (!input.trim()) return;
-
-    // Sauvegarder le message utilisateur
     const userMessage: Message = {
       text: input,
       isBot: false,
       timestamp: new Date(),
     };
 
-    setLastUserMessage(userMessage);
     setInput('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
+    const SYSTEM_PROMPT = `Tu es l'Assistant Virtuel de l'agence **Teckforgeek**. Expertise: n8n, Python, React, Next.js, IA. Ton ton est pro et direct. Pousse vers l'audit gratuit.`;
 
-    // Context for the agency
-    const SYSTEM_PROMPT = `
-Tu es l'Assistant Virtuel de l'agence **Teckforgeek**.
-Ton rôle est d'aider les entreprises à comprendre comment l'IA et l'automatisation peuvent transformer leur business.
-
-**Tes Domaines d'Expertise :**
-1. **Automation & Workflows** : n8n, Make, Python.
-2. **Développement Web/Mobile** : React, Next.js, Supabase, Applications "Elite".
-3. **Intégration IA** : LLMs, Chatbots, Agents Autonomes.
-
-**Tes Règles :**
-- Tu réponds **UNIQUEMENT** aux questions liées à l'agence, ses services, ou la technologie.
-- Si on te parle de cuisine, de politique ou d'autre chose, ramène poliment le sujet vers le business.
-- Ton ton est **Sobre, Professionnel, Direct**. Pas d'emojis excessifs.
-- Pousse toujours vers l'action : "Voulez-vous réserver un audit gratuit ?"
-- Tu es basé sur le site web actuel de l'agence.
-
-**Modèle** : Tu es propulsé par Grok via Teckforgeek.
-    `;
-
-    // Créer l'historique à envoyer
-    const userHistoryItem: GeminiHistoryItem = {
-      role: 'user',
-      parts: [{ text: input }]
-    };
+    const userHistoryItem: GeminiHistoryItem = { role: 'user', parts: [{ text: input }] };
     const historyToSend = [...chatHistory, userHistoryItem];
 
     try {
       const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-
-      if (!apiKey) {
-        throw new Error("Clé API manquante");
-      }
-
-      // Prepare messages with system prompt
-      const messages = [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...chatHistory.map(h => ({
-          role: h.role === 'model' ? 'assistant' : 'user',
-          content: h.parts[0].text
-        })),
-        { role: "user", content: input }
-      ];
+      if (!apiKey) throw new Error("Clé API manquante");
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -328,182 +249,138 @@ Ton rôle est d'aider les entreprises à comprendre comment l'IA et l'automatisa
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "x-ai/grok-4.1-fast", // Reverting to beta as user requested
-          "messages": messages,
+          "model": "x-ai/grok-4.1-fast",
+          "messages": [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...chatHistory.map(h => ({ role: h.role === 'model' ? 'assistant' : 'user', content: h.parts[0].text })),
+            { role: "user", content: input }
+          ],
           "temperature": 0.7,
-          "max_tokens": 500
         })
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`OpenRouter API Error: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-
       const data = await response.json();
-      const botResponseText = data.choices[0].message.content;
-
-      const botMessage: Message = {
-        text: botResponseText,
-        isBot: true,
-        timestamp: new Date(),
-      };
-
-      // Update history
-      const newHistoryItem: GeminiHistoryItem = {
-        role: 'model',
-        parts: [{ text: botResponseText }]
-      };
-
-      setChatHistory([...historyToSend, newHistoryItem]);
-
+      if (data.choices && data.choices[0]) {
+        const botResponseText = data.choices[0].message.content;
+        setChatHistory([...historyToSend, { role: 'model', parts: [{ text: botResponseText }] }]);
+        setLastBotMessage({ text: botResponseText, isBot: true, timestamp: new Date() });
+      }
       setIsTyping(false);
-      setLastBotMessage(botMessage);
       setResponseKey(prev => prev + 1);
       setIsOffline(false);
-
     } catch (error) {
-      console.error('Error:', error);
       setIsTyping(false);
       setIsOffline(true);
-
-      const errorMessage = (!import.meta.env.VITE_OPENROUTER_API_KEY)
-        ? "⚠️ Configuration requise : Ajoutez VITE_OPENROUTER_API_KEY dans votre fichier .env"
-        : "Je rencontre des difficultés à joindre mon cerveau dans le cloud. Veuillez réessayer.";
-
-      setLastBotMessage({
-        text: errorMessage,
-        isBot: true,
-        timestamp: new Date(),
-      });
-      setResponseKey(prev => prev + 1);
+      setLastBotMessage({ text: "Erreur de connexion.", isBot: true, timestamp: new Date() });
     }
   };
 
-
   return (
-    <div className="py-16 px-4" id="chatbot-section" ref={chatSectionRef} tabIndex={-1} style={{ outline: 'none' }}> {/* Ajout de tabIndex et suppression du contour de focus */}
-      <div className="max-w-2xl mx-auto">
-        <h2 ref={titleRef} className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white"> {/* Ajout de la ref ici */}
-          Assistant Virtuel
-          {isOffline && <span className="text-xs ml-2 text-red-500">(mode hors-ligne)</span>}
-        </h2>
-
-        <div className="h-72 mb-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg overflow-hidden flex items-center justify-center">
-          <ChatbotAnimation />
-        </div>
-
-        {/* Zone de conversation avec style amélioré */}
-        <div className="mb-8">
-          <AnimatePresence mode="wait">
-            {isTyping ? (
-              <motion.div className="flex justify-center">
-                <div className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-2xl">
-                  <div className="flex space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-300 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-300 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-300 animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key={`response - ${responseKey} `}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.4 }}
-                className="w-full flex justify-center"
-              >
-                <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                  <div className="p-6">
-                    <div className="prose prose-lg prose-indigo dark:prose-invert max-w-none">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeHighlight]}
-                        components={{
-                          h2: ({ node, ...props }) => <h2 className="text-2xl font-bold my-6 text-indigo-600 dark:text-indigo-400 tracking-wide" {...props} />,
-                          h3: ({ node, ...props }) => <h3 className="text-xl font-semibold my-4 text-gray-700 dark:text-gray-300" {...props} />,
-                          ul: ({ node, ...props }) => <ul className="my-4 space-y-2 list-none" {...props} />,
-                          li: ({ node, ...props }) => (
-                            <li className="flex items-start space-x-2 my-2" {...props}>
-                              <span className="text-indigo-500 dark:text-indigo-400 mt-1">•</span>
-                              <span className="text-gray-700 dark:text-gray-300">{props.children}</span>
-                            </li>
-                          ),
-                          code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                            const match = /language-(\w+)/.exec(className || '');
-                            const language = match ? match[1] : 'plaintext';
-
-                            // Utilise une valeur de secours pour le contenu affiché
-                            const displayContent = children || '';
-
-                            // Pour la copie, utilise la fonction d'extraction sur le markdown brut
-                            const codeContent = match
-                              ? extractCodeText(rawMarkdown, language, String(displayContent))
-                              : String(displayContent);
-
-                            return !inline && match ? (
-                              <div className="relative">
-                                <CopyButton content={codeContent} />
-                                <pre className="bg-gray-900 text-gray-200 p-4 rounded-lg mt-2 overflow-x-auto font-mono text-sm">
-                                  <div className="px-4 py-2 bg-gray-800 text-gray-400 text-xs">{language}</div>
-                                  <code className={className} {...props}>
-                                    {children}
-                                  </code>
-                                </pre>
-                              </div>
-                            ) : (
-                              <code className={className} {...props}>
-                                {children}
-                              </code>
-                            );
-                          }
-                        }}
-                      >
-                        {prepareMarkdown(lastBotMessage.text)}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Formulaire de saisie */}
-        <form
-          ref={inputSectionRef} // Attacher la référence ici
-          onSubmit={handleSubmit}
-          className="flex gap-2"
-        // onClick={(e) => { // Supprimé car onSubmit gère déjà preventDefault
-        //   e.stopPropagation();
-        //   e.preventDefault();
-        // }}
-        >
-          <input
-            ref={inputFieldRef} // Attacher la référence ici
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Tapez votre message ici..."
-            className="flex-1 p-4 rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm"
-          // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
-          />
-          <button
-            type="submit"
-            className="px-6 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-medium rounded-full shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            disabled={isTyping}
-          // onClick={(e) => e.stopPropagation()} // Supprimé pour tester
+    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4 pointer-events-none">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20, transformOrigin: 'bottom right' }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="w-[90vw] md:w-[400px] max-h-[600px] bg-white dark:bg-neutral-900 rounded-3xl shadow-2xl border border-neutral-200 dark:border-neutral-800 flex flex-col overflow-hidden pointer-events-auto"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-            </svg>
-          </button>
-        </form>
-      </div>
+            <div className="p-4 bg-neutral-100 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xs">TG</div>
+                <div>
+                  <h3 className="text-sm font-bold dark:text-white">Assistant Virtuel</h3>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-widest">En ligne</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full transition-colors text-neutral-500"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="h-48 bg-neutral-50 dark:bg-black/20 flex-shrink-0">
+              <ChatbotAnimation />
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[300px] bg-white dark:bg-neutral-900">
+              <div className="flex flex-col gap-1">
+                <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-2xl rounded-tl-none prose prose-sm dark:prose-invert max-w-none">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={{
+                      code: ({ node, inline, className, children, ...props }: CodeProps) => {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const language = match ? match[1] : 'plaintext';
+                        const displayContent = children || '';
+                        const codeContent = match ? extractCodeText(rawMarkdown, language, String(displayContent)) : String(displayContent);
+                        return !inline && match ? (
+                          <div className="relative">
+                            <CopyButton content={codeContent} />
+                            <pre className="bg-neutral-900 text-neutral-200 p-3 rounded-lg mt-2 overflow-x-auto font-mono text-xs">
+                              <code className={className} {...props}>{children}</code>
+                            </pre>
+                          </div>
+                        ) : (
+                          <code className="bg-neutral-200 dark:bg-neutral-700 px-1 rounded" {...props}>{children}</code>
+                        );
+                      }
+                    }}
+                  >
+                    {prepareMarkdown(lastBotMessage.text)}
+                  </ReactMarkdown>
+                </div>
+                <span className="text-[10px] text-neutral-400 ml-1">Assistant • {lastBotMessage.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Discutons de votre projet..."
+                className="flex-1 bg-neutral-100 dark:bg-neutral-800 border-none rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 dark:text-white"
+                disabled={isTyping}
+              />
+              <button
+                type="submit"
+                disabled={isTyping || !input.trim()}
+                className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white hover:bg-indigo-600 transition-colors disabled:opacity-50"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                </svg>
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        onClick={() => setIsOpen(!isOpen)}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="w-16 h-16 rounded-full bg-indigo-600 shadow-2xl flex items-center justify-center text-white pointer-events-auto group relative overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        {isOpen ? (
+          <X className="w-8 h-8 relative z-10" />
+        ) : (
+          <MessageCircle className="w-8 h-8 relative z-10" />
+        )}
+        {!isOpen && (
+          <span className="absolute top-3 right-3 w-4 h-4 bg-red-500 border-2 border-indigo-600 rounded-full z-20"></span>
+        )}
+      </motion.button>
     </div>
   );
 };
 
-export default ChatbotSection; 
+export default ChatbotSection;

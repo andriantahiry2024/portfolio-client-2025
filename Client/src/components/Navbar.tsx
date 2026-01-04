@@ -145,13 +145,13 @@ const Navbar = ({ className = "" }: NavbarProps) => {
           {/* Logo */}
           <button
             type="button"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
             onClick={() => navigate("/")}
-            aria-label="Retour à l'accueil de l'agence Teckforgeek"
+            aria-label="Teckforgeek Agency - Retour à l'accueil"
           >
             <img
               src={logo}
-              alt="Logo Teckforgeek Agency 2025"
+              alt="Logo Teckforgeek"
               className="h-7 w-auto md:h-8"
             />
 

@@ -30,6 +30,7 @@ interface ProjectCardProps {
   technologies: string[];
   githubUrl?: string;
   liveUrl?: string;
+  isPrivate?: boolean;
   variant?: "default" | "social" | "nutrition";
 }
 
@@ -40,6 +41,7 @@ const ProjectCard = ({
   technologies = ["React", "TypeScript", "Tailwind CSS"],
   githubUrl = "#",
   liveUrl = "#",
+  isPrivate = false,
   variant = "default",
 }: ProjectCardProps) => {
   const SocialNetworkAnimation = () => (
@@ -352,8 +354,13 @@ const ProjectCard = ({
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-between pt-2">
-          {githubUrl && (
+        <CardFooter className="flex justify-between items-center pt-2">
+          {isPrivate ? (
+            <div className="flex items-center text-xs font-medium text-amber-500 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse mr-2" />
+              Privé
+            </div>
+          ) : githubUrl && githubUrl !== "#" ? (
             <Button
               variant="outline"
               size="sm"
@@ -362,12 +369,16 @@ const ProjectCard = ({
             >
               <a href={githubUrl} target="_blank" rel="noopener noreferrer">
                 <Github className="mr-2 h-4 w-4" />
-                Code
+                Public
               </a>
             </Button>
+          ) : (
+            <div className="text-xs text-muted-foreground italic">
+              Code non disponible
+            </div>
           )}
 
-          {liveUrl && (
+          {liveUrl && liveUrl !== "#" && (
             <Button
               size="sm"
               className="hover:bg-primary/90 transition-colors"
